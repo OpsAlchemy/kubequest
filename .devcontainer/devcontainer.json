@@ -1,0 +1,39 @@
+{
+    "name": "Debian",
+    "image": "mcr.microsoft.com/devcontainers/base:bullseye",
+    "features": {
+        "ghcr.io/devcontainers/features/azure-cli:1": {},
+        "ghcr.io/devcontainers/features/common-utils:2": {},
+        "ghcr.io/devcontainers/features/terraform:1": {},
+        "ghcr.io/duduribeiro/devcontainer-features/neovim:1": {},
+        "ghcr.io/devcontainers-extra/features/mkdocs:2": {},
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    },
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    "forwardPorts": [
+        8000
+    ],
+    "runArgs": [
+        "--privileged",
+        "--network=host",
+        "-v",
+        "/var/run/docker.sock:/var/run/docker.sock"
+    ],
+    "remoteUser": "root",
+    "postCreateCommand": "chmod +x /workspaces/${localWorkspaceFolderBasename}/.devcontainer/scripts/main.sh && /workspaces/${localWorkspaceFolderBasename}/.devcontainer/scripts/main.sh",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ahmadawais.shades-of-purple",
+                "mads-hartmann.bash-ide-vscode",
+                "ahmedhmy.bash-beautify",
+                "4ops.terraform"
+            ],
+            "settings": {
+                "markdown.copyFiles.destination": {
+                    "**/*": "${documentWorkspaceFolder}/docs/assets/${fileName}"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,55 @@
+# === Terraform ===
+*.tfstate
+*.tfstate.*
+.terraform/
+.crash/
+*.log
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+terraform.tfvars
+.terraform.lock.hcl
+.plan
+
+# Local Terraform files
+terraform.tfstate.backup
+terraform.tfplan
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Python tools
+.pytest_cache/
+.mypy_cache/
+.tox/
+coverage.*
+htmlcov/
+.cache/
+.pyre/
+.dmypy.json
+.pytype/
+
+# Jupyter
+.ipynb_checkpoints
+
+# === VS Code ===
+.vscode/
+
+# === OS files ===
+.DS_Store
+Thumbs.db
