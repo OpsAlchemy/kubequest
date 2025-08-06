@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: downwardapi-demo
+  namespace: playground
+  labels:
+    app: demo-app
+    env: dev
+  annotations:
+    purpose: test-downwardapi
+spec:
+  containers:
+    - name: app
+      image: busybox
+      command:
+        - sh
+        - -c
+        - |
+          echo "Volume files:"
+          ls /etc/podinfo
+          echo "--- FILE CONTENTS ---"
+          for f in /etc/podinfo/*; do
+            echo "$(basename "$f"): $(cat "$f")"
+          done
+          echo "============================="
+          echo "ENV: POD_IP=$POD_IP"
+          echo "ENV: HOST_IP=$HOST_IP"
+          sleep 3600
+      volumeMounts:
+        - name: pod-info
+          mountPath: /etc/podinfo
+      env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+  volumes:
+    - name: pod-info
+      downwardAPI:
+        items:
+          - path: pod_name
+            fieldRef:
+              fieldPath: metadata.name
+          - path: namespace
+            fieldRef:
+              fieldPath: metadata.namespace
+          - path: uid
+            fieldRef:
+              fieldPath: metadata.uid
+          - path: label_app
+            fieldRef:
+              fieldPath: metadata.labels['app']
+          - path: label_env
+            fieldRef:
+              fieldPath: metadata.labels['env']
+          - path: annotation_purpose
+            fieldRef:
+              fieldPath: metadata.annotations['purpose']
+

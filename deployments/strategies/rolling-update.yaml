@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: rollingupdate-test
+  labels:
+    color: blue
+spec:
+  template:
+    metadata:
+      name: ru-pod 
+      labels:
+        color: blue-ru
+    spec:
+      containers:
+        - name: blue-ru-container
+          image: kodekloud/webapp-color:v1
+          ports:
+            - containerPort: 8080
+  selector:
+    matchLabel:
+      color: blue-ru 
+  replicas: 3
+  strategy:
+    type: RollingUpdate 
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+---
+apiVersion: v1
+kind: Service 
+metadata:
+  name: blueru-svc
+  labels:
+    color: blue-ru 
+spec:
+  selector:
+    color: blue-ru 
+  type: ClusterIP
+  ports:
+    - port: 80 
+      targetPort: 8080 
+      protocol: TCP
+

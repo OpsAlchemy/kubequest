@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: azure-disk-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  azureDisk:
+    diskName: mydisk
+    diskURI: /subscriptions/b1939b25-807e-43a4-8f19-c1055b6d8fc4/resourceGroups/rg-puregym-test-ukwest-01/providers/Microsoft.Compute/disks/mydisk
+    cachingMode: ReadOnly
+    fsType: ext4
+    kind: Managed

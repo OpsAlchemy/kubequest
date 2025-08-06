@@ -1,0 +1,135 @@
+# 🟦 FRONTEND
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontend
+  labels:
+    role: frontend
+spec:
+  containers:
+  - name: app
+    image: vikashraj1825/kube-connect-tester:v3.0.0
+    ports:
+    - containerPort: 8080
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: THEME_COLOR
+      value: "#17a2b8"  # teal blue
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    role: frontend
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: ClusterIP
+
+# 🟥 BACKEND
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: backend
+  labels:
+    role: backend
+spec:
+  containers:
+  - name: app
+    image: vikashraj1825/kube-connect-tester:v3.0.0
+    ports:
+    - containerPort: 8080
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: THEME_COLOR
+      value: "#dc3545"  # red
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    role: backend
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: ClusterIP
+
+# 🟩 DATABASE
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db
+  labels:
+    role: db
+spec:
+  containers:
+  - name: app
+    image: vikashraj1825/kube-connect-tester:v3.0.0
+    ports:
+    - containerPort: 8080
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: THEME_COLOR
+      value: "#28a745"  # green
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  selector:
+    role: db
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: ClusterIP
+
+# 🟨 MONITOR
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: monitor
+  labels:
+    role: monitor
+spec:
+  containers:
+  - name: app
+    image: vikashraj1825/kube-connect-tester:v3.0.0
+    ports:
+    - containerPort: 8080
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: THEME_COLOR
+      value: "#ffc107"  # yellow
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitor
+spec:
+  selector:
+    role: monitor
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: ClusterIP
+

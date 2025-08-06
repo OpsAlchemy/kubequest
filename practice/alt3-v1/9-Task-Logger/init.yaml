@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: logger
+  namespace: playground
+spec:
+  containers:
+    - name: logginpod
+      image: busybox
+      args: ['/bin/sh', '-c', 'i=0; while true; do echo "$i: $(date)" >> /var/log/log01.log; i=$((i+1)); sleep 5; done']
+      volumeMounts:
+      - name: logz
+        mountPath: /var/log
+    - name: logreader
+      image: busybox
+      args: ['/bin/sh', '-c', 'tail -f /var/log/log01.log']
+      volumeMounts:
+      - name: logz
+        mountPath: /var/log
+  volumes:
+  - name: logz 
+    emptyDir: {}
+  nodeName: aks-system-29192112-vmss000005 

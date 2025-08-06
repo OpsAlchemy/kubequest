@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: greenapp
+  labels:
+    color: green
+    tier: frontend
+spec:
+  template:
+    metadata:
+      name: bluegreen 
+      labels:
+        color: green 
+        tier: frontend 
+    spec:
+      containers:
+        - name: green-webapp
+          image: kodekloud/webapp-color:v2
+  replicas: 4 
+  selector:
+    matchLabels:
+      tier: frontend
+---
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: blueapp 
+  labels:
+    color: blue 
+    tier: frontend 
+spec:
+  template:
+    metadata:
+      name: bluegreen 
+      labels:
+        color: blue 
+        tier: frontend 
+    spec:
+      containers:
+        - name: blue-webapp
+          image: kodekloud/webapp-color:v1
+  replicas: 4 
+  selector:
+    matchLabels:
+      tier: frontend
+
+---
+apiVersion: v1
+kind: Service 
+metadata:
+  name: webapp-color-svc
+spec:
+  type: ClusterIP
+  selector:
+    color: blue
+    tier: frontend
+  ports:
+    - protocol: TCP
+      targetPort: 8080
+      port: 80
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

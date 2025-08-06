@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: azure-disk-test
+spec:
+  containers:
+    - name: alpine
+      image: alpine
+      command: ["/bin/sh"]
+      args:
+        - -c
+        - "while true; do echo $(date) >> /mnt/output.txt; sleep 5; done"
+      volumeMounts:
+        - name: disk-volume
+          mountPath: /mnt
+  volumes:
+    - name: disk-volume
+      persistentVolumeClaim:
+        claimName: azure-disk-pvc
+  restartPolicy: Always
+

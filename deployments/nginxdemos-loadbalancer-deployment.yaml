@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: nginxdemos-app
+  labels:
+    tier: frontend
+    app: nginxdemosapp 
+spec:
+  template:
+    metadata:
+      name: nginxdemos-pod 
+      labels:
+        tier: frontend 
+        app: nginxdemosapp
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginxdemos/hello
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginxdemosapp
+
+---
+apiVersion: v1
+kind: Service 
+metadata:
+  name: nginxdemos-svc
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30009
+  selector:
+    app: nginxdemosapp
+    tier: frontend

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap 
+metadata:
+  name: log-config 
+data:
+  log_level.conf : "WARN"
+# kubectl create configmap log-config --from-literal=log_level.conf="INFO"
+---
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: log-reader-pod 
+spec:
+  containers:
+    - name: logger
+      image: vikashraj1825/log-reader:latest
+      volumeMounts:
+        - name: config-volume 
+          mountPath: /etc/config 
+  volumes:
+    - name: config-volume 
+      configMap:
+        name: log-config

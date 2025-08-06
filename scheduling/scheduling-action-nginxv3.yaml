@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: Binding
+metadata:
+    name: nginxv3
+target:
+  apiVersion: v1
+  kind: Node
+  name: aks-services-35986404-vmss00000r 

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: kiwi-secret-pod 
+  namespace: playground
+spec:
+  containers:
+    - name: busybox
+      image: nginx
+      env:
+        - name: USERKIWI
+          valueFrom:
+            secretKeyRef:
+              name: juicysecret
+              key: username
+        - name: PASSKIWI
+          valueFrom:
+            secretKeyRef:
+              name: juicysecret
+              key: password

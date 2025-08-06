@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rwopod
+  labels:
+    app: rwopod 
+spec:
+  containers:
+    - name: nginx
+      image: nginx 
+      ports:
+        - name: http
+          containerPort: 80
+      volumeMounts:
+        - name: rwopvc-volume
+          mountPath: /var/www/html/
+  volumes:
+  - name: rwopvc-volume
+    persistentVolumeClaim:
+      claimName: rwopvc

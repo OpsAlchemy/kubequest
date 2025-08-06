@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: michelle-storage-admin  # must match exactly
+subjects:
+- kind: User
+  name: michelle                # must match exactly
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: storage-admin           # must match exactly
+  apiGroup: rbac.authorization.k8s.io
+

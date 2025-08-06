@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: nginxv3
+  labels:
+    name: nginxv3 
+spec:
+  containers:
+  - name: nginx 
+    image: nginx
+    ports:
+      - containerPort: 80
+#  nodeName: aks-services-35986404-vmss00000r 
+# Error from server (Conflict): error when creating "scheduling-action-nginxv3.yaml": Operation cannot be fulfilled on pods/binding "nginxv3": pod nginxv3 is already assigned to node "aks-services-35986404-vmss00000r"

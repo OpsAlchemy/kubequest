@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-server-with-helper
+spec:
+  volumes:
+    - name: shared-content
+      emptyDir: {}
+  containers:
+    - name: content-generator
+      image: busybox
+      command: ['sh', '-c', 'echo " Hello from Helper! " > /output/index.html && sleep 3600']
+      volumeMounts:
+        - name: shared-content
+          mountPath: /output
+    - name: web-server
+      image: nginx
+      volumeMounts:
+        - name: shared-content
+          mountPath: /usr/share/nginx/html

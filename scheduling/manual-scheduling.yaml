@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: nginxv2
+  labels:
+    name: nginxv2 
+spec:
+  containers:
+  - name: nginx 
+    image: nginx
+    ports:
+      - containerPort: 8080
+  nodeName: aks-system-29192112-vmss000005

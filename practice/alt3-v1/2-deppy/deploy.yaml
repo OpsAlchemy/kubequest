@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: deppy
+  name: deppy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deppy
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: deppy
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports: 
+          - containerPort: 80
+status: {}

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: azurefile-tester
+  namespace: debug
+spec:
+  containers:
+    - name: busybox
+      image: busybox
+      command: ["/bin/sh", "-c", "while true; do date >> /mnt/log/data.txt; sleep 5; done"]
+      volumeMounts:
+        - mountPath: /mnt/log
+          name: log-volume
+  volumes:
+    - name: log-volume
+      persistentVolumeClaim:
+        claimName: myclaim
+  restartPolicy: Always
+

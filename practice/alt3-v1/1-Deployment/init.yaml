@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dragon
+spec:
+  template:
+    metadata:
+      name: dragon-pod
+      labels:
+        app: dragon 
+        color: red
+    spec:
+      containers:
+        - name: dragon-container
+          image: nginx
+          ports:
+            - containerPort: 80
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dragon 
+  strategy:
+    type: Recreate

@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metal-cm 
+  namespace: metallica 
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Metallica - Enter Sandman</title>
+      <style>
+        body {
+          background-color: #000;
+          color: #eee;
+          font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+          text-align: center;
+          padding-top: 50px;
+        }
+        h1 {
+          font-size: 3em;
+          color: #ff0000;
+        }
+        p {
+          font-size: 1.5em;
+          color: #ccc;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Welcome to Metallica</h1>
+      <p>🎸 Now I lay me down to sleep... 🎸</p>
+      <p><em>Off to never-never land</em></p>
+    </body>
+    </html>
+

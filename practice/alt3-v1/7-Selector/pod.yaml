@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: noded
+spec:
+  containers:
+    - image: nginx
+      name: noded
+  nodeSelector:
+    disk: nvme
+
