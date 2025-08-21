@@ -1,0 +1,83 @@
+sudo bash master.sh
+kubectl get pods
+ls
+cat master.sh
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl get pods
+exit
+clear
+alias k=kubectl
+k get pods
+k get pods -A
+k create pod nginx --image nginx
+k create deploy nginx --image nginx
+clear
+k get pods
+k get pods -w
+k get pods
+ipa
+ip a
+k get pods -o wide
+k get pods -o wide -A
+kubectl get pods
+kubectl get pods -o wide
+exit
+ls
+cat master.sh
+exit
+ls
+clear
+cat overlay-checks.sh 
+ip link show type veth
+ip link show type bridge
+bridge link show 
+bridge link show | grep cni0
+kubectl get pods -o wide 
+kubectl get pods -o wide -A | grep kube-node
+kubectl get deploy
+kubectl scale deploy nginx --replicas=2
+k get pods -o wide
+kubectl get pods -o wide
+ip route
+ip a
+cat overlay-checks.sh 
+ip a
+ip rotue
+ip route
+exit
+sudo cp /etc/kubernetes/admin.conf /home/vagrant/admin.conf
+sudo chown vagrant:vagrant /home/vagrant/admin.conf
+exit
+clear
+kubectl get pods -o wide
+ip a
+kubectl get nodes
+kubectl get deploy
+clear
+ip route
+kubectl get pods -o wide
+cat /etc/kubernetes/admin.conf 
+sudo cat /etc/kubernetes/admin.conf 
+clear
+kubectl taint nodes k8s-master node-role.kubernetes.io/control-plane:NoSchedule-
+kubectl delete deployment nginx --ignore-not-found
+ip route
+ip a | grep eth0
+kubectl get pods -o wide
+sudo apt install traceroute
+kubectl get pods -o wide
+traceroute 10.244.1.4
+arp
+sudo apt install net-tools
+arp -n
+tshark
+clear
+sudo apt update
+sudo apt install -y tshark
+clear
+tshark -V --color -i eth0 -d udp.port=8472,vxlan -f "port 8472"
+sudo tshark -V --color -i eth0 -d udp.port=8472,vxlan -f "port 8472"
+ls
+exit

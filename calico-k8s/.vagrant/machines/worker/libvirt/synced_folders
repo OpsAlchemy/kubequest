@@ -1,0 +1,1 @@
+{"rsync":{"/vagrant":{"disabled":false,"guestpath":"/vagrant","hostpath":"/home/azureuser/kuberentes/calico-k8s","type":"rsync","rsync__auto":true,"rsync__exclude":[".git/","node_modules/"],"__vagrantfile":true,"auto":true,"exclude":[".git/","node_modules/"],"owner":"vagrant","group":"vagrant"}}}

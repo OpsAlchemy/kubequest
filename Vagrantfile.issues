@@ -1,0 +1,102 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "generic/ubuntu2204"
+
+  config.vm.provider :libvirt do |lv|
+    lv.cpus = 2
+    lv.memory = 2048
+  end
+
+  # Shared folder for passing join command
+  config.vm.synced_folder ".", "/vagrant", type: "rsync"
+
+  # Master node
+  config.vm.define "master" do |m|
+    m.vm.hostname = "master"
+    m.vm.network :private_network, ip: "192.168.121.10"
+
+    m.vm.provision "shell", inline: <<-SHELL
+      set -e
+      sudo apt update
+      sudo apt-get install -y containerd apt-transport-https ca-certificates curl gpg
+
+      # containerd config
+      sudo mkdir -p /etc/containerd
+      containerd config default \
+        | sed 's/SystemdCgroup = false/SystemdCgroup = true/' \
+        | sed 's|sandbox_image = ".*"|sandbox_image = "registry.k8s.io/pause:3.10"|' \
+        | sudo tee /etc/containerd/config.toml > /dev/null
+      sudo systemctl restart containerd
+
+      sudo swapoff -a
+      sudo sysctl -w net.ipv4.ip_forward=1
+      sudo sed -i '/^#net\\.ipv4\\.ip_forward=1/s/^#//' /etc/sysctl.conf
+      sudo sysctl -p
+
+      # kube repo
+      sudo mkdir -p -m 755 /etc/apt/keyrings
+      sudo curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key \
+        | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /' \
+        | sudo tee /etc/apt/sources.list.d/kubernetes.list
+      sudo apt-get update
+      KUBE_VERSION="1.33.2-1.1"
+      sudo apt-get install -y kubelet=$KUBE_VERSION kubeadm=$KUBE_VERSION kubectl=$KUBE_VERSION
+      sudo apt-mark hold kubelet kubeadm kubectl
+
+      # init cluster
+      sudo kubeadm init --pod-network-cidr=192.168.0.0/16 \
+        --cri-socket=unix:///run/containerd/containerd.sock
+
+      mkdir -p $HOME/.kube
+      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+      sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+      # install calico
+      kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
+
+      # get join command & write to shared file
+      kubeadm token create --print-join-command > /vagrant/join.sh
+    SHELL
+  end
+
+  # Worker node
+  config.vm.define "worker" do |w|
+    w.vm.hostname = "worker"
+    w.vm.network :private_network, ip: "192.168.121.11"
+
+    w.vm.provision "shell", inline: <<-SHELL
+      set -e
+      sudo apt update
+      sudo apt-get install -y containerd apt-transport-https ca-certificates curl gpg
+
+      # containerd config
+      sudo mkdir -p /etc/containerd
+      containerd config default \
+        | sed 's/SystemdCgroup = false/SystemdCgroup = true/' \
+        | sed 's|sandbox_image = ".*"|sandbox_image = "registry.k8s.io/pause:3.10"|' \
+        | sudo tee /etc/containerd/config.toml > /dev/null
+      sudo systemctl restart containerd
+
+      sudo swapoff -a
+      sudo sysctl -w net.ipv4.ip_forward=1
+      sudo sed -i '/^#net\\.ipv4\\.ip_forward=1/s/^#//' /etc/sysctl.conf
+      sudo sysctl -p
+
+      # kube repo
+      sudo mkdir -p -m 755 /etc/apt/keyrings
+      sudo curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key \
+        | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /' \
+        | sudo tee /etc/apt/sources.list.d/kubernetes.list
+      sudo apt-get update
+      KUBE_VERSION="1.33.2-1.1"
+      sudo apt-get install -y kubelet=$KUBE_VERSION kubeadm=$KUBE_VERSION kubectl=$KUBE_VERSION
+      sudo apt-mark hold kubelet kubeadm kubectl
+
+      # wait until master writes join.sh
+      while [ ! -f /vagrant/join.sh ]; do sleep 5; done
+      bash /vagrant/join.sh
+    SHELL
+  end
+end
+

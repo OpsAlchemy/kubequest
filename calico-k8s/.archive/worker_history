@@ -1,0 +1,58 @@
+sudo bash worker.sh
+sudo kubeadm join 192.168.121.223:6443 --token bpioqa.btl9odn02yukoci7         --discovery-token-ca-cert-hash sha256:1394696437e21c039242aaa9fde0bc2dfc26318e8ede0e46b694fa822654598c
+exit
+mkdir /etc/kubernetes/
+exit
+clear
+kubectl get pods -o wide
+ip a
+clear
+ip a
+clear
+ip route
+kubectl get pods -o wide
+kubectl get nods
+mkdir -p $HOME/.kube
+cp /home/vagrant/admin.conf $HOME/.kube/config
+clear
+ls
+kubectl get pods
+clear
+kubectl create deployment nginx --image=nginx --replicas=4
+kubectl get pods -o wide -l app=nginx
+kubectl get pods -o wide -l app=nginx w
+kubectl get pods -o wide -l app=nginx -w
+clear
+ip route
+kubectl get services
+kubectl expose deployment nginx   --name=nginx-svc   --port=80   --target-port=80   --type=ClusterIP
+clear
+kubectl get svc
+kubectl expose deployment nginx   --name=nginx-nodeport   --port=80   --target-port=80   --type=NodePort
+clear
+kubectl get nodes
+kubectl get svc
+curl http://192.168.121.223:32511
+kubectl get pods
+kubectl get pods -o wide
+curl http://10.244.1.4/
+ip a
+ip route
+curl http://10.244.1.4/
+traceroute 10.244.1.1
+traceroute 10.244.1.4
+sudo apt install tracroute
+sudo apt update inetutils-traceroute
+sudo apt install inetutils-tracroute
+sudo apt update
+sudo apt install inetutils-tracroute
+sudo apt update
+sudo apt install traceroute -y
+traceroute 10.244.1.4
+kubectl exec -it nginx-5869d7778c-85729 -- sh
+kubectl run netshoot --rm -it --image=nicolaka/netshoot -- bash
+clear
+kubectl run netshoot --rm -it --image=nicolaka/netshoot -- bash
+kubect get pods -o wide
+kubectl get pods -o wide
+kubectl run netshoot --rm -it --image=nicolaka/netshoot -- bash
