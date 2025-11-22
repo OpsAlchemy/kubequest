@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hobby-project
+  labels:
+    level: hobby
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: level
+            operator: In
+            values:
+            - restricted
+        topologyKey: kubernetes.io/hostname
+  containers:
+  - name: c
+    image: nginx:alpine

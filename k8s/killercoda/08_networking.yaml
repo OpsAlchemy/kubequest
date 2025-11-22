@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-web-app-deployment
+spec:
+  selector:
+    matchLabels:
+      app: my-web-app
+  replicas: 2
+  template:
+    metadata:
+      name: my-web-app-container
+      labels:
+        app: my-web-app
+    spec:
+      containers:
+        - name: container
+          image: wordpress
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-web-app-service
+spec:
+  selector:
+    app: my-web-app
+  type: NodePort
+  ports:
+    - protocol: TCP
+      nodePort: 30770
+      port: 80
+      targetPort: 80

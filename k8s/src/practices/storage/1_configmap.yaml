@@ -1,0 +1,154 @@
+apiVersion: v1 
+kind: ConfigMap 
+metadata:
+  name: volcm
+data:
+  hello: "world"
+  the: "fuck"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  volumes:
+    - name: volcm
+      configMap:
+        name: volcm
+  containers:
+    - name: busybox
+      image: busybox
+      command: 
+        - "sleep"
+        - "3600"
+      volumeMounts:
+        - name: volcm
+          mountPath: /cm
+---
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: busybox-subpath
+spec:
+  volumes:
+    - name: volcm
+      configMap:
+        name: volcm 
+  containers:
+    - name: busybox-subpath
+      image: busybox 
+      command: ["sleep", "3600"]
+      volumeMounts:
+        - name: volcm
+          mountPath: /cm 
+          subPath: the
+---
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: busybox-subpath-dir
+spec:
+  volumes:
+    - name: volcm
+      configMap:
+        name: volcm 
+  containers:
+    - name: busybox-subpath
+      image: busybox 
+      command: ["sleep", "3600"]
+      volumeMounts:
+        - name: volcm
+          mountPath: /cm/the 
+          subPath: the
+---
+# by the file can be done imperatively, when doign declearative you have to include the content sadly can't help that : / 
+# kubectl create configmap my-app-config --from-file=my-custom-key=./app.properties
+# kubectl create configmap <configmap-name> --from-file=<path-to-file>
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: appproperties
+  namespace: default
+data:
+  # The key is the filename you want the pod to see
+  app.properties: |
+    database.url=jdbc:postgresql://db-host:5432/mydb
+    app.feature.enabled=true
+    log.level=DEBUG
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configjson 
+  # You can add more "files" as separate keys
+data:
+  config.json: |
+    {
+      "server": {
+        "port": 8080
+      }
+    }
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: the-rock
+spec:
+  containers:
+    - name: busybox
+      image: busybox
+      command: ["sleep", "3600"]
+      volumeMounts:
+        - name: appproperties
+          mountPath: /configuration/app.properties
+          subPath: app.properties
+        - name: configjson
+          mountPath: /configuration/config.json
+          subPath: config.json
+      # volumeMounts:
+      #   - name: appproperties
+      #     mountPath: /configuration
+      #     subPath: app.properties
+      #   - name: configjson
+      #     mountPath: /configuration
+      #     subPath: config.json
+  volumes:
+    - name: appproperties
+      configMap:
+        name: appproperties
+    - name: configjson
+      configMap:
+        name: configjson 
+---
+apiVersion: v1
+kind: ConfigMap 
+metadata:
+  name: maps
+data:
+  key1: "key1"
+  key2: "key2"
+  key3: "key3" 
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: maps-pod
+spec:
+  volumes:
+    - name: shared
+      emptyDir: {}
+  containers:
+    - name: one
+      image: busybox
+      command: ["/bin/sh"]
+      args: ["-c", "while true; do echo 'hello world' >> /mnt/data/log.txt; sleep 1; done"]
+      volumeMounts:
+        - name: shared
+          mountPath: /mnt/data
+    - name: two
+      image: busybox
+      command: ["/bin/sh"]
+      args: ["-c", "tail -f /mnt/data/log.txt"]
+      volumeMounts:
+        - name: shared
+          mountPath: /mnt/data

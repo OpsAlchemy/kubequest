@@ -1,0 +1,132 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: manual-sc
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Retain # This will be ignored
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: manual-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: manual-sc
+  hostPath:
+    path: /mnt/data
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: manual-local-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: manual-sc
+  local:
+    path: /mnt/html
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - minikube-m02
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: testicle-pvc
+spec:
+  resources:
+    requests:
+      storage: 5Gi
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: manual-sc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: manual-pvc
+spec:
+  resources:
+    requests:
+      storage: 5Gi
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: manual-sc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deploy
+  template:
+    metadata:
+      labels:
+        app: deploy
+    spec:
+      volumes:
+      - name: shared
+        persistentVolumeClaim:
+          claimName: manual-pvc
+      containers:
+      - name: busybox
+        image: busybox
+        volumeMounts:
+        - name: shared
+          mountPath: /usr/share/nginx/html
+        command:
+          - /bin/sh
+          - -c
+          - |
+            while true; do
+              echo "hellow" > /usr/share/nginx/html/index.html
+              sleep 10;
+            done
+            sleep 3600
+            
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: testicles
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deploy-testicles
+  template:
+    metadata:
+      labels:
+        app: deploy-testicles
+    spec:
+      volumes:
+      - name: shared
+        persistentVolumeClaim:
+          claimName: testicle-pvc
+      containers:
+      - name: busybox
+        image: busybox
+        volumeMounts:
+        - name: shared
+          mountPath: /usr/share/nginx/html
+        command:
+          - /bin/sh
+          - -c
+          - |
+            sleep 3600

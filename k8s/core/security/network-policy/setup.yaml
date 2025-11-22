@@ -1,0 +1,295 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fullstack
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: fullstack
+data:
+  default.conf: |
+    server {
+      listen 80;
+      server_name _;
+
+      location / {
+        root /usr/share/nginx/html;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+      }
+
+      # Proxy API to backend Service inside cluster
+      location /api/ {
+        proxy_pass http://backend.fullstack.svc.cluster.local:8000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_http_version 1.1;
+      }
+    }
+  index.html: |
+    <!doctype html>
+    <html>
+    <head>
+      <meta charset="utf-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1"/>
+      <title>Full Stack Demo</title>
+    </head>
+    <body>
+      <h1>Frontend is up</h1>
+      <button id="btn">Call API</button>
+      <pre id="out">click the button</pre>
+      <script>
+        document.getElementById('btn').onclick = async () => {
+          try {
+            const r = await fetch('/api/hello');
+            const j = await r.json();
+            document.getElementById('out').textContent = JSON.stringify(j, null, 2);
+          } catch (e) {
+            document.getElementById('out').textContent = 'Error: ' + e;
+          }
+        };
+      </script>
+    </body>
+    </html>
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-code
+  namespace: fullstack
+data:
+  app.py: |
+    import os
+    from flask import Flask, jsonify
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+
+    DB_HOST = os.getenv("DB_HOST", "db")
+    DB_PORT = int(os.getenv("DB_PORT", "5432"))
+    DB_NAME = os.getenv("DB_NAME", "app")
+    DB_USER = os.getenv("DB_USER", "app")
+    DB_PASSWORD = os.getenv("DB_PASSWORD", "app123")
+
+    def get_conn():
+      return psycopg2.connect(
+        host=DB_HOST, port=DB_PORT, dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD
+      )
+
+    app = Flask(__name__)
+
+    # create table on startup
+    try:
+      with get_conn() as conn:
+        with conn.cursor() as cur:
+          cur.execute("""
+            CREATE TABLE IF NOT EXISTS visits (
+              id SERIAL PRIMARY KEY,
+              ts TIMESTAMPTZ DEFAULT NOW()
+            )
+          """)
+        conn.commit()
+    except Exception as e:
+      # avoid crashing if DB is not ready yet, readiness probe will retry
+      print("Init warning:", e, flush=True)
+
+    @app.get("/api/hello")
+    def hello():
+      with get_conn() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+          cur.execute("INSERT INTO visits DEFAULT VALUES RETURNING id, ts;")
+          last = cur.fetchone()
+          cur.execute("SELECT COUNT(*) AS total FROM visits;")
+          total = cur.fetchone()["total"]
+      return jsonify(message="Hello from backend", last_visit=last, visits=total)
+
+    @app.get("/healthz")
+    def healthz():
+      # Try a very light DB check
+      try:
+        with get_conn() as conn:
+          with conn.cursor() as cur:
+            cur.execute("SELECT 1;")
+        return "ok", 200
+      except Exception as e:
+        return f"db not ready: {e}", 503
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  namespace: fullstack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: app
+            - name: POSTGRES_USER
+              value: app
+            - name: POSTGRES_PASSWORD
+              value: app123
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: pgdata
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  namespace: fullstack
+spec:
+  selector:
+    app: db
+  ports:
+    - name: pg
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: fullstack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: api
+          image: python:3.11-slim
+          workingDir: /app
+          command: ["/bin/sh","-c"]
+          args:
+            - |
+              pip install --no-cache-dir flask psycopg2-binary gunicorn && \
+              gunicorn -w 2 -b 0.0.0.0:8000 app:app
+          env:
+            - name: DB_HOST
+              value: db
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: app
+            - name: DB_USER
+              value: app
+            - name: DB_PASSWORD
+              value: app123
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          volumeMounts:
+            - name: backend-src
+              mountPath: /app/app.py
+              subPath: app.py
+      volumes:
+        - name: backend-src
+          configMap:
+            name: backend-code
+            items:
+              - key: app.py
+                path: app.py
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: fullstack
+spec:
+  selector:
+    app: backend
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: fullstack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:stable-alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: fe-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+            - name: fe-html
+              mountPath: /usr/share/nginx/html/index.html
+              subPath: index.html
+      volumes:
+        - name: fe-conf
+          configMap:
+            name: frontend-config
+            items:
+              - key: default.conf
+                path: default.conf
+        - name: fe-html
+          configMap:
+            name: frontend-config
+            items:
+              - key: index.html
+                path: index.html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: fullstack
+spec:
+  selector:
+    app: frontend
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      nodePort: 30080

@@ -1,0 +1,215 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: basic-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard # Uses default StorageClass if exists
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rwo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: fast-ssd
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rox-pvc
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: nfs-storage
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rwx-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 15Gi
+  storageClassName: glusterfs
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fs-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem # Mounted as filesystem
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: block-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Block # Exposed as raw block device
+  resources:
+    requests:
+      storage: 50Gi
+  storageClassName: block-storage
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: selective-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi
+  selector:
+    matchLabels:
+      storage-tier: "ssd"
+      app: "database"
+  storageClassName: "" # Empty string for pre-provisioned PVs
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: expressive-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  selector:
+    matchExpressions:
+    - key: environment
+      operator: In
+      values: ["production", "staging"]
+    - key: storage-type
+      operator: NotIn
+      values: ["hdd"]
+  storageClassName: ""
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: clone-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  dataSource:
+    kind: PersistentVolumeClaim
+    name: original-pvc
+  storageClassName: fast-storage
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: restore-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  dataSource:
+    kind: VolumeSnapshot
+    name: daily-backup-snapshot
+    apiGroup: snapshot.storage.k8s.io
+  storageClassName: standard
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sized-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+    limits:
+      storage: 10Gi # Maximum allowed expansion size
+  storageClassName: expandable
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: manual-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: "" # Empty string binds to pre-existing PVs
+  # volumeName: specific-pv # Optional: bind to specific PV by name
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: annotated-pvc
+  annotations:
+    # Cloud provider specific annotations
+    volume.beta.kubernetes.io/storage-class: "fast-ssd"
+    volume.beta.kubernetes.io/storage-provisioner: "pd.csi.storage.gke.io"
+    # Backup/restore annotations
+    backup.velero.io/backup-volumes: "data"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: fast-ssd
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: namespaced-pvc
+  namespace: production # PVC in specific namespace
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: production-storage
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: requirements-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: high-iops
+  # Some CSI drivers support additional parameters via selector
+  selector:
+    matchLabels:
+      iops: "10000"
+      throughput: "500Mi"

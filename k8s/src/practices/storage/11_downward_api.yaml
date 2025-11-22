@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: downward-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: downward-api
+  template:
+    metadata:
+      labels:
+        app: downward-api
+    spec:
+      volumes:
+      - name: downward-api
+        downwardAPI:
+          items:
+          - path: name
+            fieldRef:
+              fieldPath: metadata.name
+          - path: namespace
+            fieldRef:
+              fieldPath: metadata.namespace
+      containers:
+      - name: busybox
+        image: busybox
+        volumeMounts:
+        - name: downward-api
+          mountPath: /mnt/downward-api
+        command:
+          - /bin/sh
+          - -c
+          - |
+              while true; do
+                echo "This is from env loaded:"
+                echo "$POD_NAME"; echo
+                echo "$POD_NAMESPACE"; echo
+
+                echo "This is from downwardAPI volume:"
+                ls /mnt/downward-api; echo
+                cat /mnt/downward-api/name; echo
+                cat /mnt/downward-api/namespace; echo
+
+                sleep 300
+              done
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cas
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cas
+  template:
+    metadata:
+      labels:
+        app: cas
+    spec:
+      volumes:
+      - name: downward-api
+        downwardAPI:
+          items:
+            - fieldRef:
+                fieldPath: metadata.name
+              path: pod_name
+            - fieldRef:
+                fieldPath: metadata.namespace
+              path: pod_namespace
+      containers:
+        - env:
+            - name: DWA_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: DWA_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: DWA_POD_UID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: DWA_SERVICE_ACCOUNT_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+            - name: DWA_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: DWA_STATUS_IP
+          image: busybox
+          name: busybox
+          volumeMounts:
+          - name: downward-api
+            mountPath: /mnt/podinfo 
+          command:
+          - /bin/sh
+          - -c
+          - |
+              printenv | grep DWA_
+              sleep 3600;
+
+    

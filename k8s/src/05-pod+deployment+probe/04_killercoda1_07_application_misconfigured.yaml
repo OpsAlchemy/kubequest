@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: application1
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - env:
+        - name: CATEGORY
+          valueFrom:
+            configMapKeyRef:
+              key: category
+              name: configmap-category
+        image: httpd:2.4.52-alpine
+        imagePullPolicy: IfNotPresent
+        name: httpd
+        resources: {}
+      restartPolicy: Always

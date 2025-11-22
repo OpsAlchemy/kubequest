@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mypvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: standard
+---
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: mypod
+spec:
+  volumes:
+    - name: shared
+      persistentVolumeClaim:
+        claimName: mypvc
+  containers:
+    - name: busybox
+      image: busybox
+      command:
+        - "/bin/sh"
+        - "-c"
+        - |
+          while true; do 
+            echo "hello friends!" > /random/data/logs.txt;
+            sleep 20;
+          done
+      volumeMounts:
+        - name: shared
+          mountPath: /random/data

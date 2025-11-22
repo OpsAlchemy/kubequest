@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-pvc-cka
+spec:
+  resources:
+    requests:
+      storage: 80Mi
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: nginx-stc-cka
+  volumeName: nginx-pv-cka
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod-cka
+spec:
+  tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+  volumes:
+  - name: storage
+    persistentVolumeClaim:
+      claimName: nginx-pvc-cka
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - name: storage
+      mountPath: /var/www/html

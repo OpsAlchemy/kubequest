@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: test-ingress
+  name: test-ingress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-ingress
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: test-ingress
+    spec:
+      containers:
+      - image: hashicorp/http-echo
+        name: http-echo
+        args: ["-text", "hello brother", "-listen", ":8080"]
+        resources: {}
+status: {}

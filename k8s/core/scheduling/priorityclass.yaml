@@ -1,0 +1,29 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: high-priority
+value: 10000000
+description: "Priority class for mission critical pod"
+preemptionPolicy: PreemptLowerPriority # so it will kill the lower prioty this is default also
+---
+
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+        - containerPort: 80
+  priorityClassName: high-priority
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: default-high-priority
+value: 10000000
+description: "Priority class for mission critical pod"
+globalDefault: true # only possible for one priority class , can't be multiple priority class
+preemptionPolicy: never # different

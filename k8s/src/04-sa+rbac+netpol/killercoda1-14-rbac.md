@@ -1,0 +1,37 @@
+# create SAs
+k -n ns1 create sa pipeline
+k -n ns2 create sa pipeline
+
+# use ClusterRole view
+k get clusterrole view # there is default one
+k create clusterrolebinding pipeline-view --clusterrole view --serviceaccount ns1:pipeline --serviceaccount ns2:pipeline
+
+# manage Deployments in both Namespaces
+k create clusterrole -h # examples
+k create clusterrole pipeline-deployment-manager --verb create,delete --resource deployments
+# instead of one ClusterRole we could also create the same Role in both Namespaces
+
+k -n ns1 create rolebinding pipeline-deployment-manager --clusterrole pipeline-deployment-manager --serviceaccount ns1:pipeline
+k -n ns2 create rolebinding pipeline-deployment-manager --clusterrole pipeline-deployment-manager --serviceaccount ns2:pipeline
+
+
+
+
+# namespace ns1 deployment manager
+k auth can-i delete deployments --as system:serviceaccount:ns1:pipeline -n ns1 # YES
+k auth can-i create deployments --as system:serviceaccount:ns1:pipeline -n ns1 # YES
+k auth can-i update deployments --as system:serviceaccount:ns1:pipeline -n ns1 # NO
+k auth can-i update deployments --as system:serviceaccount:ns1:pipeline -n default # NO
+
+# namespace ns2 deployment manager
+k auth can-i delete deployments --as system:serviceaccount:ns2:pipeline -n ns2 # YES
+k auth can-i create deployments --as system:serviceaccount:ns2:pipeline -n ns2 # YES
+k auth can-i update deployments --as system:serviceaccount:ns2:pipeline -n ns2 # NO
+k auth can-i update deployments --as system:serviceaccount:ns2:pipeline -n default # NO
+
+# cluster wide view role
+k auth can-i list deployments --as system:serviceaccount:ns1:pipeline -n ns1 # YES
+k auth can-i list deployments --as system:serviceaccount:ns1:pipeline -A # YES
+k auth can-i list pods --as system:serviceaccount:ns1:pipeline -A # YES
+k auth can-i list pods --as system:serviceaccount:ns2:pipeline -A # YES
+k auth can-i list secrets --as system:serviceaccount:ns2:pipeline -A # NO (default view-role doesn't allow)
