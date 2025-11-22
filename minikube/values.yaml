@@ -1,0 +1,67 @@
+# datadog-values.yaml
+datadog:
+  apiKey: "ede7b2dae668c8bac543cd7e8d7b33b9"
+  appKey: "20df7cf8fe20914de3c4d29ea628d333b9b3ab55" 
+  site: "datadoghq.com"
+  clusterName: "minikube-cluster"
+  
+  # Enable Cluster Agent
+  clusterAgent:
+    enabled: true
+    metricsProvider:
+      enabled: true
+  
+  # Collect Kubernetes resources
+  kubeStateMetricsEnabled: true
+  kubeStateMetricsCore:
+    enabled: true
+  
+  # Collect cluster checks
+  clusterChecks:
+    enabled: true
+  
+  # Container collection
+  collectEvents: true
+  logs:
+    enabled: true
+    containerCollectAll: true
+  
+  # APM tracing
+  apm:
+    enabled: true
+    port: 8126
+  
+  # Network performance monitoring
+  networkMonitoring:
+    enabled: true
+  
+  # Process monitoring
+  processAgent:
+    enabled: true
+    processCollection: true
+
+clusterAgent:
+  # Additional Cluster Agent configuration
+  replicas: 1
+  metricsProvider:
+    useDatadogMetrics: true
+    enabled: true
+
+# Enable admission controller for automatic instrumentation
+clusterAgent:
+  admissionController:
+    enabled: true
+    mutateUnlabelled: true
+
+# Node Agent configuration
+agents:
+  enabled: true
+  containers:
+    agent:
+      resources:
+        requests:
+          cpu: 200m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi

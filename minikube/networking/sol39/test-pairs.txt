@@ -1,0 +1,1 @@
+tenant-a/deployment/web-app tenant-a/deployment/backend --common-ports

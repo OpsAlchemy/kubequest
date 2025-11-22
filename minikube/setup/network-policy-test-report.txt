@@ -1,0 +1,55 @@
+Network Policy Test Report
+Generated: Tue Sep 23 01:41:58 AM IST 2025
+Cluster: minikube-calico
+
+Network Policies Applied:
+NAME      POD-SELECTOR    AGE
+netpol1   tier=frontend   3m45s
+netpol2   tier=backend    3m45s
+netpol3   tier=database   3m45s
+
+Pod Information:
+NAME                        READY   STATUS    RESTARTS   AGE     IP             NODE              NOMINATED NODE   READINESS GATES
+backend-5879546489-bxfr6    2/2     Running   0          6m13s   10.244.27.29   minikube-calico   <none>           <none>
+backend-5879546489-kq6d6    2/2     Running   0          6m13s   10.244.27.28   minikube-calico   <none>           <none>
+database-b9d9f675c-4h29q    2/2     Running   0          6m12s   10.244.27.30   minikube-calico   <none>           <none>
+database-b9d9f675c-h6kds    2/2     Running   0          6m12s   10.244.27.31   minikube-calico   <none>           <none>
+frontend-86496f69f9-fx8c4   2/2     Running   0          6m13s   10.244.27.27   minikube-calico   <none>           <none>
+frontend-86496f69f9-kjnvf   2/2     Running   0          6m13s   10.244.27.26   minikube-calico   <none>           <none>
+
+Service Information:
+
+
+Expected Connectivity Matrix:
+┌───────────┬──────────┬─────────┬──────────┐
+│ From/To   │ Frontend │ Backend │ Database │
+├───────────┼──────────┼─────────┼──────────┤
+│ Frontend  │    ✓     │    ✓    │    ✓     │
+├───────────┼──────────┼─────────┼──────────┤
+│ Backend   │    ✓     │    ✓    │    ✓     │
+├───────────┼──────────┼─────────┼──────────┤
+│ Database  │    ✗     │    ✓    │    ✓     │
+└───────────┴──────────┴─────────┴──────────┘
+
+Key:
+✓ = Allowed by NetworkPolicy
+✗ = Blocked by NetworkPolicy
+
+Test Commands:
+# Test from frontend to backend:
+kubectl exec frontend-86496f69f9-fx8c4 -c debug -- curl -s http://backend:80
+
+# Test from backend to database:
+kubectl exec backend-5879546489-bxfr6 -c debug -- curl -s http://database:80
+
+# Test from database to frontend (should fail):
+kubectl exec database-b9d9f675c-4h29q -c debug -- curl -s http://frontend:80
+
+Debug Tips:
+# Get shell in debug container:
+kubectl exec -it frontend-86496f69f9-fx8c4 -c debug -- bash
+
+# Check iptables rules (on node):
+kubectl get nodes -o wide
+# Then ssh into node and check calico rules
+

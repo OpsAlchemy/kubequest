@@ -1,0 +1,18 @@
+.:1053 {
+    file /zones/root.zone
+    log
+    errors
+}
+
+test:1053 {
+    file /zones/test.zone
+    log
+    errors
+}
+
+example.test:1053 {
+    file /zones/example.zone
+    log
+    errors
+}
+

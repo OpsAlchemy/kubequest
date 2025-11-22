@@ -1,0 +1,8 @@
+.:53 {
+    hosts /etc/coredns/hosts.txt {
+        fallthrough
+    }
+    forward . 8.8.8.8 9.9.9.9
+    log
+    errors
+}

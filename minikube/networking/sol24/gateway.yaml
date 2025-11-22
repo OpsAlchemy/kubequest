@@ -1,0 +1,15 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: gateway
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - hostname: api.example.com
+      name: http-api
+      protocol: HTTP
+      port: 80
+    - hostname: ui.example.com
+      name: http-ui
+      protocol: HTTP
+      port: 80

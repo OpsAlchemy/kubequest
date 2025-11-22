@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+  labels:
+    app: cache
+spec:
+  containers:
+    - name: main
+      image: vikashraj1825/nginx-curl
+    - name: redis
+      image: redis
+      ports:
+        - containerPort: 6379

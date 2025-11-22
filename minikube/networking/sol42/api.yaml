@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: api
+  labels:
+    app: api
+spec:
+  containers:
+    - name: custom
+      image: vikashraj1825/netkit
+      env:
+        - name: TEXT
+          value: "This is an api will try to connect to Redis"
+        - name: PORT
+          value: "80"

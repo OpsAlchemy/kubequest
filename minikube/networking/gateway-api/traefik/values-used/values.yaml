@@ -1,0 +1,62 @@
+# traefik-values-443.yaml
+# Complete values for traefik chart v3.x configured for :443 and Gateway API
+
+providers:
+  kubernetesGateway:
+    enabled: true
+
+log:
+  level: INFO
+
+ports:
+  type: LoadBalancer
+  web:
+    port: 80
+    exposedPort: 80
+    protocol: TCP
+    exposed: true
+  websecure:
+    port: 443
+    exposedPort: 443
+    protocol: TCP
+    exposed: true
+  traefik:
+    port: 8080
+    exposedPort: 8080
+    protocol: TCP
+    exposed: true
+  metrics:
+    port: 9100
+    exposedPort: 9100
+    protocol: TCP
+    exposed: true
+
+additionalArguments:
+  - "--entryPoints.web.address=:80/tcp"
+  - "--entryPoints.websecure.address=:443/tcp"
+  - "--entryPoints.websecure.http.tls=true"
+  - "--providers.kubernetesgateway=true"
+  - "--providers.kubernetescrd=true"
+  - "--providers.kubernetesingress=true"
+  - "--ping=true"
+  - "--api.dashboard=true"
+
+service:
+  type: ClusterIP
+  ports:
+    traefik:
+      port: 8080
+      targetPort: traefik
+    web:
+      port: 80
+      targetPort: web
+    websecure:
+      port: 443
+      targetPort: websecure
+    metrics:
+      port: 9100
+      targetPort: metrics
+
+gateway:
+  enabled: false
+

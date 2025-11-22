@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  coredns:
+    image: coredns/coredns:latest
+    container_name: coredns
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    volumes:
+      - ./Corefile:/etc/coredns/Corefile
+      - ./hosts.txt:/etc/coredns/hosts.txt
+    command: ["-conf", "/etc/coredns/Corefile"]
+    restart: unless-stopped
+    networks:
+      - coredns-net
+
+networks:
+  coredns-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24

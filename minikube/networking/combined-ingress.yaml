@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: combined-service
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: public.my-service.com
+    http:
+      paths:
+        - path: /path-a
+          pathType: Prefix
+          backend:
+            service:
+              name: service-a
+              port:
+                number: 80
+        - path: /path-b
+          pathType: Prefix
+          backend:
+            service:
+              name: service-b
+              port:
+                number: 80
+

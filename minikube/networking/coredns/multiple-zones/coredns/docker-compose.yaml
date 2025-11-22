@@ -1,0 +1,35 @@
+services:
+  coredns:
+    image: coredns/coredns:latest
+    container_name: coredns
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+      - "8053:8053"  # Metrics port
+    volumes:
+      - ./conf/Corefile:/etc/coredns/Corefile
+      - ./conf/hosts.txt:/etc/coredns/hosts.txt
+      - ./conf/zones:/etc/coredns/zones
+    command: ["-conf", "/etc/coredns/Corefile"]
+    restart: unless-stopped
+    networks:
+      coredns-net:
+        ipv4_address: 172.20.0.10
+
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
+    ports:
+      - "8080:80"
+    networks:
+      coredns-net:
+        ipv4_address: 172.20.0.20
+    dns:
+      - 172.20.0.10 
+
+networks:
+  coredns-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24

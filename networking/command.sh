@@ -1,0 +1,2 @@
+netstat -ap TCP
+netstat

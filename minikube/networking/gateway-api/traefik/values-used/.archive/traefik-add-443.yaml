@@ -1,0 +1,31 @@
+# Ensure Gateway provider enabled and map websecure -> 443
+providers:
+  kubernetesGateway:
+    enabled: true
+
+ports:
+  web:
+    port: 80
+    exposedPort: 80
+    protocol: TCP
+    exposed: true
+  websecure:
+    port: 443
+    exposedPort: 443
+    protocol: TCP
+    exposed: true
+
+additionalArguments:
+  - "--entryPoints.web.address=:80/tcp"
+  - "--entryPoints.websecure.address=:443/tcp"
+  - "--entryPoints.websecure.http.tls=true"
+  - "--providers.kubernetesgateway=true"
+
+service:
+  ports:
+    web:
+      port: 80
+      targetPort: web
+    websecure:
+      port: 443
+      targetPort: websecure

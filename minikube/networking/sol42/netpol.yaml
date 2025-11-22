@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: netpol
+spec:
+  podSelector:
+    matchLabels:
+      app: redis
+  policyTypes:
+    - Ingress
+  egress:
+    - to:
+      - ipBlock:
+          cidr: 93.184.216.34/32
+      ports:
+        - protocol: UDP
+          port: 123
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api

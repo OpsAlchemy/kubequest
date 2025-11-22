@@ -1,0 +1,18 @@
+local.dev:53 {
+    hosts /etc/coredns/hosts.txt
+    log
+    errors
+}
+
+internal.company:53 {
+    file /etc/coredns/db.internal.company
+    log
+    errors
+}
+
+.:53 {
+    forward . 8.8.8.8 1.1.1.1
+    cache 3600
+    log
+    errors
+}

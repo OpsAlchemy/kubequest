@@ -1,0 +1,9 @@
+# Local development domains
+192.168.1.100     api.local.dev
+192.168.1.101     app.local.dev
+192.168.1.102     db.local.dev
+10.0.0.5          internal.service
+
+# Docker container aliases
+172.20.0.5        mysql.container
+172.20.0.6        redis.container
