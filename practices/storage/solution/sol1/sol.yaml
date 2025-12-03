@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: app-pv
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /tmp/app-data
+    type: DirectoryOrCreate
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - aks-tools-27673584-vmss00000c
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-path
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: Immediate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-pod
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: aks-tools-27673584-vmss00000c
+  tolerations:
+    - key: "workload"
+      operator: "Equal"
+      value: "tools"
+      effect: "NoSchedule"
+  containers:
+    - name: app-container
+      image: busybox:latest
+      command:
+        - sh
+        - -c
+        - |
+          echo "<html><body><h1>Hello from Kubernetes!</h1>" > /data/index.html
+          echo "<p>This content is stored in a Persistent Volume</p>" >> /data/index.html
+          echo "<p>PV Path: /mnt/data/app</p>" >> /data/index.html
+          echo "<p>Pod Name: app-pod</p>" >> /data/index.html
+          echo "<p>Timestamp: $(date)</p>" >> /data/index.html
+          echo "</body></html>" >> /data/index.html
+
+          echo "This is a test file created by the pod." > /data/test.txt
+          echo "Pod is running and writing to persistent storage." >> /data/test.txt
+
+          echo "Files in /data directory:" > /data/filelist.txt
+          ls -la /data/ >> /data/filelist.txt
+
+          echo "Starting HTTP server on port 8080..."
+          exec httpd -f -h /data -p 8080
+      volumeMounts:
+        - mountPath: /data
+          name: app-storage
+      resources:
+        requests:
+          memory: "16Mi"
+          cpu: "50m"
+        limits:
+          memory: "32Mi"
+          cpu: "100m"
+      ports:
+        - containerPort: 8080
+  volumes:
+    - name: app-storage
+      persistentVolumeClaim:
+        claimName: app-pvc
