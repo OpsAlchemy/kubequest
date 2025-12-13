@@ -1,1 +1,0 @@
-https://killercoda.com/chadmcrowell/course/cka/create-sa-for-pod

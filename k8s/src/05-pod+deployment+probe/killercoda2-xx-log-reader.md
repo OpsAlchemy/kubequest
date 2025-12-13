@@ -1,1 +1,0 @@
-https://killercoda.com/sachin/course/CKA/log-reader-1

@@ -1,3 +1,0 @@
-# kubectl run -it --rm test-nslookup \
-  # --image=busybox:1.28 --restart=Never -- \
-  # nslookup nginx-service-cka

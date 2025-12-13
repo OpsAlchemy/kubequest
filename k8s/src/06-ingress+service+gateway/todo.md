@@ -1,1 +1,0 @@
-1. Comnplete nginx course again and do it all the practices over a docker! again and again and again and again and again!
