@@ -9,9 +9,9 @@ spec:
     - ReadWriteOnce
   storageClassName: local-path
   persistentVolumeReclaimPolicy: Retain
-  hostPath:
+  local:
     path: /tmp/app-data
-    type: DirectoryOrCreate
+    # type: DirectoryOrCreate
   nodeAffinity:
     required:
       nodeSelectorTerms:
