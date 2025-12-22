@@ -1,0 +1,1 @@
+it's creazy there is none quetion in 70 question worth doing!!
