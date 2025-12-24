@@ -1,0 +1,31 @@
+replicaCount: 2
+image: busybox:latest
+command:
+  - /bin/sh
+  - -c
+  - echo 'Default command' && sleep 3600
+
+service:
+  port: 8080
+  protocol: TCP
+  targetPort: 80
+
+sidecar:
+  enabled: false
+  image: nginx:alpine
+  port: 80
+
+environment: dev
+team: platform
+
+env: 
+  - name: LOG_LEVEL
+    value: "INFO"
+  - name: TIMEOUT
+    value: "30"
+
+envSecrets: []
+
+configData: |
+  app.name: {{ .Chart.Name }}
+  app.version: {{ .Chart.Version }}

@@ -2,8 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: simple-app
+  labels:
+    environment: {{ .Values.environment | lower }}
+    team: {{ .Values.team | lower }}
+    fullname: {{ .Release.Name }}-{{ .Chart.Name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: simple
@@ -13,12 +17,48 @@ spec:
       labels:
         app: simple
     spec:
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-config
+            items:
+              - key: configData
+                path: app.conf
+
       containers:
         - name: busybox
-          image: busybox
+          image: {{ .Values.image }}
+
+          volumeMounts:
+            - name: config
+              mountPath: /app/config/app.conf
+              subPath: app.conf
+              readOnly: true
+
           command:
-            - /bin/sh
-            - -c
-            - |
-              echo "App Started"
-              sleep 3600
+{{ toYaml .Values.command | nindent 12 }}
+
+          env:
+{{- range .Values.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+{{- end }}
+
+{{- range .Values.envSecrets }}
+{{- $secretName := .secretName }}
+{{- range .keys }}
+            - name: {{ . }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: {{ . }}
+{{- end }}
+{{- end }}
+
+{{- if .Values.sidecar.enabled }}
+        - name: sidecar
+          image: nginx
+          ports:
+            - name: http
+              containerPort: {{ default 80 .Values.sidecar.port }}
+{{- end }}
