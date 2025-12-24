@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple
+  template:
+    metadata:
+      name: simple-pod
+      labels:
+        app: simple
+    spec:
+      containers:
+        - name: busybox
+          image: busybox
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "App Started"
+              sleep 3600
