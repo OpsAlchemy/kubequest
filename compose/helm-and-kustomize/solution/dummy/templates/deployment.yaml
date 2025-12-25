@@ -3,9 +3,7 @@ kind: Deployment
 metadata:
   name: simple-app
   labels:
-    environment: {{ .Values.environment | lower }}
-    team: {{ .Values.team | lower }}
-    fullname: {{ .Release.Name }}-{{ .Chart.Name }}
+  {{- include "simple-app.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
