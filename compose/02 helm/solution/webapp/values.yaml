@@ -1,0 +1,4 @@
+appName: webapp
+enabled: true
+
+replicaCount: 2
