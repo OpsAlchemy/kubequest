@@ -2,3 +2,17 @@ appName: webapp
 enabled: true
 
 replicaCount: 2
+image: busybox:latest
+imagePullPolicy: IfNotPresent
+
+containerPort: 8080
+servicePort: 8080
+serviceType: ClusterIP
+
+command:
+  - /bin/sh
+  - -c
+  - echo "App Started on port 8080" && sleep 3600
+
+nameOverride: ""
+fullnameOverride: ""
