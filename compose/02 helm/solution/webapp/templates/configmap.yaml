@@ -1,13 +1,17 @@
 {{- if .Values.enabled }}
+{{- range $cmName, $cmData := .Values.configMaps }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.appName }}-config
-  namespace: {{ .Release.Namespace }}
+  name: {{ include "webapp.fullname" $ }}-{{ $cmName }}
+  namespace: {{ $.Release.Namespace }}
   labels:
-    app: {{ .Values.appName }}
+    {{- include "webapp.labels" $ | nindent 4 }}
+    config-type: {{ $cmName }}
 data:
-  app-name: {{ .Values.appName }}
-  chart-name: {{ .Chart.Name }}
-  chart-version: {{ .Chart.Version }}
+  {{- range $key, $value := $cmData.data }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
 {{- end }}

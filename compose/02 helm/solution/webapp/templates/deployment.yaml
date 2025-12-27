@@ -24,6 +24,18 @@ spec:
         - name: http
           containerPort: {{ .Values.containerPort }}
           protocol: TCP
+        envFrom:
+        {{- range .Values.envFromConfigMaps }}
+        - configMapRef:
+            name: {{ include "webapp.fullname" $ }}-{{ .name }}
+        {{- end }}
+        env:
+        {{- range .Values.env }}
+        - name: {{ .name }}
+          valueFrom:
+            fieldRef:
+              fieldPath: {{ .valueFrom.fieldRef.fieldPath }}
+        {{- end }}
         command:
           {{- toYaml .Values.command | nindent 10 }}
         livenessProbe:
