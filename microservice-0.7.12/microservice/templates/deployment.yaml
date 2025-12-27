@@ -1,7 +1,0 @@
-{{ $base := .}}
-{{- $microserviceChart := include "microservice.chart" . -}}
-{{ range $deploymentShortName, $deployment := .Values.deployments }}
-{{ if $deployment.enabled }}
-{{ include "microservice.deployment" (dict "base" $base "deployment" $deployment "deploymentShortName" $deploymentShortName ) }}
-{{ end }}
-{{ end }}

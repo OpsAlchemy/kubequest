@@ -1,6 +1,0 @@
-apiVersion: v2
-appVersion: 1.0.0
-description: Microservice Chart for Kubernetes
-name: microservice
-type: application
-version: 0.7.12

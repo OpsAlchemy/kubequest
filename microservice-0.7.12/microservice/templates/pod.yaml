@@ -1,9 +1,0 @@
-{{ $base := . }}
-{{- $microserviceChart := include "microservice.chart" . -}}
-{{ if gt (len .Values.pods) 0 }}
-{{ range $podShortName, $pod := .Values.pods }}
-{{ if $pod.enabled }}
-{{ include "microservice.pod" (dict "base" $base "pod" $pod "podShortName" $podShortName ) }}
-{{ end }}
-{{ end }}
-{{ end }}
