@@ -16,6 +16,18 @@ spec:
       labels:
         {{- include "webapp.labels" . | nindent 8 }}
     spec:
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "webapp.fullname" . }}
+      automountServiceAccountToken: true
+      {{- end }}
+      
+
+      {{- if .Values.monitoring.enabled }}
+      podAnnotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image | quote }}
