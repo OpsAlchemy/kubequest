@@ -1,0 +1,7 @@
+{{ $base := .}}
+{{- $microserviceChart := include "microservice.chart" . -}}
+{{ range $cronJobShortName, $cronJob := .Values.cronJobs }}
+{{ if $cronJob.enabled }}
+{{ include "microservice.cron-job" (dict "base" $base "cronJob" $cronJob "cronJobShortName" $cronJobShortName ) }}
+{{ end }}
+{{ end }}

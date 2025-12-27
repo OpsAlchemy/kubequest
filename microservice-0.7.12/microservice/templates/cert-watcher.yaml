@@ -1,0 +1,59 @@
+{{ if .Values.tls.enabled }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "microservice.fullname" . }}-cert-watcher
+  labels: {{ include "microservice.extraLabels" . | nindent 4 }}{{ include "microservice.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,post-delete
+    "helm.sh/hook-weight": "1"
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "secrets" ]
+    verbs: [ "get", "watch", "list" ]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "microservice.fullname" . }}-cert-watcher
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,post-delete
+    "helm.sh/hook-weight": "1"
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "microservice.fullname" . }}
+    apiGroup: ""
+roleRef:
+  kind: Role
+  name: {{ include "microservice.fullname" . }}-cert-watcher
+  apiGroup: ""
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "microservice.fullname" . }}-cert-watcher
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "2"
+spec:
+  serviceAccountName: {{ include "microservice.fullname" . }}
+  containers:
+    - name: kubectl
+      image: {{ .Values.kubectlImage.repository }}/{{ .Values.kubectlImage.image }}:{{ .Values.kubectlImage.tag }}
+      command:
+        - "/bin/bash"
+        - "-c"
+        - |
+          echo "waiting for certificate ..."
+          while [[ -z $(kubectl get secret {{ .Release.Name }}-client-cert -n {{ .Release.Namespace }} | grep "{{ .Release.Name }}-client-cert") ]]; do
+            echo "Waiting for cert secret to be created..."
+            sleep 1
+          done
+          echo "certificate is ready."
+          exit 0
+  restartPolicy: Never
+{{ end }}

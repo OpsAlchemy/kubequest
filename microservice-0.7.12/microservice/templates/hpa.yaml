@@ -1,0 +1,30 @@
+{{- $microserviceFullName := include "microservice.fullname" . -}}
+{{- $microserviceLabels := include "microservice.labels" . -}}
+{{- $microserviceExtraLabels := include "microservice.extraLabels" . -}}
+{{- $microserviceChart := include "microservice.chart" . -}}
+{{ if .Values.service.canary }}{{ else }}
+{{ $values := .Values }}
+{{ $base := . }}
+{{ range $deploymentName, $deployment := .Values.deployments }}
+{{ if and $deployment.autoscaling $deployment.autoscaling.replicas }}
+{{ if and $deployment.enabled ($deployment.autoscaling.enabled | default true) }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ $microserviceFullName }}-{{ $deploymentName }}
+  namespace: {{ $base.Release.Namespace }}
+  labels: {{ $microserviceExtraLabels | nindent 4 }}{{ $microserviceLabels | nindent 4 }}
+    app.kubernetes.io/component: {{ $deploymentName }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ $microserviceFullName }}-{{ $deploymentName }}
+  maxReplicas: {{ $deployment.autoscaling.replicas.max }}
+  minReplicas: {{ $deployment.autoscaling.replicas.min }} {{ if $deployment.autoscaling.metrics }}
+  metrics: {{ toYaml $deployment.autoscaling.metrics | nindent 4 }}{{ end }}
+---
+{{ end }}
+{{ end }}
+{{ end }}
+{{ end }}

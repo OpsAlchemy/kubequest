@@ -1,0 +1,4 @@
+{{ if .Values.traefik.enabled }}
+{{ include "ingress.services" . }}
+{{ include "ingress.cors-headers-redirect" . }}
+{{ end }}

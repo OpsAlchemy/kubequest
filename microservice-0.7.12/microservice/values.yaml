@@ -1,0 +1,239 @@
+fullnameOverride: ""
+releaseRevisionEnabled: false
+
+env:
+  #  from:
+  #    - configMapRef:
+  #        name: special-config
+  value: []
+#    - name: VAR_NAME
+#      value: "var value"
+  map: {}
+#    KEY: value
+
+persistentVolumes: []
+#  - name:
+#    volumeMode:
+#    storage:
+#    enabled: true
+
+secretFileMounts: []
+#  - name: secret-name
+#    mounts:
+#      - fileDirectory: /some/directory
+
+fileMounts: []
+#  - volumeName: volume-name
+#    configMap: configmap-name
+#    mounts:
+#      - name: mount-name
+#        fileDirectory: /some/directory
+
+image:
+  # The complete image name including the tag. Should not be used in conjunction with `repository` and `tag`
+  image:
+  repository: docker.io/node
+  tag: latest
+  # Should be "Never" for local development
+  pullPolicy: IfNotPresent
+
+kubectlImage:
+  image: kubectl
+  repository: bitnamilegacy
+  tag: latest
+
+imagePullSecrets: []
+#  - name: secret-name
+
+pods: {}
+#  something:
+#    enabled: true
+#    container:
+#      command: ["yarn", "start:load-config"]
+#    annotations:
+#      "helm.sh/hook": post-install,post-upgrade
+#      "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+
+cronJobs: {}
+#  something:
+#    enabled: true
+##   Schedule is required!
+#    schedule: "*/1 * * * *"
+#    container:
+#      command: [ "yarn", "start:load-config" ]
+##   Restart policy is required!
+#    restartPolicy: Never
+##   Concurrency policy (optional): Allow (default), Forbid, or Replace
+#    concurrencyPolicy: Forbid
+
+deployments: {}
+#  maxSurge: "25%"
+#  maxUnavailable: "25%"
+#  something:
+#    env:
+#      value:
+#        - name: SOME_VAR
+#          value: SOME_VALUE
+#    hostMounts:
+#      - type:
+#        hostPath:
+#        containerPath:
+#        name:
+#        readOnly: true
+#        accessMode: ReadWriteOnce
+#    initContainers:
+#    nodeSelectors:
+#       - key: az
+#         value: us-west-1
+#    enabled: false
+#    container:
+#      command:
+#      port: 80
+#      privileged:
+#      # lifecycle can also be configured here under container.lifecycle
+#    lifecycle:
+#      preStop:
+#        exec:
+#          command: ["/bin/sh", "-c", "sleep 15"]
+#        # OR use httpGet:
+#        # httpGet:
+#        #   path: /shutdown
+#        #   port: 3000
+#        #   scheme: HTTP
+#        # OR use tcpSocket:
+#        # tcpSocket:
+#        #   port: 3000
+#        # OR use sleep (Kubernetes 1.31+):
+#        # sleep:
+#        #   seconds: 15
+#
+#    annotations:
+#
+#    runtimeClassName:
+#    annotations:
+#      iam.amazonaws.com/role: "role-name"
+#    autoscaling:
+#      enabled: true
+#      metrics:
+#        - type: Resource
+#          resource:
+#            name: cpu
+#            target:
+#              type: Utilization
+#              averageUtilization: 60
+#      replicas:
+#        min: 1
+#        max: 20
+#      resources:
+#        requests:
+#          cpu: 50m
+#          memory: 50Mi
+#        limits:
+#          cpu: 500m
+#          memory: 100Mi
+#
+#    probes:
+#      enabled: false
+#      liveness: {}
+#        httpGet:
+#          path: /healthz
+#          port: http
+#        failureThreshold: 1
+#        periodSeconds: 10
+#        initialDelaySeconds: 1
+#      readiness: {}
+#        httpGet:
+#          path: /healthz
+#          port: http
+#        failureThreshold: 3
+#        periodSeconds: 10
+#        initialDelaySeconds: 1
+#      startup: {}
+#        httpGet:
+#          path: /healthz
+#          port: http
+#        failureThreshold: 10
+#        periodSeconds: 3
+#        initialDelaySeconds: 1
+
+service:
+  version: v1
+
+tls:
+  enabled: false
+  serviceName: rest
+  issuer:
+    name: ca-root
+    kind: ClusterIssuer
+  usages:
+    - client auth
+    - server auth
+
+services: {}
+#  something:
+#    prefix: api
+#    forwardAuth:
+#      unprotectedPaths:
+#        - value: /ping
+#      unprotectedPathPrefixes:
+#        - value: /pong/
+#    paths:
+#      - value: /hello
+#      - value: /world
+#        middlewares:
+#          - forward-auth
+#    pathPrefixes:
+#      - value: /hello/
+#      - value: /world/
+#        middlewares: [ "forward-auth" ]
+#      - value: /go/
+#    domain: something.com
+#    altDomains:
+#      - somethingelse.com
+#    websocketHttpUpgradeEnabled: false
+#    canary: false
+#    type:
+#    enabled: true
+#    port: 80
+#    externalIPs:
+#    deploymentName:
+#    ingress: HTTP
+#    enableCorsInterceptor: false
+#    disableServiceVersioning: false
+#    docs:
+#      prefix: "/docs"
+#      path: "/something"
+#    extraPorts: []
+#      - port:
+#        name:
+#        containerPort:
+#        protocol:
+
+traefik:
+  enabled: false
+  certResolver:
+  v3:
+    # When enabled, render Traefik v3 CRDs (apiVersion: traefik.io/v1alpha1) in addition to existing v2 resources
+    enabled: false
+  forwardAuth:
+    address:
+    skipTlsVerification: true
+#  rateLimitMiddlewares:
+#    default:
+#      middleware: traefik-http-rate-limit-default@kubernetescrd
+#      middlewareV3: traefik-v3-ingress-v3-rate-limit-default@kubernetescrd
+#    noLimit:
+#      - "5.5.5.5/32"
+#      - "6.6.6.6/32"
+#    groups:
+#      - name: samsung
+#        middleware: traefik-http-rate-limit-samsung@kubernetescrd
+#        middlewareV3: traefik-v3-ingress-v3-rate-limit-samsung@kubernetescrd
+#        ips:
+#          - "1.1.1.1/32"
+#          - "2.2.2.2/32"
+
+rbac:
+  enabled: false
+
+star: "*"

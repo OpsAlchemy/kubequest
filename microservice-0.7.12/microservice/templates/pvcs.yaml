@@ -1,0 +1,22 @@
+{{- $microserviceFullName := include "microservice.fullname" . -}}
+{{- $microserviceChart := include "microservice.chart" . -}}
+{{- $microserviceLabels := include "microservice.labels" . -}}
+{{- $microserviceExtraLabels := include "microservice.extraLabels" . -}}
+{{ range .Values.persistentVolumes }}
+{{ if and .name .enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $microserviceFullName }}-{{ .name }}
+  labels: {{ $microserviceExtraLabels | nindent 4 }}{{ $microserviceLabels | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .accessMode | default "ReadWriteOnce" }}
+  volumeMode: {{ .volumeMode | default "Filesystem" }}
+  resources:
+    requests:
+      storage: {{ .storage }} {{ if .storageClassName }}
+  storageClassName: {{ .storageClassName }}{{ end }}
+---
+{{ end }}
+{{ end }}
