@@ -1,0 +1,21 @@
+# base/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: node:18-alpine
+        command: ["node", "-e", "console.log('API starting'); require('http').createServer((req, res) => { res.end('Hello from Base API') }).listen(3000)"]
+        ports:
+        - containerPort: 3000

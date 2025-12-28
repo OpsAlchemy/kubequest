@@ -6,6 +6,3 @@ nameSuffix: -dev
 
 patches:
   - path: deployment-patch.yaml
-    target:
-      kind: Deployment
-      name: app
