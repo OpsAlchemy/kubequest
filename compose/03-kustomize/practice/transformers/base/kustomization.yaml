@@ -8,3 +8,17 @@ resources:
   - redis-service.yaml
   - secret.yaml
   - worker-deployment.yaml
+  - demo-config.yaml
+  - demo-deploy.yaml
+
+replacements:
+  - source:
+      kind: ConfigMap
+      name: demo-config
+      fieldPath: data.color
+    targets:
+      - select:
+          kind: Deployment
+          name: demo-deploy
+        fieldPaths:
+          - spec.template.metadata.labels.color
