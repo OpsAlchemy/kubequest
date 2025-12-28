@@ -40,3 +40,13 @@ spec:
                 configMapKeyRef:
                   name: app-config
                   key: REDIS_HOST
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: DB_PASSWORD
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: API_KEY
