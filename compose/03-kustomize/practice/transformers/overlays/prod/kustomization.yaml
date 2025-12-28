@@ -13,3 +13,12 @@ patches:
     target:
       kind: Deployment
       name: api-deployment
+  - path: configmap-patch.yaml
+    target:
+      kind: ConfigMap
+      name: app-config
+images:
+  - name: node:18-alpine
+    newTag: 18.20.0-alpine
+  - name: redis:7-alpine
+    newTag: 7.2.4-alpine
