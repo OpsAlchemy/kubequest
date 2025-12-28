@@ -5,13 +5,24 @@ namespace: prod
 namePrefix: prod-
 nameSuffix: -v1
 
+labels:
+  - pairs:
+      env: prod
+    includeSelectors: true
+    includeTemplates: true
+
+commonAnnotations:
+  environment: production
+  team: platform
+  owner: platform-team@company.com
+  sla-tier: "gold"
+
 resources:
   - ../../base
-  - metrics-pdb.yaml
 
-components:
-  - ../../components/observability-hardening
-
+# -------------------------------
+# PATCHES (GVK REQUIRED HERE)
+# -------------------------------
 patches:
   - path: patch-replicas.yaml
     target:
@@ -34,23 +45,62 @@ patches:
       kind: Deployment
       name: worker-deployment
 
+  # Inline JSON6902 patch (monitor container)
   - target:
       group: apps
       version: v1
       kind: Deployment
-      name: metrics-collector
+      name: worker-deployment
     patch: |-
       - op: add
-        path: /spec/template/spec/containers/0/env
+        path: /spec/template/spec/containers/-
         value:
-          - name: CONFIG_SOURCE
-            value: $(CONFIGMAP_NAME)
+          name: monitor
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                echo "monitoring worker...";
+                sleep 30;
+              done
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "16Mi"
+            limits:
+              cpu: "20m"
+              memory: "32Mi"
 
+# -------------------------------
+# REPLICAS (NO GVK HERE)
+# -------------------------------
+# replicas:
+#   - name: api-deployment
+#     count: 4
+#   - name: worker-deployment
+#     count: 4
+
+# -------------------------------
+# IMAGE PINNING
+# -------------------------------
 images:
   - name: node:18-alpine
     newTag: 18.20.0-alpine
   - name: redis:7-alpine
     newTag: 7.2.4-alpine
+
+# -------------------------------
+# GENERATORS (MERGE + ENV FILES)
+# -------------------------------
+secretGenerator:
+  - name: app-secret
+    behavior: merge
+    envs:
+      - prod-secret.txt
+    literals:
+      - ROTATION_ENABLED=true
 
 configMapGenerator:
   - name: app-config
@@ -59,31 +109,14 @@ configMapGenerator:
       - prod-config.txt
     literals:
       - ENV_TYPE=production
+      - FEATURE_FLAG_X=true
 
-secretGenerator:
-  - name: app-secret
-    behavior: merge
-    envs:
-      - prod-secret.txt
-
+# -------------------------------
+# GENERATOR OPTIONS
+# -------------------------------
 generatorOptions:
   disableNameSuffixHash: false
-
-# 🔑 THIS IS WHAT WAS MISSING BEFORE
-configurations:
-  - kustomizeconfig.yaml
-  - metrics-vars.yaml
-
-replacements:
-  - source:
-      kind: ConfigMap
-      name: app-config
-      fieldPath: data.ENV_TYPE
-    targets:
-      - select:
-          kind: Deployment
-          name: metrics-collector
-        fieldPaths:
-          - spec.template.spec.containers.[name=collector].env.[name=ENV_TYPE].value
-        options:
-          create: true
+  labels:
+    generated-by: kustomize
+  annotations:
+    managed-by: platform-team

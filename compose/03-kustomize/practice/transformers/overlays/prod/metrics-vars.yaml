@@ -1,8 +1,0 @@
-vars:
-  - name: CONFIGMAP_NAME
-    objref:
-      apiVersion: v1
-      kind: ConfigMap
-      name: app-config
-    fieldref:
-      fieldpath: metadata.name
