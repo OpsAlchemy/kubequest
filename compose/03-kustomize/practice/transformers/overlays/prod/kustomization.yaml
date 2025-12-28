@@ -1,30 +1,89 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
 namespace: prod
 namePrefix: prod-
-labels:
-  - pairs:
-      env: prod
-    includeSelectors: true
-    includeTemplates: true
+nameSuffix: -v1
+
 resources:
   - ../../base
+  - metrics-pdb.yaml
+
+components:
+  - ../../components/observability-hardening
+
 patches:
   - path: patch-replicas.yaml
     target:
+      group: apps
+      version: v1
       kind: Deployment
       name: api-deployment
-  - path: configmap-patch.yaml
+
+  - path: patch-sidecar.yaml
     target:
-      kind: ConfigMap
-      name: app-config
+      group: apps
+      version: v1
+      kind: Deployment
+      name: api-deployment
+
+  - path: patch-worker.json
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: worker-deployment
+
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: metrics-collector
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env
+        value:
+          - name: CONFIG_SOURCE
+            value: $(CONFIGMAP_NAME)
+
 images:
   - name: node:18-alpine
     newTag: 18.20.0-alpine
   - name: redis:7-alpine
     newTag: 7.2.4-alpine
+
+configMapGenerator:
+  - name: app-config
+    behavior: merge
+    envs:
+      - prod-config.txt
+    literals:
+      - ENV_TYPE=production
+
 secretGenerator:
   - name: app-secret
     behavior: merge
     envs:
       - prod-secret.txt
+
+generatorOptions:
+  disableNameSuffixHash: false
+
+# 🔑 THIS IS WHAT WAS MISSING BEFORE
+configurations:
+  - kustomizeconfig.yaml
+  - metrics-vars.yaml
+
+replacements:
+  - source:
+      kind: ConfigMap
+      name: app-config
+      fieldPath: data.ENV_TYPE
+    targets:
+      - select:
+          kind: Deployment
+          name: metrics-collector
+        fieldPaths:
+          - spec.template.spec.containers.[name=collector].env.[name=ENV_TYPE].value
+        options:
+          create: true

@@ -7,3 +7,5 @@ resources:
   - redis-deployment.yaml
   - redis-service.yaml
   - secret.yaml
+  - worker-deployment.yaml
+  - metrics-collector-deployment.yaml

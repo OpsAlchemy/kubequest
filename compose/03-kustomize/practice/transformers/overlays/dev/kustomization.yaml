@@ -7,6 +7,7 @@ labels:
       env: dev
     includeSelectors: true
     includeTemplates: true
+
 resources:
   - ../../base
 patches:

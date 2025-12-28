@@ -4,3 +4,14 @@ metadata:
   name: api-deployment
 spec:
   replicas: 4
+  template:
+    spec:
+      containers:
+        - name: api
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
