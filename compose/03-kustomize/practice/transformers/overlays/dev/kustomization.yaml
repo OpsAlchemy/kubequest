@@ -8,3 +8,8 @@ labels:
     includeTemplates: true
 resources:
   - ../../base
+patches:
+  - path: patch-replicas.yaml
+    target:
+      kind: Deployment
+      name: api-deployment
