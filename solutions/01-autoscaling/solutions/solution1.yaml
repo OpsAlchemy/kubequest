@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memory-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: memory-app
+  template:
+    metadata:
+      name: memory-app
+      labels:
+        app: memory-app
+    spec:
+      containers:
+        - name: memory-app
+          image: polinux/stress
+          resources:
+            requests:
+              memory: "20Mi"
+              cpu: "30m"
+          command: ["sleep", "3600"]
+# ---
+# apiVersion: autoscaling/v2
+# kind: HorizontalPodAutoscaler
+# metadata:
+#   name: memory-app-hpa
+# spec:
+#   scaleTargetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: memory-app
+#   minReplicas: 1
+#   maxReplicas: 5
+#   metrics:
+#     - type: Resource
+#       resource:
+#         name: memory
+#         target:
+#           type: Utilization
+#           averageUtilization: 70
