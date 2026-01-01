@@ -1,0 +1,4902 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/compose/02%20helm/question3/">
+      
+      
+        <link rel="prev" href="../question2/">
+      
+      
+        <link rel="next" href="../question4/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Question3 - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#practice-question-3-build-a-scalable-web-application-chart-progressive-complexity" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Question3
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concise Notes for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01 autoscaling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    01 autoscaling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/hpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Horizontal Pod Autoscaler (HPA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/keywords/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search Keywords+
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HPA &amp; VPA Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/vpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vertical Pod Autoscaler (VPA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02 helm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    02 helm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm Comprehensive Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Helm Charts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../practice-questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm Practice Questions - Progressive Learning Path
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../question1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../question2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question3
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#practice-question-3-build-a-scalable-web-application-chart-progressive-complexity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Practice Question 3: Build a Scalable Web Application Chart - Progressive Complexity
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-basic-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: Basic Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: Basic Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-you-have" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Have
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-configuration-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Configuration Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: Configuration Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-multi-environment-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Multi-Environment Support
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Multi-Environment Support">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-4-scaling-performance-hpa-pdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: Scaling &amp; Performance (HPA &amp; PDB)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4: Scaling &amp; Performance (HPA &amp; PDB)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-5-security-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: Security Hardening
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5: Security Hardening">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-6-storage-persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: Storage &amp; Persistence
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 6: Storage &amp; Persistence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-7-networking-exposure-service-ingress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: Networking &amp; Exposure (Service, Ingress)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 7: Networking &amp; Exposure (Service, Ingress)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-8-observability-prometheus-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Observability (Prometheus &amp; Logging)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 8: Observability (Prometheus &amp; Logging)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-9-deployment-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 9: Deployment Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 9: Deployment Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-10-production-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 10: Production Readiness
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 10: Production Readiness">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#progression-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Progression Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-youre-building" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You're Building
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-helm-concepts-youll-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Helm Concepts You'll Learn
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../question4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03 kustomize
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    03 kustomize
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-kustomize/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kustomize Master Guide: Advanced Patterns &amp; Modern Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-kustomize/question1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04 admission webhook
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    04 admission webhook
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-admission-webhook/commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-admission-webhook/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    05 kubeconfig
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    05 kubeconfig
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-kubeconfig/how-to-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-kubeconfig/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    06 cluster certificates and kube system [important]
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    06 cluster certificates and kube system [important]
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-cluster-certificates-and-kube-system%20%5Bimportant%5D/kubeadm-certs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kubeadm Certificate Checks &amp; Renewal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    07 crd's
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    07 crd's
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/crd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Resource Definitions (CRDs) and Custom Resources (CRs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/solutions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Solutions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    08 gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    08 gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-gateway-api/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10 scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/nodename/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/nodeselector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NodeSelector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_3" id="__nav_10_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    podAffinity nodeAffinity deployments
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    podAffinity nodeAffinity deployments
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/podAffinity-nodeAffinity-deployments/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Scheduling: Pod &amp; Node Affinity - Theory &amp; Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../11-coredns/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 coredns
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    11 coredns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 deployments
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    12 deployments
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_12_1" id="__nav_12_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Probing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_12_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Probing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-deployments/probing/probing-psotgres/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Probing psotgres
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 manage cluster via kubeadm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    13 manage cluster via kubeadm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/cluster-create/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kubeadm Cluster Create &amp; Upgrade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/etcd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Etcd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/high-availablity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    High availablity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/north-south-traffic-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Ingress
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Ingress Controller Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_15" >
+        
+          
+          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 troubleshoot controlplane
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_15">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    15 troubleshoot controlplane
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15-troubleshoot-controlplane/prerequisite-and-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Approach Control Plane Issues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17 authorization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    17 authorization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/cani/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cani
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/gotchas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RBAC Gotchas and Common Mistakes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/role-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RBAC Core Objects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/system-based-authorization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System based authorization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18 basic bash
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    18 basic bash
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../18-basic-bash/bash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19 secrets and configmap
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    19 secrets and configmap
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../19-secrets-and-configmap/environment-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment and volume
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20 services
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    20 services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../20-services/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cli
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_20" >
+        
+          
+          <label class="md-nav__link" for="__nav_20" id="__nav_20_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    21 storage class pv pvc
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_20_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    21 storage class pv pvc
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../21-storage-class-pv-pvc/example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../21-storage-class-pv-pvc/selector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Selector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#practice-question-3-build-a-scalable-web-application-chart-progressive-complexity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Practice Question 3: Build a Scalable Web Application Chart - Progressive Complexity
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-basic-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: Basic Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: Basic Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-you-have" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Have
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-configuration-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Configuration Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: Configuration Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-multi-environment-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Multi-Environment Support
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Multi-Environment Support">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-4-scaling-performance-hpa-pdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: Scaling &amp; Performance (HPA &amp; PDB)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4: Scaling &amp; Performance (HPA &amp; PDB)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-5-security-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: Security Hardening
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5: Security Hardening">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-6-storage-persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: Storage &amp; Persistence
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 6: Storage &amp; Persistence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-7-networking-exposure-service-ingress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: Networking &amp; Exposure (Service, Ingress)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 7: Networking &amp; Exposure (Service, Ingress)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-8-observability-prometheus-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Observability (Prometheus &amp; Logging)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 8: Observability (Prometheus &amp; Logging)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-9-deployment-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 9: Deployment Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 9: Deployment Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-10-production-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 10: Production Readiness
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 10: Production Readiness">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-add_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#progression-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Progression Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-youre-building" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You're Building
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-helm-concepts-youll-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Helm Concepts You'll Learn
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Question3</h1>
+
+<h2 id="practice-question-3-build-a-scalable-web-application-chart-progressive-complexity">Practice Question 3: Build a Scalable Web Application Chart - Progressive Complexity</h2>
+<p><strong>Chart Name:</strong> <code>scalable-web-app</code></p>
+<p><strong>Philosophy:</strong> One chart. One application. Progressively add features, making it production-ready step by step.</p>
+<hr />
+<hr />
+<h2 id="phase-1-basic-deployment">Phase 1: Basic Deployment</h2>
+<p><strong>Objective:</strong> Create a simple Deployment with basic pod specifications.</p>
+<h3 id="what-you-have">What You Have</h3>
+<ul>
+<li>Application image: <code>scalable-web-app:latest</code></li>
+<li>Need to deploy to Kubernetes</li>
+</ul>
+<h3 id="what-you-build">What You Build</h3>
+<p>Create chart structure with:
+- <code>templates/deployment.yaml</code> - simple Deployment with 1 replica
+- <code>values.yaml</code> - image, tag, port configuration
+- <code>Chart.yaml</code> with metadata
+- <code>templates/service.yaml</code> - ClusterIP service for internal access</p>
+<h3 id="requirements">Requirements</h3>
+<ul>
+<li>Deployment creates 1 Pod running the application</li>
+<li>Service exposes the app internally</li>
+<li><code>helm template</code> produces valid YAML</li>
+<li><code>helm install</code> deploys successfully</li>
+</ul>
+<h3 id="validation">Validation</h3>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>template<span class="w"> </span>scalable-web-app<span class="w"> </span>.<span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
+kubectl<span class="w"> </span>get<span class="w"> </span>deployment
+kubectl<span class="w"> </span>get<span class="w"> </span>pods
+kubectl<span class="w"> </span>port-forward<span class="w"> </span>svc/scalable-web-app<span class="w"> </span><span class="m">8080</span>:8080
+<span class="c1"># Test: curl http://localhost:8080</span>
+</code></pre></div>
+<hr />
+<h2 id="phase-2-configuration-management">Phase 2: Configuration Management</h2>
+<p><strong>Objective:</strong> Add ConfigMap for application configuration (not hardcoded).</p>
+<h3 id="current-state">Current State</h3>
+<ul>
+<li>Phase 1 is working (basic deployment)</li>
+</ul>
+<h3 id="what-you-add">What You Add</h3>
+<ul>
+<li><code>templates/configmap.yaml</code> - application configuration file</li>
+<li>Update <code>values.yaml</code> with <code>config</code> section containing app settings</li>
+<li>Update <code>templates/deployment.yaml</code> to mount the ConfigMap as a volume</li>
+<li>Create <code>_helpers.tpl</code> for reusable template snippets</li>
+</ul>
+<h3 id="requirements_1">Requirements</h3>
+<ul>
+<li>ConfigMap contains application configuration (key-value pairs)</li>
+<li>Deployment mounts ConfigMap as a volume at <code>/etc/config</code></li>
+<li>Application reads configuration from mounted file</li>
+<li>Configuration changes update ConfigMap without redeploying pod</li>
+<li>Helm values override default configuration</li>
+</ul>
+<h3 id="validation_1">Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check ConfigMap is created</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>configmap
+
+<span class="c1"># Verify mount</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>--<span class="w"> </span>cat<span class="w"> </span>/etc/config
+
+<span class="c1"># Update config and reinstall</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>scalable-web-app<span class="w"> </span>.
+kubectl<span class="w"> </span>get<span class="w"> </span>configmap<span class="w"> </span>-o<span class="w"> </span>yaml
+</code></pre></div>
+<hr />
+<h2 id="phase-3-multi-environment-support">Phase 3: Multi-Environment Support</h2>
+<p><strong>Objective:</strong> Support different configurations for dev, staging, prod.</p>
+<h3 id="current-state_1">Current State</h3>
+<ul>
+<li>Phase 2 is working (configuration management)</li>
+</ul>
+<h3 id="what-you-add_1">What You Add</h3>
+<ul>
+<li>Create <code>values-dev.yaml</code>, <code>values-staging.yaml</code>, <code>values-prod.yaml</code></li>
+<li>Each file overrides resource limits, replicas, etc.</li>
+<li>Update <code>values.yaml</code> with environment-specific sections</li>
+<li>Add conditional logic in templates to validate correct environment selected</li>
+</ul>
+<h3 id="requirements_2">Requirements</h3>
+<ul>
+<li><code>helm install -f values-dev.yaml</code> deploys dev version (1 replica, small resources)</li>
+<li><code>helm install -f values-prod.yaml</code> deploys prod version (3+ replicas, large resources)</li>
+<li>Cannot accidentally mix configurations</li>
+<li>Different storage classes per environment</li>
+<li>Different ingress rules per environment</li>
+<li>Chart validates that only one environment is selected</li>
+</ul>
+<h3 id="validation_2">Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Deploy to dev</span>
+helm<span class="w"> </span>install<span class="w"> </span>scalable-web-app<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-dev.yaml
+kubectl<span class="w"> </span>get<span class="w"> </span>deployment,configmap
+
+<span class="c1"># Verify: 1 replica, small resources</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>deployment<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>replicas
+
+<span class="c1"># Deploy to prod (different release)</span>
+helm<span class="w"> </span>install<span class="w"> </span>scalable-web-app-prod<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-prod.yaml
+
+<span class="c1"># Verify: 3+ replicas, large resources</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>deployment<span class="w"> </span>scalable-web-app-prod<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>replicas
+</code></pre></div>
+<hr />
+<h2 id="phase-4-scaling-performance-hpa-pdb">Phase 4: Scaling &amp; Performance (HPA &amp; PDB)</h2>
+<p><strong>Objective:</strong> Auto-scale based on metrics and protect disruptions.</p>
+<h3 id="current-state_2">Current State</h3>
+<ul>
+<li>Phase 3 is working (multi-environment support)</li>
+</ul>
+<h3 id="what-you-add_2">What You Add</h3>
+<ul>
+<li><code>templates/hpa.yaml</code> - HorizontalPodAutoscaler (scale based on CPU/memory)</li>
+<li><code>templates/pdb.yaml</code> - PodDisruptionBudget (maintain availability during node maintenance)</li>
+<li>Update <code>values.yaml</code> with autoscaling config (min/max replicas, metrics)</li>
+<li>Metrics Server must be installed in cluster for HPA to work</li>
+</ul>
+<h3 id="requirements_3">Requirements</h3>
+<ul>
+<li>HPA scales between min (2) and max (10) replicas based on CPU usage</li>
+<li>PDB maintains at least 1 Pod available always</li>
+<li>Pods have resource requests/limits defined (required for HPA)</li>
+<li>HPA triggers when CPU exceeds threshold</li>
+<li>Scaling down respects graceful termination period</li>
+</ul>
+<h3 id="validation_3">Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check HPA status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>hpa
+kubectl<span class="w"> </span>describe<span class="w"> </span>hpa<span class="w"> </span>scalable-web-app
+
+<span class="c1"># Check PDB</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pdb
+
+<span class="c1"># Simulate load (in separate terminal)</span>
+kubectl<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>load-generator<span class="w"> </span>--image<span class="o">=</span>busybox<span class="w"> </span>--<span class="w"> </span>/bin/sh
+<span class="c1"># Inside pod: while sleep 0.01; do wget -q -O- http://scalable-web-app:8080; done</span>
+
+<span class="c1"># Watch scaling in progress</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>hpa<span class="w"> </span>-w
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-w
+</code></pre></div>
+<hr />
+<h2 id="phase-5-security-hardening">Phase 5: Security Hardening</h2>
+<p><strong>Objective:</strong> Apply security best practices (RBAC, SecurityContext, NetworkPolicy).</p>
+<h3 id="current-state_3">Current State</h3>
+<ul>
+<li>Phase 4 is working (HPA &amp; PDB)</li>
+</ul>
+<h3 id="what-you-add_3">What You Add</h3>
+<ul>
+<li><code>templates/serviceaccount.yaml</code> - ServiceAccount for the app</li>
+<li><code>templates/role.yaml</code> - RBAC Role with minimal permissions</li>
+<li><code>templates/rolebinding.yaml</code> - Bind role to ServiceAccount</li>
+<li>Update <code>templates/deployment.yaml</code> with SecurityContext:</li>
+<li>Non-root user (runAsUser: 1000)</li>
+<li>Read-only root filesystem</li>
+<li>No privileged container</li>
+<li>Drop unnecessary capabilities</li>
+<li><code>templates/networkpolicy.yaml</code> - Deny all ingress by default, allow from ingress controller only</li>
+</ul>
+<h3 id="requirements_4">Requirements</h3>
+<ul>
+<li>Pod runs as non-root user</li>
+<li>Pod cannot write to root filesystem</li>
+<li>Pod has minimal RBAC permissions (only needed APIs)</li>
+<li>NetworkPolicy blocks unauthorized traffic</li>
+<li>No secrets in environment variables (will add later)</li>
+<li>Container cannot escalate privileges</li>
+</ul>
+<h3 id="validation_4">Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Verify SecurityContext</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>deployment<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">10</span><span class="w"> </span>securityContext
+
+<span class="c1"># Verify ServiceAccount</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>sa
+
+<span class="c1"># Verify RBAC</span>
+kubectl<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span>list<span class="w"> </span>pods<span class="w"> </span>--as<span class="o">=</span>system:serviceaccount:default:scalable-web-app
+
+<span class="c1"># Verify NetworkPolicy</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>networkpolicy
+kubectl<span class="w"> </span>describe<span class="w"> </span>networkpolicy<span class="w"> </span>scalable-web-app
+
+<span class="c1"># Test: Pod cannot execute as root</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>--<span class="w"> </span>id<span class="w">  </span><span class="c1"># Should show uid=1000</span>
+</code></pre></div>
+<hr />
+<h2 id="phase-6-storage-persistence">Phase 6: Storage &amp; Persistence</h2>
+<p><strong>Objective:</strong> Add persistent data storage with PVC.</p>
+<h3 id="current-state_4">Current State</h3>
+<ul>
+<li>Phase 5 is working (security)</li>
+</ul>
+<h3 id="what-you-add_4">What You Add</h3>
+<ul>
+<li><code>templates/pvc.yaml</code> - PersistentVolumeClaim for application data</li>
+<li>Update <code>templates/deployment.yaml</code> to mount PVC as volume</li>
+<li>Update <code>values.yaml</code> with storage size and storage class name</li>
+<li>Add support for different storage classes per environment (dev: hostPath, prod: EBS/Azure Disk)</li>
+</ul>
+<h3 id="requirements_5">Requirements</h3>
+<ul>
+<li>PVC is created from appropriate storage class</li>
+<li>Deployment mounts PVC at <code>/data</code></li>
+<li>Application can write to <code>/data</code> persistently</li>
+<li>Pod restart doesn't lose data</li>
+<li>Storage size is configurable per environment</li>
+<li>StatefulSet (not Deployment) used if multiple replicas need separate PVCs</li>
+</ul>
+<h3 id="validation_5">Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check PVC</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pvc
+kubectl<span class="w"> </span>describe<span class="w"> </span>pvc<span class="w"> </span>scalable-web-app-data
+
+<span class="c1"># Verify mount</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>--<span class="w"> </span>ls<span class="w"> </span>-la<span class="w"> </span>/data
+
+<span class="c1"># Write test file</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>--<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;echo &#39;test&#39; &gt; /data/test.txt&quot;</span>
+
+<span class="c1"># Delete pod and verify data persists</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>pod<span class="w"> </span>&lt;pod-name&gt;
+<span class="c1"># Wait for new pod</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;new-pod-name&gt;<span class="w"> </span>--<span class="w"> </span>cat<span class="w"> </span>/data/test.txt<span class="w">  </span><span class="c1"># Should show &quot;test&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="phase-7-networking-exposure-service-ingress">Phase 7: Networking &amp; Exposure (Service, Ingress)</h2>
+<p><strong>Objective:</strong> Expose app to external traffic securely.</p>
+<h3 id="current-state_5">Current State</h3>
+<ul>
+<li>Phase 6 is working (storage)</li>
+</ul>
+<h3 id="what-you-add_5">What You Add</h3>
+<ul>
+<li>Update <code>templates/service.yaml</code> to type: LoadBalancer (or NodePort for dev)</li>
+<li><code>templates/ingress.yaml</code> - expose app via Ingress with:</li>
+<li>TLS/HTTPS configuration (self-signed cert for dev, real cert for prod)</li>
+<li>Path-based routing</li>
+<li>Host-based routing (environment-specific domains)</li>
+<li>Authentication/authorization (basic auth for dev, OAuth for prod)</li>
+<li>Update <code>values.yaml</code> with ingress domain, TLS cert config</li>
+</ul>
+<h3 id="requirements_6">Requirements</h3>
+<ul>
+<li>Service exposes pod on port 8080</li>
+<li>Ingress exposes app on domain (ingress-class: nginx)</li>
+<li>HTTPS/TLS works with proper certificate</li>
+<li>Traffic routing works to correct pod</li>
+<li>Different ingress configs for dev vs prod (TLS required only in prod)</li>
+</ul>
+<h3 id="validation_6">Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check Service</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>svc
+kubectl<span class="w"> </span>describe<span class="w"> </span>svc<span class="w"> </span>scalable-web-app
+
+<span class="c1"># Check Ingress</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>ingress
+kubectl<span class="w"> </span>describe<span class="w"> </span>ingress<span class="w"> </span>scalable-web-app
+
+<span class="c1"># Test routing (if minikube/local cluster)</span>
+curl<span class="w"> </span>http://scalable-web-app.example.com<span class="w">  </span><span class="c1"># Should route to pod</span>
+curl<span class="w"> </span>-k<span class="w"> </span>https://scalable-web-app.example.com<span class="w">  </span><span class="c1"># Should work with TLS</span>
+
+<span class="c1"># Verify certificate</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>ingress<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>cert
+</code></pre></div>
+<hr />
+<h2 id="phase-8-observability-prometheus-logging">Phase 8: Observability (Prometheus &amp; Logging)</h2>
+<p><strong>Objective:</strong> Collect metrics and logs for monitoring.</p>
+<h3 id="current-state_6">Current State</h3>
+<ul>
+<li>Phase 7 is working (networking)</li>
+</ul>
+<h3 id="what-you-add_6">What You Add</h3>
+<ul>
+<li><code>templates/servicemonitor.yaml</code> - Prometheus ServiceMonitor for metrics scraping</li>
+<li>Update <code>templates/deployment.yaml</code> to expose <code>/metrics</code> endpoint (port 9090)</li>
+<li>Structured logging configuration (JSON format logs)</li>
+<li>Update <code>values.yaml</code> with observability config (enable metrics, log level)</li>
+<li><code>templates/prometheusrule.yaml</code> - Alert rules for SLA violations</li>
+<li>Dashboard definition (as ConfigMap) for Grafana</li>
+</ul>
+<h3 id="requirements_7">Requirements</h3>
+<ul>
+<li>Pod exposes Prometheus metrics on <code>/metrics</code> port 9090</li>
+<li>ServiceMonitor tells Prometheus where to scrape metrics</li>
+<li>Application logs are in JSON format (structured)</li>
+<li>Logs include request ID for tracing</li>
+<li>Alert rules fire when:</li>
+<li>Pod restarts frequently (&gt;3 restarts/hour)</li>
+<li>Error rate exceeds 5%</li>
+<li>Response time exceeds SLA (e.g., 500ms p99)</li>
+<li>Metrics show: request count, latency, errors, resource usage</li>
+</ul>
+<h3 id="validation_7">Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check ServiceMonitor</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>servicemonitor
+
+<span class="c1"># Verify metrics endpoint</span>
+kubectl<span class="w"> </span>port-forward<span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span><span class="m">9090</span>:9090
+curl<span class="w"> </span>http://localhost:9090/metrics<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>requests_total
+
+<span class="c1"># Check logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>&lt;pod-name&gt;<span class="w">  </span><span class="c1"># Should be JSON formatted</span>
+
+<span class="c1"># If Prometheus running, check scrape config</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>prometheus-pod<span class="w"> </span>-c<span class="w"> </span>prometheus<span class="w"> </span>--<span class="w"> </span>cat<span class="w"> </span>/etc/prometheus/prometheus.yml
+
+<span class="c1"># Check alerts are defined</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>prometheusrule
+kubectl<span class="w"> </span>describe<span class="w"> </span>prometheusrule<span class="w"> </span>scalable-web-app
+</code></pre></div>
+<hr />
+<h2 id="phase-9-deployment-strategies">Phase 9: Deployment Strategies</h2>
+<p><strong>Objective:</strong> Safely roll out updates with zero downtime.</p>
+<h3 id="current-state_7">Current State</h3>
+<ul>
+<li>Phase 8 is working (observability)</li>
+</ul>
+<h3 id="what-you-add_7">What You Add</h3>
+<ul>
+<li>Multiple deployment strategies as values option:</li>
+<li><strong>Rolling Update</strong> (default): gradual pod replacement with maxSurge/maxUnavailable</li>
+<li><strong>Blue-Green</strong>: two deployments, instant traffic switch</li>
+<li><strong>Canary</strong>: gradual traffic shift to new version (requires ServiceMesh or Ingress rules)</li>
+<li>Add pre-upgrade job to backup data</li>
+<li>Add post-upgrade job to verify deployment health</li>
+<li>Update <code>values.yaml</code> to select strategy</li>
+</ul>
+<h3 id="requirements_8">Requirements</h3>
+<ul>
+<li>Rolling update: maxUnavailable=1, maxSurge=1 (always 1-2 pods running)</li>
+<li>Blue-green: create both v1 and v2 deployments, switch service selector</li>
+<li>Canary: gradually route traffic (10% → 50% → 100%) to new version</li>
+<li>Old pods gracefully shutdown (preStop hook, 30s termination grace)</li>
+<li>Automatic rollback if health checks fail</li>
+<li>Zero-downtime upgrades (no traffic loss)</li>
+</ul>
+<h3 id="validation_8">Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Simulate deployment update</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>scalable-web-app<span class="w"> </span>.<span class="w"> </span>--set<span class="w"> </span>image.tag<span class="o">=</span>v2
+
+<span class="c1"># Watch rolling update</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment/scalable-web-app
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-w
+
+<span class="c1"># Verify zero downtime (in separate terminal, hit endpoint)</span>
+<span class="k">while</span><span class="w"> </span>true<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>curl<span class="w"> </span>http://scalable-web-app:8080<span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+<span class="c1"># Should see continuous responses, no connection errors</span>
+
+<span class="c1"># Rollback if needed</span>
+helm<span class="w"> </span>rollback<span class="w"> </span>scalable-web-app
+
+<span class="c1"># Blue-green test</span>
+helm<span class="w"> </span>install<span class="w"> </span>scalable-web-app<span class="w"> </span>.<span class="w"> </span>--set<span class="w"> </span><span class="nv">deploymentStrategy</span><span class="o">=</span>blue-green<span class="w"> </span>--set<span class="w"> </span>image.tag<span class="o">=</span>v1
+helm<span class="w"> </span>upgrade<span class="w"> </span>scalable-web-app<span class="w"> </span>.<span class="w"> </span>--set<span class="w"> </span>image.tag<span class="o">=</span>v2
+<span class="c1"># Verify both deployments exist, traffic switches to v2</span>
+</code></pre></div>
+<hr />
+<h2 id="phase-10-production-readiness">Phase 10: Production Readiness</h2>
+<p><strong>Objective:</strong> Validate chart quality, documentation, and operational readiness.</p>
+<h3 id="current-state_8">Current State</h3>
+<ul>
+<li>Phase 9 is working (deployment strategies)</li>
+</ul>
+<h3 id="what-you-add_8">What You Add</h3>
+<ul>
+<li><code>values.schema.json</code> - JSON Schema for values validation</li>
+<li><code>NOTES.txt</code> - deployment instructions and next steps</li>
+<li><code>README.md</code> - comprehensive documentation</li>
+<li>Architecture overview</li>
+<li>Installation instructions</li>
+<li>Configuration reference</li>
+<li>Troubleshooting guide</li>
+<li>Performance tuning recommendations</li>
+<li>Chart tests in <code>templates/tests/</code> directory</li>
+<li>Verify pod is running</li>
+<li>Verify service is accessible</li>
+<li>Verify ingress works</li>
+<li>Verify configmap was created</li>
+<li>Verify metrics endpoint responds</li>
+<li>Update Chart.yaml with proper metadata (description, keywords, maintainers)</li>
+</ul>
+<h3 id="requirements_9">Requirements</h3>
+<ul>
+<li><code>helm lint</code> passes without errors/warnings</li>
+<li><code>helm template</code> produces valid YAML for all environments</li>
+<li><code>helm install --dry-run --debug</code> succeeds</li>
+<li>Chart values validate against schema (invalid values rejected)</li>
+<li>All 10 phases are working together cohesively</li>
+<li>Documentation answers: What? How? Why? When to use?</li>
+<li>Tests verify critical functionality automatically</li>
+<li>Chart follows Helm best practices</li>
+</ul>
+<h3 id="validation_9">Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Lint chart</span>
+helm<span class="w"> </span>lint<span class="w"> </span>.
+
+<span class="c1"># Validate against schema</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span>--dry-run<span class="o">=</span>client
+
+<span class="c1"># Run tests</span>
+helm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>scalable-web-app
+
+<span class="c1"># Verify all resources created</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>all
+kubectl<span class="w"> </span>get<span class="w"> </span>configmap,pvc,networkpolicy,ingress,servicemonitor
+
+<span class="c1"># Check NOTES output</span>
+helm<span class="w"> </span>install<span class="w"> </span>scalable-web-app<span class="w"> </span>.
+<span class="c1"># Should print helpful next steps</span>
+
+<span class="c1"># Verify documentation</span>
+<span class="c1"># README.md should be comprehensive and clear</span>
+<span class="c1"># values.schema.json should validate all settings</span>
+
+<span class="c1"># Final check: can delete and redeploy cleanly</span>
+helm<span class="w"> </span>uninstall<span class="w"> </span>scalable-web-app
+helm<span class="w"> </span>install<span class="w"> </span>scalable-web-app<span class="w"> </span>.
+</code></pre></div>
+<hr />
+<h2 id="progression-summary">Progression Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Focus</th>
+<th>Key Concepts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Basics</td>
+<td>Deployment, Service, templates</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Config</td>
+<td>ConfigMap, volumes, helper functions</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Environments</td>
+<td>values files, conditionals, validation</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Scaling</td>
+<td>HPA, PDB, resource requests/limits</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Security</td>
+<td>RBAC, SecurityContext, NetworkPolicy</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Storage</td>
+<td>PVC, persistent data, StatefulSet</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Networking</td>
+<td>Ingress, TLS, routing</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Observability</td>
+<td>Prometheus, ServiceMonitor, alerts</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Deployments</td>
+<td>Rolling, Blue-Green, Canary strategies</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Production</td>
+<td>Schema validation, tests, documentation</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="what-youre-building">What You're Building</h2>
+<p>By end of Phase 10, you have:</p>
+<ul>
+<li>✅ Chart that deploys a complete application</li>
+<li>✅ Multi-environment support (dev/staging/prod)</li>
+<li>✅ Auto-scaling based on metrics</li>
+<li>✅ High availability (PDB maintains availability)</li>
+<li>✅ Persistent storage for application data</li>
+<li>✅ HTTPS/TLS secured external access</li>
+<li>✅ Security hardening (RBAC, SecurityContext, NetworkPolicy)</li>
+<li>✅ Full observability (metrics, alerts, logs)</li>
+<li>✅ Safe deployment strategies (zero downtime)</li>
+<li>✅ Production-quality documentation and validation</li>
+</ul>
+<p><strong>Total Implementation Time:</strong> 25-35 hours</p>
+<hr />
+<h2 id="key-helm-concepts-youll-learn">Key Helm Concepts You'll Learn</h2>
+<ol>
+<li><strong>Chart Structure</strong> - metadata, templates, values hierarchy</li>
+<li><strong>Templating</strong> - conditionals, loops, range, variables, functions</li>
+<li><strong>Helper Functions</strong> - DRY principle, _helpers.tpl, named templates</li>
+<li><strong>Values Management</strong> - defaults, overrides, precedence, schema validation</li>
+<li><strong>Reusability</strong> - composing complex configs from simple building blocks</li>
+<li><strong>Kubernetes Patterns</strong> - RBAC, NetworkPolicy, Deployments, StatefulSets</li>
+<li><strong>Observability</strong> - metrics, logging, alerting at chart level</li>
+<li><strong>Deployment Strategies</strong> - safe rollouts, health checks, rollbacks</li>
+<li><strong>Best Practices</strong> - documentation, testing, linting, security</li>
+<li><strong>Advanced Templating</strong> - computed values, dynamic resource generation</li>
+</ol>
+<hr />
+<h2 id="notes">Notes</h2>
+<ul>
+<li>Each phase depends on previous phases</li>
+<li>You'll iterate and refine as you discover edge cases</li>
+<li>Real-world constraints matter (actual cluster limitations, quotas)</li>
+<li>Documentation is as important as code</li>
+<li>Chart should be idempotent (safe to run multiple times)</li>
+</ul>
+<p>Good luck! Build incrementally, test thoroughly, and focus on one feature at a time.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "navigation.indexes", "toc.follow", "content.code.copy", "content.tabs.link", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

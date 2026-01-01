@@ -1,0 +1,3211 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/docs/cluster%20architecture%2C%20installation%20%26%20configuration/kubeadm-certificate-commands-reference/">
+      
+      
+        <link rel="prev" href="../etcd-backup-and-restore/">
+      
+      
+        <link rel="next" href="../kubeadm-cluster-init-troubleshooting/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Complete kubeadm Certificate Management Command Reference - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#complete-kubeadm-certificate-management-command-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Complete kubeadm Certificate Management Command Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KillerCoda Notes – CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Configs that Mimic Kubernetes Ingress Behavior
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Mystery of (/|$): NGINX Ingress Controller's Secret Sauce
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-vs-ingress-compare/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nginx vs ingress compare
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Location Block Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/north-south-traffic-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes NGINX Ingress — Complete Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regex From Absolute Scratch - You WILL Understand This 🎯
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster architecture, installation & configuration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster architecture, installation & configuration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../apiserver-misconfigured-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kube-apiserver Crash (Static Pod)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../apiserver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Control Plane (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cka-kubernetes-upgrade-complete-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Kubernetes Cluster Upgrade Guide for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../etcd-backup-and-restore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    etcd Snapshot Backup and Restore (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete kubeadm Certificate Management Command Reference
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete kubeadm Certificate Management Command Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kubeadm-certs-command-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kubeadm certs Command Structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-certificate-expiration-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Certificate Expiration Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Certificate Expiration Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-all-certificate-expirations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check All Certificate Expirations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter-and-process-expiration-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filter and Process Expiration Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-certificate-renewal-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Certificate Renewal Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Certificate Renewal Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#renew-all-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Renew All Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#renew-specific-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Renew Specific Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#renew-certificate-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Renew Certificate Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-certificate-key-generation-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Certificate Key Generation Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Certificate Key Generation Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate-certificate-encryption-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generate Certificate Encryption Key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificate-key-for-cluster-upgrades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Key for Cluster Upgrades
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-certificate-signing-request-csr-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Certificate Signing Request (CSR) Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Certificate Signing Request (CSR) Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate-csrs-for-external-ca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generate CSRs for External CA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#csr-generation-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSR Generation Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-certificate-inspection-and-verification-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Certificate Inspection and Verification Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Certificate Inspection and Verification Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verify-certificate-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify Certificate Chain
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificate-details-inspection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Details Inspection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-certificate-configuration-and-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Certificate Configuration and Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Certificate Configuration and Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-certificate-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update Certificate Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manage-externally-managed-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manage Externally Managed Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-certificate-backup-and-restore-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Certificate Backup and Restore Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Certificate Backup and Restore Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backup-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restore-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restore Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-certificate-troubleshooting-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Certificate Troubleshooting Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Certificate Troubleshooting Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-certificate-issues-and-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Certificate Issues and Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Certificate Issues and Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-certificate-expired" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue: Certificate Expired
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-certificate-mismatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue: Certificate Mismatch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-unknown-certificate-authority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue: Unknown Certificate Authority
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificate-validation-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Validation Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-advanced-certificate-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Advanced Certificate Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Advanced Certificate Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#certificate-rotation-without-downtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Rotation Without Downtime
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate-certificates-for-new-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generate Certificates for New Nodes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificate-expiry-monitoring-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Expiry Monitoring Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-cka-exam-practice-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. CKA Exam Practice Scenarios
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. CKA Exam Practice Scenarios">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario-1-renew-expiring-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 1: Renew Expiring Certificate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-2-check-all-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 2: Check All Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-3-generate-new-certificate-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 3: Generate New Certificate Key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-4-fix-certificate-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 4: Fix Certificate Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kubeadm-cluster-init-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Cluster Initialization and Node Join Process Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kubelet-misconfigured/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubelet Misconfigured
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../probing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Probes &amp; Health Endpoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rbac-namespace-scope-with-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespacing ClusterRoles Using RoleBindings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rbac-pipeline-serviceaccount-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes RBAC: Pipeline ServiceAccount with Cluster-Wide Read and Namespaced Deployment Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vimsetpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal Vim Configuration for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API: Complete Master Guide 🚀
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API vs Ingress Controller: Deep Dive into Complex Logic 🧠
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/load-of-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services & networking
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services & networking
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/ingress-cli-pathType-and-class/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Ingress via kubectl CLI with Prefix Paths and IngressClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-cross-namespace-egress-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restricting Cross-Namespace Traffic Using NetworkPolicies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-egress-cross-namespace-label-based/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Egress NetworkPolicy for Label-Based Cross-Namespace Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Storage
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/affinity-with-hostPath-and-selector-on-pvc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    affinity with hostPath and selector on pvc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/cheatshett/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cheatshett
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/consumption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Consumption
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/minimal-pv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal pv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/standard-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standard sc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/usage-of-manual-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual StorageClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workload & scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workload & scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/all-possible-way-to-create-secret/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Secrets - Complete Reference Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-env-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using ConfigMaps as Environment Variables and Volumes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-selective/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configmap selective
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/daemonset-troubleshooting-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DaemonSet YAML Troubleshooting Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment-nodeName-scheduling-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment Scheduling Failure Due to Hard-Coded nodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment.strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment.strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/multi-container-port-conflict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CrashLoopBackOff Due to Port Conflict in Multi-Container Pod
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-affinity-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Pod Affinity: Advanced Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-priority-and-priorityclass-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pod Priority Using PriorityClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kubeadm-certs-command-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kubeadm certs Command Structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-certificate-expiration-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Certificate Expiration Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Certificate Expiration Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-all-certificate-expirations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check All Certificate Expirations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter-and-process-expiration-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filter and Process Expiration Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-certificate-renewal-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Certificate Renewal Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Certificate Renewal Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#renew-all-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Renew All Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#renew-specific-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Renew Specific Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#renew-certificate-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Renew Certificate Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-certificate-key-generation-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Certificate Key Generation Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Certificate Key Generation Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate-certificate-encryption-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generate Certificate Encryption Key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificate-key-for-cluster-upgrades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Key for Cluster Upgrades
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-certificate-signing-request-csr-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Certificate Signing Request (CSR) Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Certificate Signing Request (CSR) Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate-csrs-for-external-ca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generate CSRs for External CA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#csr-generation-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSR Generation Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-certificate-inspection-and-verification-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Certificate Inspection and Verification Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Certificate Inspection and Verification Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verify-certificate-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify Certificate Chain
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificate-details-inspection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Details Inspection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-certificate-configuration-and-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Certificate Configuration and Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Certificate Configuration and Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-certificate-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update Certificate Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manage-externally-managed-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manage Externally Managed Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-certificate-backup-and-restore-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Certificate Backup and Restore Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Certificate Backup and Restore Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backup-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restore-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restore Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-certificate-troubleshooting-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Certificate Troubleshooting Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Certificate Troubleshooting Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-certificate-issues-and-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Certificate Issues and Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Certificate Issues and Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-certificate-expired" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue: Certificate Expired
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-certificate-mismatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue: Certificate Mismatch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-unknown-certificate-authority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue: Unknown Certificate Authority
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificate-validation-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Validation Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-advanced-certificate-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Advanced Certificate Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Advanced Certificate Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#certificate-rotation-without-downtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Rotation Without Downtime
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate-certificates-for-new-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generate Certificates for New Nodes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificate-expiry-monitoring-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Expiry Monitoring Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-cka-exam-practice-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. CKA Exam Practice Scenarios
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. CKA Exam Practice Scenarios">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario-1-renew-expiring-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 1: Renew Expiring Certificate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-2-check-all-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 2: Check All Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-3-generate-new-certificate-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 3: Generate New Certificate Key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-4-fix-certificate-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 4: Fix Certificate Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="complete-kubeadm-certificate-management-command-reference">Complete kubeadm Certificate Management Command Reference</h1>
+<p><strong>File name:</strong> <code>kubeadm-certificate-commands-reference.md</code></p>
+<h2 id="kubeadm-certs-command-structure">kubeadm certs Command Structure</h2>
+<div class="highlight"><pre><span></span><code>kubeadm<span class="w"> </span>certs<span class="w"> </span><span class="o">[</span>flags<span class="o">]</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span><span class="o">[</span>command<span class="o">]</span>
+
+Available<span class="w"> </span>Commands:
+<span class="w">  </span>certificate-key<span class="w">  </span>Generate<span class="w"> </span>certificate<span class="w"> </span>keys
+<span class="w">  </span>check-expiration<span class="w"> </span>Check<span class="w"> </span>certificates<span class="w"> </span>expiration<span class="w"> </span><span class="k">for</span><span class="w"> </span>a<span class="w"> </span>Kubernetes<span class="w"> </span>cluster
+<span class="w">  </span>generate-csr<span class="w">     </span>Generate<span class="w"> </span>keys<span class="w"> </span>and<span class="w"> </span>certificate<span class="w"> </span>signing<span class="w"> </span>requests
+<span class="w">  </span>renew<span class="w">            </span>Renew<span class="w"> </span>certificates<span class="w"> </span><span class="k">for</span><span class="w"> </span>a<span class="w"> </span>Kubernetes<span class="w"> </span>cluster
+</code></pre></div>
+<h2 id="1-certificate-expiration-commands">1. Certificate Expiration Commands</h2>
+<h3 id="check-all-certificate-expirations">Check All Certificate Expirations</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Basic expiration check</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration
+
+<span class="c1"># With verbose output</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration<span class="w"> </span>-v<span class="o">=</span><span class="m">5</span>
+
+<span class="c1"># Output specific certificate only</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>apiserver
+
+<span class="c1"># Check with JSON output format</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration<span class="w"> </span>-o<span class="w"> </span>json
+
+<span class="c1"># Check with YAML output format</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration<span class="w"> </span>-o<span class="w"> </span>yaml
+</code></pre></div>
+<h3 id="filter-and-process-expiration-data">Filter and Process Expiration Data</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># List certificates expiring within 90 days</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;NR&gt;2 &amp;&amp; $4 ~ /^[0-9]+d$/ {split($4, days, &quot;d&quot;); if (days[1] &lt;= 90) print $0}&#39;</span>
+
+<span class="c1"># Extract only certificate names and expiration dates</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;NR&gt;2 &amp;&amp; /^[a-z]/ {print $1, $2, $3, $4, $5}&#39;</span>
+
+<span class="c1"># Count certificates by expiration status</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;d</span>$<span class="s2">&quot;</span><span class="w">  </span><span class="c1"># Count certificates (not CAs)</span>
+</code></pre></div>
+<h2 id="2-certificate-renewal-commands">2. Certificate Renewal Commands</h2>
+<h3 id="renew-all-certificates">Renew All Certificates</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Renew all certificates at once</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>all
+
+<span class="c1"># Renew with confirmation prompt</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>all<span class="w"> </span>--yes
+
+<span class="c1"># Renew with dry-run (show what would be done)</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>all<span class="w"> </span>--dry-run
+
+<span class="c1"># Renew with specific kubeconfig directory</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>all<span class="w"> </span>--kubeconfig-dir<span class="o">=</span>/custom/kubeconfig
+
+<span class="c1"># Renew with specific certificate directory</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>all<span class="w"> </span>--cert-dir<span class="o">=</span>/custom/pki
+</code></pre></div>
+<h3 id="renew-specific-certificates">Renew Specific Certificates</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Renew API server certificate</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>apiserver
+
+<span class="c1"># Renew etcd certificates</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>etcd-server
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>etcd-peer
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>etcd-healthcheck-client
+
+<span class="c1"># Renew client certificates</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>apiserver-kubelet-client
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>apiserver-etcd-client
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>front-proxy-client
+
+<span class="c1"># Renew kubeconfig files</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>admin.conf
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>controller-manager.conf
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>scheduler.conf
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>super-admin.conf
+</code></pre></div>
+<h3 id="renew-certificate-groups">Renew Certificate Groups</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Renew all etcd-related certificates</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>etcd-server<span class="w"> </span>etcd-peer<span class="w"> </span>etcd-healthcheck-client
+
+<span class="c1"># Renew all API server certificates</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>apiserver<span class="w"> </span>apiserver-kubelet-client<span class="w"> </span>apiserver-etcd-client
+
+<span class="c1"># Renew all kubeconfig files</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>admin.conf<span class="w"> </span>controller-manager.conf<span class="w"> </span>scheduler.conf
+</code></pre></div>
+<h2 id="3-certificate-key-generation-commands">3. Certificate Key Generation Commands</h2>
+<h3 id="generate-certificate-encryption-key">Generate Certificate Encryption Key</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate a new certificate key</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>certificate-key
+
+<span class="c1"># Generate with specific size (default: 2048)</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>certificate-key<span class="w"> </span>--size<span class="o">=</span><span class="m">4096</span>
+
+<span class="c1"># Generate and save to file</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>certificate-key<span class="w"> </span>&gt;<span class="w"> </span>/etc/kubernetes/pki/certificate-key.txt
+
+<span class="c1"># Use in kubeadm init</span>
+kubeadm<span class="w"> </span>init<span class="w"> </span>--certificate-key<span class="w"> </span><span class="k">$(</span>kubeadm<span class="w"> </span>certs<span class="w"> </span>certificate-key<span class="k">)</span>
+</code></pre></div>
+<h3 id="certificate-key-for-cluster-upgrades">Certificate Key for Cluster Upgrades</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate key for encrypted certificate backup</span>
+<span class="nv">CERT_KEY</span><span class="o">=</span><span class="k">$(</span>kubeadm<span class="w"> </span>certs<span class="w"> </span>certificate-key<span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$CERT_KEY</span>
+
+<span class="c1"># Use during kubeadm init with certificate key</span>
+kubeadm<span class="w"> </span>init<span class="w"> </span>--upload-certs<span class="w"> </span>--certificate-key<span class="w"> </span><span class="nv">$CERT_KEY</span>
+
+<span class="c1"># Store securely for future use</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;CERTIFICATE_KEY=</span><span class="nv">$CERT_KEY</span><span class="s2">&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/root/cluster-secrets.env
+chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/root/cluster-secrets.env
+</code></pre></div>
+<h2 id="4-certificate-signing-request-csr-commands">4. Certificate Signing Request (CSR) Commands</h2>
+<h3 id="generate-csrs-for-external-ca">Generate CSRs for External CA</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate all CSRs</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>generate-csr
+
+<span class="c1"># Generate CSRs with custom directory</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>generate-csr<span class="w"> </span>--cert-dir<span class="o">=</span>/etc/kubernetes/pki<span class="w"> </span>--kubeconfig-dir<span class="o">=</span>/etc/kubernetes
+
+<span class="c1"># Generate CSR for specific certificate</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>generate-csr<span class="w"> </span>--cert-dir<span class="o">=</span>/etc/kubernetes/pki<span class="w"> </span>--certificate<span class="o">=</span>apiserver
+
+<span class="c1"># View CSR details</span>
+openssl<span class="w"> </span>req<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/apiserver.csr<span class="w"> </span>-text<span class="w"> </span>-noout
+</code></pre></div>
+<h3 id="csr-generation-options">CSR Generation Options</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate CSRs with specific configuration</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>generate-csr<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--config<span class="o">=</span>/etc/kubernetes/kubeadm-config.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cert-dir<span class="o">=</span>/custom/pki<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--kubeconfig-dir<span class="o">=</span>/custom/kubeconfig
+
+<span class="c1"># List generated CSRs</span>
+find<span class="w"> </span>/etc/kubernetes/pki<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.csr&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort
+
+<span class="c1"># Check CSR subject</span>
+openssl<span class="w"> </span>req<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/apiserver.csr<span class="w"> </span>-subject<span class="w"> </span>-noout
+</code></pre></div>
+<h2 id="5-certificate-inspection-and-verification-commands">5. Certificate Inspection and Verification Commands</h2>
+<h3 id="verify-certificate-chain">Verify Certificate Chain</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Verify API server certificate against CA</span>
+openssl<span class="w"> </span>verify<span class="w"> </span>-CAfile<span class="w"> </span>/etc/kubernetes/pki/ca.crt<span class="w"> </span>/etc/kubernetes/pki/apiserver.crt
+
+<span class="c1"># Verify etcd certificate chain</span>
+openssl<span class="w"> </span>verify<span class="w"> </span>-CAfile<span class="w"> </span>/etc/kubernetes/pki/etcd/ca.crt<span class="w"> </span>/etc/kubernetes/pki/etcd/server.crt
+
+<span class="c1"># Verify all certificates</span>
+<span class="k">for</span><span class="w"> </span>cert<span class="w"> </span><span class="k">in</span><span class="w"> </span>/etc/kubernetes/pki/*.crt<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Verifying </span><span class="k">$(</span>basename<span class="w"> </span><span class="nv">$cert</span><span class="k">)</span><span class="s2">...&quot;</span>
+<span class="w">  </span>openssl<span class="w"> </span>verify<span class="w"> </span>-CAfile<span class="w"> </span>/etc/kubernetes/pki/ca.crt<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$cert</span><span class="s2">&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Failed: </span><span class="k">$(</span>basename<span class="w"> </span><span class="nv">$cert</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="k">done</span>
+</code></pre></div>
+<h3 id="certificate-details-inspection">Certificate Details Inspection</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># View certificate details</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/apiserver.crt<span class="w"> </span>-text<span class="w"> </span>-noout
+
+<span class="c1"># Check specific fields</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/apiserver.crt<span class="w"> </span>-subject<span class="w"> </span>-noout
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/apiserver.crt<span class="w"> </span>-issuer<span class="w"> </span>-noout
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/apiserver.crt<span class="w"> </span>-dates<span class="w"> </span>-noout
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/apiserver.crt<span class="w"> </span>-serial<span class="w"> </span>-noout
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/apiserver.crt<span class="w"> </span>-fingerprint<span class="w"> </span>-noout
+
+<span class="c1"># Check SANs (Subject Alternative Names)</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/apiserver.crt<span class="w"> </span>-text<span class="w"> </span>-noout<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span><span class="s2">&quot;Subject Alternative Name&quot;</span>
+</code></pre></div>
+<h2 id="6-certificate-configuration-and-management">6. Certificate Configuration and Management</h2>
+<h3 id="update-certificate-configuration">Update Certificate Configuration</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Update kubeadm config with new certificate SANs</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/kubernetes/kubeadm-config.yaml<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">apiVersion: kubeadm.k8s.io/v1beta3</span>
+<span class="s">kind: ClusterConfiguration</span>
+<span class="s">apiServer:</span>
+<span class="s">  certSANs:</span>
+<span class="s">  - &quot;kubernetes&quot;</span>
+<span class="s">  - &quot;kubernetes.default&quot;</span>
+<span class="s">  - &quot;kubernetes.default.svc&quot;</span>
+<span class="s">  - &quot;kubernetes.default.svc.cluster.local&quot;</span>
+<span class="s">  - &quot;172.30.1.2&quot;</span>
+<span class="s">  - &quot;my-custom-hostname.example.com&quot;</span>
+<span class="s">  - &quot;10.0.0.1&quot;</span>
+<span class="s">EOF</span>
+
+<span class="c1"># Upload updated configuration</span>
+kubeadm<span class="w"> </span>init<span class="w"> </span>phase<span class="w"> </span>upload-config<span class="w"> </span>kubeadm<span class="w"> </span>--config<span class="w"> </span>/etc/kubernetes/kubeadm-config.yaml
+
+<span class="c1"># Regenerate certificates with new config</span>
+kubeadm<span class="w"> </span>init<span class="w"> </span>phase<span class="w"> </span>certs<span class="w"> </span>all<span class="w"> </span>--config<span class="w"> </span>/etc/kubernetes/kubeadm-config.yaml
+</code></pre></div>
+<h3 id="manage-externally-managed-certificates">Manage Externally Managed Certificates</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Mark certificates as externally managed</span>
+kubeadm<span class="w"> </span>init<span class="w"> </span>phase<span class="w"> </span>upload-config<span class="w"> </span>kubeadm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--certificate-key<span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--upload-certs<span class="o">=</span><span class="nb">false</span>
+
+<span class="c1"># Check if certificates are externally managed</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;EXTERNALLY MANAGED&quot;</span>
+
+<span class="c1"># For externally managed certs, renewal must be done manually</span>
+<span class="c1"># Place new certificates in /etc/kubernetes/pki/</span>
+<span class="c1"># Restart affected components</span>
+</code></pre></div>
+<h2 id="7-certificate-backup-and-restore-commands">7. Certificate Backup and Restore Commands</h2>
+<h3 id="backup-certificates">Backup Certificates</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Backup all certificates and keys</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>/backup/kubernetes-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>
+cp<span class="w"> </span>-r<span class="w"> </span>/etc/kubernetes/pki<span class="w"> </span>/backup/kubernetes-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>/
+cp<span class="w"> </span>/etc/kubernetes/*.conf<span class="w"> </span>/backup/kubernetes-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>/
+
+<span class="c1"># Backup with tar compression</span>
+tar<span class="w"> </span>-czf<span class="w"> </span>/backup/k8s-certs-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.tar.gz<span class="w"> </span>/etc/kubernetes/pki<span class="w"> </span>/etc/kubernetes/*.conf
+
+<span class="c1"># Backup individual certificates</span>
+cp<span class="w"> </span>/etc/kubernetes/pki/ca.<span class="o">{</span>crt,key<span class="o">}</span><span class="w"> </span>/backup/
+cp<span class="w"> </span>/etc/kubernetes/pki/apiserver.<span class="o">{</span>crt,key<span class="o">}</span><span class="w"> </span>/backup/
+cp<span class="w"> </span>/etc/kubernetes/pki/sa.<span class="o">{</span>pub,key<span class="o">}</span><span class="w"> </span>/backup/
+</code></pre></div>
+<h3 id="restore-certificates">Restore Certificates</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Stop kubelet</span>
+systemctl<span class="w"> </span>stop<span class="w"> </span>kubelet
+
+<span class="c1"># Restore from backup</span>
+cp<span class="w"> </span>-r<span class="w"> </span>/backup/pki/*<span class="w"> </span>/etc/kubernetes/pki/
+cp<span class="w"> </span>/backup/*.conf<span class="w"> </span>/etc/kubernetes/
+
+<span class="c1"># Set proper permissions</span>
+chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/kubernetes/pki/*.key
+chmod<span class="w"> </span><span class="m">644</span><span class="w"> </span>/etc/kubernetes/pki/*.crt
+chmod<span class="w"> </span><span class="m">644</span><span class="w"> </span>/etc/kubernetes/*.conf
+
+<span class="c1"># Start kubelet</span>
+systemctl<span class="w"> </span>start<span class="w"> </span>kubelet
+
+<span class="c1"># Verify restoration</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+</code></pre></div>
+<h2 id="8-certificate-troubleshooting-commands">8. Certificate Troubleshooting Commands</h2>
+<h3 id="common-certificate-issues-and-fixes">Common Certificate Issues and Fixes</h3>
+<h4 id="issue-certificate-expired">Issue: Certificate Expired</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check which certificates expired</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;0d&quot;</span>
+
+<span class="c1"># Renew expired certificates</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>all
+
+<span class="c1"># Restart components</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+</code></pre></div>
+<h4 id="issue-certificate-mismatch">Issue: Certificate Mismatch</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check certificate SANs</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/apiserver.crt<span class="w"> </span>-text<span class="w"> </span>-noout<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span><span class="s2">&quot;Subject Alternative Name&quot;</span>
+
+<span class="c1"># Regenerate with correct SANs</span>
+kubeadm<span class="w"> </span>init<span class="w"> </span>phase<span class="w"> </span>certs<span class="w"> </span>apiserver<span class="w"> </span>--apiserver-cert-extra-sans<span class="w"> </span><span class="s2">&quot;new-hostname,new-ip&quot;</span>
+</code></pre></div>
+<h4 id="issue-unknown-certificate-authority">Issue: Unknown Certificate Authority</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Verify CA certificate</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/ca.crt<span class="w"> </span>-text<span class="w"> </span>-noout
+
+<span class="c1"># Regenerate CA (WARNING: Destructive!)</span>
+<span class="c1"># Backup first!</span>
+kubeadm<span class="w"> </span>init<span class="w"> </span>phase<span class="w"> </span>certs<span class="w"> </span>ca
+</code></pre></div>
+<h3 id="certificate-validation-script">Certificate Validation Script</h3>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># validate-certificates.sh</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Kubernetes Certificate Validation ===&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="c1"># 1. Check expiration</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;1. Certificate Expiration Status:&quot;</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="c1"># 2. Verify certificate chain</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;2. Certificate Chain Validation:&quot;</span>
+<span class="k">for</span><span class="w"> </span>cert<span class="w"> </span><span class="k">in</span><span class="w"> </span>/etc/kubernetes/pki/*.crt<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span><span class="nv">$cert</span><span class="w"> </span>!<span class="o">=</span><span class="w"> </span>*<span class="s2">&quot;ca.crt&quot;</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nv">cert_name</span><span class="o">=</span><span class="k">$(</span>basename<span class="w"> </span><span class="nv">$cert</span><span class="k">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>openssl<span class="w"> </span>verify<span class="w"> </span>-CAfile<span class="w"> </span>/etc/kubernetes/pki/ca.crt<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$cert</span><span class="s2">&quot;</span><span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">      </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ </span><span class="nv">$cert_name</span><span class="s2">: Valid&quot;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">      </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✗ </span><span class="nv">$cert_name</span><span class="s2">: Invalid&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="w">  </span><span class="k">fi</span>
+<span class="k">done</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="c1"># 3. Check file permissions</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;3. File Permissions Check:&quot;</span>
+find<span class="w"> </span>/etc/kubernetes/pki<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.key&quot;</span><span class="w"> </span>-exec<span class="w"> </span>ls<span class="w"> </span>-la<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="c1"># 4. Check kubeconfig certificates</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;4. Kubeconfig Certificate Status:&quot;</span>
+<span class="k">for</span><span class="w"> </span>kubeconfig<span class="w"> </span><span class="k">in</span><span class="w"> </span>/etc/kubernetes/*.conf<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Checking </span><span class="k">$(</span>basename<span class="w"> </span><span class="nv">$kubeconfig</span><span class="k">)</span><span class="s2">...&quot;</span>
+<span class="w">  </span>kubectl<span class="w"> </span>--kubeconfig<span class="o">=</span><span class="nv">$kubeconfig</span><span class="w"> </span>cluster-info<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  ✓ Accessible&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  ✗ Inaccessible&quot;</span>
+<span class="k">done</span>
+</code></pre></div>
+<h2 id="9-advanced-certificate-operations">9. Advanced Certificate Operations</h2>
+<h3 id="certificate-rotation-without-downtime">Certificate Rotation Without Downtime</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># For high availability clusters</span>
+<span class="c1"># 1. Renew certificates on one control plane node</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>all
+
+<span class="c1"># 2. Wait for new certificates to propagate</span>
+sleep<span class="w"> </span><span class="m">30</span>
+
+<span class="c1"># 3. Restart kubelet</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+
+<span class="c1"># 4. Verify node is healthy</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+
+<span class="c1"># 5. Repeat for other control plane nodes</span>
+</code></pre></div>
+<h3 id="generate-certificates-for-new-nodes">Generate Certificates for New Nodes</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate bootstrap token for new node</span>
+kubeadm<span class="w"> </span>token<span class="w"> </span>create<span class="w"> </span>--print-join-command
+
+<span class="c1"># The new node will automatically generate certificates</span>
+<span class="c1"># during kubeadm join process</span>
+
+<span class="c1"># Verify new node certificates</span>
+ssh<span class="w"> </span>new-node<span class="w"> </span><span class="s2">&quot;kubeadm certs check-expiration&quot;</span>
+</code></pre></div>
+<h3 id="certificate-expiry-monitoring-setup">Certificate Expiry Monitoring Setup</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create monitoring script</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>/usr/local/bin/monitor-certs.sh<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">#!/bin/bash</span>
+<span class="s">THRESHOLD_DAYS=30</span>
+<span class="s">LOG_FILE=&quot;/var/log/k8s-cert-monitor.log&quot;</span>
+
+<span class="s">{</span>
+<span class="s">  echo &quot;=== Certificate Monitor Run: $(date) ===&quot;</span>
+<span class="s">  kubeadm certs check-expiration</span>
+
+<span class="s">  echo &quot;&quot;</span>
+<span class="s">  echo &quot;=== Certificates Expiring Soon ===&quot;</span>
+<span class="s">  kubeadm certs check-expiration | awk -v threshold=$THRESHOLD_DAYS &#39;</span>
+<span class="s">  NR&gt;2 &amp;&amp; /^[a-z]/ {</span>
+<span class="s">    days_left = $4</span>
+<span class="s">    sub(/d/, &quot;&quot;, days_left)</span>
+<span class="s">    if (days_left + 0 &lt;= threshold) {</span>
+<span class="s">      printf &quot;%-30s expires in %3d days\n&quot;, $1, days_left</span>
+<span class="s">    }</span>
+<span class="s">  }&#39;</span>
+<span class="s">} &gt;&gt; $LOG_FILE</span>
+
+<span class="s"># Send alert if any certificates expiring soon</span>
+<span class="s">if kubeadm certs check-expiration | grep -q &quot;0d\|1d\|7d\|14d\|30d&quot;; then</span>
+<span class="s">  mail -s &quot;K8s Certificate Alert&quot; admin@example.com &lt; $LOG_FILE</span>
+<span class="s">fi</span>
+<span class="s">EOF</span>
+
+chmod<span class="w"> </span>+x<span class="w"> </span>/usr/local/bin/monitor-certs.sh
+
+<span class="c1"># Add to cron</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;0 8 * * * /usr/local/bin/monitor-certs.sh&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/crontab
+</code></pre></div>
+<h2 id="10-cka-exam-practice-scenarios">10. CKA Exam Practice Scenarios</h2>
+<h3 id="scenario-1-renew-expiring-certificate">Scenario 1: Renew Expiring Certificate</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Task: The apiserver certificate is expiring in 5 days. Renew it.</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>apiserver
+systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w">  </span><span class="c1"># Verify</span>
+</code></pre></div>
+<h3 id="scenario-2-check-all-certificates">Scenario 2: Check All Certificates</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Task: Check expiration of all certificates and save apiserver expiry to file</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>apiserver<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2, $3, $4, $5}&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>/opt/apiserver-expiry.txt
+</code></pre></div>
+<h3 id="scenario-3-generate-new-certificate-key">Scenario 3: Generate New Certificate Key</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Task: Generate a new certificate key for cluster upgrades</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>certificate-key
+<span class="c1"># Save output for later use</span>
+</code></pre></div>
+<h3 id="scenario-4-fix-certificate-error">Scenario 4: Fix Certificate Error</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Task: Fix &quot;x509: certificate has expired or is not yet valid&quot; error</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>all<span class="w"> </span>--yes
+systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+</code></pre></div>
+<p>This comprehensive reference covers all kubeadm certificate management commands with practical examples, troubleshooting scenarios, and CKA-focused practice exercises.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "content.code.copy", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

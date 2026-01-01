@@ -1,0 +1,4786 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/compose/01-autoscaling/hpa/">
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../keywords/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Horizontal Pod Autoscaler (HPA) - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#horizontal-pod-autoscaler-hpa" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Horizontal Pod Autoscaler (HPA)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concise Notes for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01 autoscaling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    01 autoscaling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Horizontal Pod Autoscaler (HPA)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Horizontal Pod Autoscaler (HPA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#metrics-server-installation-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Metrics Server Installation &amp; Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Metrics Server Installation &amp; Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-issue-in-labs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Issue in Labs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommended-installation-method-helm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Installation Method (Helm)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recommended Installation Method (Helm)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standard Installation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-configuration-parameters-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Configuration Parameters Explained
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verification Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting-metrics-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Metrics Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#horizontal-pod-autoscaler-hpa-complete-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚙️ Horizontal Pod Autoscaler (HPA) - Complete Guide
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ Horizontal Pod Autoscaler (HPA) - Complete Guide">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-hpa-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What HPA Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hpa-architecture-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HPA Architecture Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-hpa-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic HPA Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prerequisite-resource-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisite: Resource Requests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hpa-behavior-configuration-complete-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎛️ HPA Behavior Configuration - Complete Details
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎛️ HPA Behavior Configuration - Complete Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose-of-behavior-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose of Behavior Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-components-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Components Explained
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core Components Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-stabilizationwindowseconds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. stabilizationWindowSeconds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-policies-scaling-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. policies - Scaling Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-selectpolicy-choosing-between-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. selectPolicy - Choosing Between Policies
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-behavior-configuration-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Behavior Configuration Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Complete Behavior Configuration Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-web-application-pattern-responsive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Web Application Pattern (Responsive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-batch-processing-pattern-conservative" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Batch Processing Pattern (Conservative)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-real-timestreaming-pattern-aggressive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Real-time/Streaming Pattern (Aggressive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#load-testing-with-stress-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Load Testing with stress Command
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧪 Load Testing with stress Command">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose-of-load-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose of Load Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-the-polinuxstress-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using the polinux/stress Image
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using the polinux/stress Image">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-test-pod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Test Pod
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-stress-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory Stress Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cpu-stress-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CPU Stress Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combined-stress-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Combined Stress Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-hpa-with-memory-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing HPA with Memory Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-hpa-with-cpu-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing HPA with CPU Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-metric-hpa-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Metric HPA Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hpa-status-interpretation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 HPA Status Interpretation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 HPA Status Interpretation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#checking-hpa-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking HPA Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-hpa-conditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key HPA Conditions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-hpa-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common HPA Events
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 Troubleshooting Common Issues
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚨 Troubleshooting Common Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-1-hpa-shows-unknown-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 1: HPA shows &lt;unknown&gt; targets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-2-hpa-not-scaling-when-expected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 2: HPA not scaling when expected
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-3-rapid-scaling-oscillations-flapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 3: Rapid scaling oscillations ("flapping")
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Quick Reference Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📋 Quick Reference Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hpa-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HPA Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring &amp; Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debugging
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💡 Best Practices Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-pitfalls-to-avoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ Common Pitfalls to Avoid
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../keywords/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search Keywords+
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HPA &amp; VPA Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vertical Pod Autoscaler (VPA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02 helm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    02 helm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm Comprehensive Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/create/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Helm Charts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/practice-questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm Practice Questions - Progressive Learning Path
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/question1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/question2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/question3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/question4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03 kustomize
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    03 kustomize
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-kustomize/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kustomize Master Guide: Advanced Patterns &amp; Modern Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-kustomize/question1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04 admission webhook
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    04 admission webhook
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-admission-webhook/commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-admission-webhook/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    05 kubeconfig
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    05 kubeconfig
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-kubeconfig/how-to-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-kubeconfig/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    06 cluster certificates and kube system [important]
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    06 cluster certificates and kube system [important]
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-cluster-certificates-and-kube-system%20%5Bimportant%5D/kubeadm-certs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kubeadm Certificate Checks &amp; Renewal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    07 crd's
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    07 crd's
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/crd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Resource Definitions (CRDs) and Custom Resources (CRs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/solutions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Solutions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    08 gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    08 gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-gateway-api/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10 scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/nodename/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/nodeselector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NodeSelector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_3" id="__nav_10_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    podAffinity nodeAffinity deployments
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    podAffinity nodeAffinity deployments
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/podAffinity-nodeAffinity-deployments/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Scheduling: Pod &amp; Node Affinity - Theory &amp; Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../11-coredns/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 coredns
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    11 coredns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 deployments
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    12 deployments
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_12_1" id="__nav_12_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Probing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_12_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Probing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-deployments/probing/probing-psotgres/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Probing psotgres
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 manage cluster via kubeadm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    13 manage cluster via kubeadm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/cluster-create/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kubeadm Cluster Create &amp; Upgrade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/etcd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Etcd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/high-availablity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    High availablity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/north-south-traffic-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Ingress
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Ingress Controller Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_15" >
+        
+          
+          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 troubleshoot controlplane
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_15">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    15 troubleshoot controlplane
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15-troubleshoot-controlplane/prerequisite-and-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Approach Control Plane Issues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17 authorization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    17 authorization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/cani/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cani
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/gotchas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RBAC Gotchas and Common Mistakes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/role-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RBAC Core Objects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/system-based-authorization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System based authorization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18 basic bash
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    18 basic bash
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../18-basic-bash/bash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19 secrets and configmap
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    19 secrets and configmap
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../19-secrets-and-configmap/environment-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment and volume
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20 services
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    20 services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../20-services/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cli
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_20" >
+        
+          
+          <label class="md-nav__link" for="__nav_20" id="__nav_20_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    21 storage class pv pvc
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_20_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    21 storage class pv pvc
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../21-storage-class-pv-pvc/example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../21-storage-class-pv-pvc/selector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Selector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#metrics-server-installation-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Metrics Server Installation &amp; Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Metrics Server Installation &amp; Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-issue-in-labs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Issue in Labs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommended-installation-method-helm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Installation Method (Helm)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recommended Installation Method (Helm)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standard Installation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-configuration-parameters-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Configuration Parameters Explained
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verification Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting-metrics-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Metrics Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#horizontal-pod-autoscaler-hpa-complete-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚙️ Horizontal Pod Autoscaler (HPA) - Complete Guide
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ Horizontal Pod Autoscaler (HPA) - Complete Guide">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-hpa-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What HPA Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hpa-architecture-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HPA Architecture Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-hpa-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic HPA Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prerequisite-resource-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisite: Resource Requests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hpa-behavior-configuration-complete-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎛️ HPA Behavior Configuration - Complete Details
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎛️ HPA Behavior Configuration - Complete Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose-of-behavior-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose of Behavior Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-components-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Components Explained
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core Components Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-stabilizationwindowseconds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. stabilizationWindowSeconds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-policies-scaling-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. policies - Scaling Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-selectpolicy-choosing-between-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. selectPolicy - Choosing Between Policies
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-behavior-configuration-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Behavior Configuration Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Complete Behavior Configuration Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-web-application-pattern-responsive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Web Application Pattern (Responsive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-batch-processing-pattern-conservative" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Batch Processing Pattern (Conservative)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-real-timestreaming-pattern-aggressive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Real-time/Streaming Pattern (Aggressive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#load-testing-with-stress-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Load Testing with stress Command
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧪 Load Testing with stress Command">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose-of-load-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose of Load Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-the-polinuxstress-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using the polinux/stress Image
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using the polinux/stress Image">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-test-pod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Test Pod
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-stress-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory Stress Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cpu-stress-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CPU Stress Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combined-stress-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Combined Stress Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-hpa-with-memory-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing HPA with Memory Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-hpa-with-cpu-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing HPA with CPU Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-metric-hpa-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Metric HPA Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hpa-status-interpretation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 HPA Status Interpretation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 HPA Status Interpretation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#checking-hpa-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking HPA Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-hpa-conditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key HPA Conditions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-hpa-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common HPA Events
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 Troubleshooting Common Issues
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚨 Troubleshooting Common Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-1-hpa-shows-unknown-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 1: HPA shows &lt;unknown&gt; targets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-2-hpa-not-scaling-when-expected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 2: HPA not scaling when expected
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-3-rapid-scaling-oscillations-flapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 3: Rapid scaling oscillations ("flapping")
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Quick Reference Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📋 Quick Reference Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hpa-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HPA Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring &amp; Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debugging
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💡 Best Practices Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-pitfalls-to-avoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ Common Pitfalls to Avoid
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="horizontal-pod-autoscaler-hpa">Horizontal Pod Autoscaler (HPA)</h1>
+<h2 id="metrics-server-installation-configuration">📊 <strong>Metrics Server Installation &amp; Configuration</strong></h2>
+<h3 id="purpose"><strong>Purpose</strong></h3>
+<p>The Metrics Server collects resource utilization data (CPU/Memory) from Kubernetes nodes and pods, enabling the <code>kubectl top</code> command and providing metrics to the Horizontal Pod Autoscaler (HPA).</p>
+<h3 id="core-issue-in-labs"><strong>Core Issue in Labs</strong></h3>
+<p>Lab environments like KillerCoda often have self-signed or untrusted TLS certificates between components. Without bypassing TLS verification, the Metrics Server cannot scrape metrics from kubelets.</p>
+<h3 id="recommended-installation-method-helm"><strong>Recommended Installation Method (Helm)</strong></h3>
+<h4 id="standard-installation"><strong>Standard Installation</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Add Helm repository</span>
+helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>metrics-server<span class="w"> </span>https://kubernetes-sigs.github.io/metrics-server/
+helm<span class="w"> </span>repo<span class="w"> </span>update
+
+<span class="c1"># Install with lab-friendly configuration</span>
+helm<span class="w"> </span>install<span class="w"> </span>metrics-server<span class="w"> </span>metrics-server/metrics-server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--namespace<span class="w"> </span>kube-system<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span><span class="s1">&#39;args={--cert-dir=/tmp,--secure-port=4443,--kubelet-insecure-tls,--kubelet-preferred-address-types=InternalIP}&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span><span class="nv">containerPort</span><span class="o">=</span><span class="m">4443</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span><span class="s1">&#39;livenessProbe.httpGet.path=/livez&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span><span class="s1">&#39;livenessProbe.httpGet.port=4443&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span><span class="s1">&#39;livenessProbe.httpGet.scheme=HTTPS&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span><span class="s1">&#39;readinessProbe.httpGet.path=/readyz&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span><span class="s1">&#39;readinessProbe.httpGet.port=4443&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span><span class="s1">&#39;readinessProbe.httpGet.scheme=HTTPS&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>service.port<span class="o">=</span><span class="m">4443</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>service.targetPort<span class="o">=</span><span class="m">4443</span>
+</code></pre></div>
+<h4 id="key-configuration-parameters-explained"><strong>Key Configuration Parameters Explained</strong></h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Purpose</th>
+<th>Why It's Needed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--kubelet-insecure-tls</code></td>
+<td>Disables TLS verification</td>
+<td>Lab environments have self-signed certs</td>
+</tr>
+<tr>
+<td><code>--kubelet-preferred-address-types=InternalIP</code></td>
+<td>Uses internal IPs</td>
+<td>Ensures correct network connectivity</td>
+</tr>
+<tr>
+<td><code>containerPort: 4443</code></td>
+<td>Explicit port definition</td>
+<td>Avoids conflicts with default ports</td>
+</tr>
+<tr>
+<td>Port 4443 in probes</td>
+<td>Consistent port usage</td>
+<td>Health checks match actual listening port</td>
+</tr>
+<tr>
+<td>HTTPS scheme</td>
+<td>Secure connections</td>
+<td>Required for metrics server security</td>
+</tr>
+</tbody>
+</table>
+<h3 id="verification-steps"><strong>Verification Steps</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Wait 20-30 seconds for initialization</span>
+sleep<span class="w"> </span><span class="m">20</span>
+
+<span class="c1"># Check pod status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/name<span class="o">=</span>metrics-server
+
+<span class="c1"># Test metrics collection</span>
+kubectl<span class="w"> </span>top<span class="w"> </span>nodes
+kubectl<span class="w"> </span>top<span class="w"> </span>pods
+
+<span class="c1"># Verify API service</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>apiservice<span class="w"> </span>v1beta1.metrics.k8s.io
+<span class="c1"># Should show: AVAILABLE=True</span>
+</code></pre></div>
+<h3 id="troubleshooting-metrics-server"><strong>Troubleshooting Metrics Server</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check logs for connection issues</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>deployment/metrics-server
+
+<span class="c1"># If &#39;Failed to scrape node&#39;, verify network policies</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>networkpolicies<span class="w"> </span>-A
+
+<span class="c1"># Test direct metrics API access</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>--raw<span class="w"> </span><span class="s2">&quot;/apis/metrics.k8s.io/v1beta1/nodes&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+</code></pre></div>
+<h2 id="horizontal-pod-autoscaler-hpa-complete-guide">⚙️ <strong>Horizontal Pod Autoscaler (HPA) - Complete Guide</strong></h2>
+<h3 id="what-hpa-does"><strong>What HPA Does</strong></h3>
+<p>HPA automatically adjusts the number of pod replicas in a deployment based on observed metrics, maintaining your defined target utilization.</p>
+<p><strong>Core Formula</strong>: <code>desiredReplicas = ceil(currentReplicas × (currentMetricValue / desiredMetricValue))</code></p>
+<h3 id="hpa-architecture-diagram"><strong>HPA Architecture Diagram</strong></h3>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────┐
+│                          HPA Controller                              │
+│  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐         │
+│  │  Get Metrics │────▶│  Calculate   │────▶│  Update      │         │
+│  │  from API    │     │  Desired     │     │  Deployment  │         │
+│  │              │     │  Replicas    │     │  Replicas    │         │
+│  └──────────────┘     └──────────────┘     └──────────────┘         │
+└─────────────────────────────────────────────────────────────────────┘
+         │                            │
+         ▼                            ▼
+┌─────────────────┐         ┌─────────────────┐
+│   Metrics API   │         │   Deployment    │
+│   (Metrics-     │         │   Controller    │
+│    Server)      │         │                 │
+└─────────────────┘         └─────────────────┘
+         │
+         ▼
+┌─────────────────┐
+│    Kubelet      │
+│   (Nodes/Pods)  │
+└─────────────────┘
+</code></pre></div>
+<h3 id="basic-hpa-structure"><strong>Basic HPA Structure</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling/v2</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HorizontalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-hpa</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">scaleTargetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">your-app</span>
+
+<span class="w">  </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w">        </span><span class="c1"># Minimum pods for availability</span>
+<span class="w">  </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w">       </span><span class="c1"># Maximum pods for cost control</span>
+
+<span class="w">  </span><span class="nt">metrics</span><span class="p">:</span><span class="w">              </span><span class="c1"># What to monitor</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Resource</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpu</span>
+<span class="w">      </span><span class="nt">target</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Utilization</span>
+<span class="w">        </span><span class="nt">averageUtilization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70</span><span class="w">  </span><span class="c1"># Target 70% CPU usage</span>
+
+<span class="w">  </span><span class="nt">behavior</span><span class="p">:</span><span class="w">             </span><span class="c1"># How to scale (optional but recommended)</span>
+<span class="w">    </span><span class="nt">scaleUp</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">stabilizationWindowSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">      </span><span class="nt">policies</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">...</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">scaleDown</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">stabilizationWindowSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+<span class="w">      </span><span class="nt">policies</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">...</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<h3 id="prerequisite-resource-requests"><strong>Prerequisite: Resource Requests</strong></h3>
+<p><strong>Critical</strong>: Pods must have resource requests for HPA to calculate utilization percentages.
+<div class="highlight"><pre><span></span><code><span class="c1"># In your deployment template</span>
+<span class="nt">resources</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;256Mi&quot;</span><span class="w">    </span><span class="c1"># HPA uses: (actual usage / 256Mi) × 100%</span>
+<span class="w">    </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;250m&quot;</span><span class="w">        </span><span class="c1"># Requested = 0.25 CPU cores</span>
+<span class="w">  </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;512Mi&quot;</span>
+<span class="w">    </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;500m&quot;</span>
+</code></pre></div></p>
+<p><strong>Common Mistake</strong>: Using wrong units
+- ❌ CPU: <code>"256Mi"</code> (Mi is for memory!)
+- ✅ CPU: <code>"250m"</code> (millicores) or <code>"0.25"</code>
+- ✅ Memory: <code>"256Mi"</code> (mebibytes) or <code>"512Mi"</code></p>
+<h2 id="hpa-behavior-configuration-complete-details">🎛️ <strong>HPA Behavior Configuration - Complete Details</strong></h2>
+<h3 id="purpose-of-behavior-settings"><strong>Purpose of Behavior Settings</strong></h3>
+<p>Control the <strong>timing</strong>, <strong>speed</strong>, and <strong>magnitude</strong> of scaling operations to prevent rapid oscillations ("flapping") and ensure stable application performance.</p>
+<h3 id="core-components-explained"><strong>Core Components Explained</strong></h3>
+<h4 id="1-stabilizationwindowseconds"><strong>1. <code>stabilizationWindowSeconds</code></strong></h4>
+<p>A waiting period after a metric change before taking scaling action.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">scaleDown</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">stabilizationWindowSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span><span class="w">  </span><span class="c1"># Wait 5 minutes of low usage before scaling down</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Recommended Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scale Up (responsive)</td>
+<td>0-30 seconds</td>
+</tr>
+<tr>
+<td>Scale Down (conservative)</td>
+<td>300-600 seconds</td>
+</tr>
+<tr>
+<td>Stateful applications</td>
+<td>600+ seconds</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2-policies-scaling-rules"><strong>2. <code>policies</code> - Scaling Rules</strong></h4>
+<p>Define how many pods can be added/removed in a time window.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">policies</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pods</span><span class="w">        </span><span class="c1"># Fixed number of pods</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w">          </span><span class="c1"># Add/remove 2 pods max</span>
+<span class="w">  </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span><span class="w"> </span><span class="c1"># Every 60 seconds</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Percent</span><span class="w">     </span><span class="c1"># Percentage of current pods</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span><span class="w">         </span><span class="c1"># Add/remove 50% of current pods</span>
+<span class="w">  </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w"> </span><span class="c1"># Every 30 seconds</span>
+</code></pre></div>
+<p><strong>Policy Types Comparison</strong>:
+| Type | Best For | Example | Result (10 pods → ?) |
+|------|----------|---------|----------------------|
+| <code>Pods</code> | Predictable scaling | <code>value: 3</code> | Add/remove exactly 3 pods |
+| <code>Percent</code> | Proportional scaling | <code>value: 50</code> | Add/remove 5 pods (50% of 10) |</p>
+<h4 id="3-selectpolicy-choosing-between-policies"><strong>3. <code>selectPolicy</code> - Choosing Between Policies</strong></h4>
+<p>When multiple policies exist, which one to apply?</p>
+<div class="highlight"><pre><span></span><code><span class="nt">selectPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Max</span><span class="w">  </span><span class="c1"># Use the policy allowing the BIGGEST change</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Behavior</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Max</code></td>
+<td>Uses policy allowing largest change</td>
+<td>Fast scaling response</td>
+</tr>
+<tr>
+<td><code>Min</code></td>
+<td>Uses policy allowing smallest change</td>
+<td>Conservative, safe scaling</td>
+</tr>
+<tr>
+<td><code>Disabled</code></td>
+<td>No scaling in this direction</td>
+<td>Disable scale-up/down</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example with <code>Max</code></strong>:
+<div class="highlight"><pre><span></span><code><span class="nt">policies</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pods</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w">          </span><span class="c1"># Can change 2 pods</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Percent</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w">        </span><span class="c1"># Can change 100% of pods (all of them!)</span>
+
+<span class="c1"># With selectPolicy: Max → Uses Percent: 100 (bigger change)</span>
+<span class="c1"># With selectPolicy: Min → Uses Pods: 2 (smaller change)</span>
+</code></pre></div></p>
+<h3 id="complete-behavior-configuration-examples"><strong>Complete Behavior Configuration Examples</strong></h3>
+<h4 id="1-web-application-pattern-responsive"><strong>1. Web Application Pattern (Responsive)</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">behavior</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">scaleUp</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">stabilizationWindowSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w">      </span><span class="c1"># React immediately to traffic spikes</span>
+<span class="w">    </span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pods</span>
+<span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Percent</span>
+<span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15</span>
+<span class="w">    </span><span class="nt">selectPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Max</span><span class="w">                  </span><span class="c1"># Scale aggressively during spikes</span>
+
+<span class="w">  </span><span class="nt">scaleDown</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">stabilizationWindowSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span><span class="w">    </span><span class="c1"># Wait 5 minutes before scaling down</span>
+<span class="w">    </span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Percent</span>
+<span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
+<span class="w">    </span><span class="nt">selectPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Max</span>
+</code></pre></div>
+<h4 id="2-batch-processing-pattern-conservative"><strong>2. Batch Processing Pattern (Conservative)</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">behavior</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">scaleUp</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">stabilizationWindowSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span><span class="w">     </span><span class="c1"># Wait 1 minute to confirm need</span>
+<span class="w">    </span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pods</span>
+<span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">90</span>
+<span class="w">    </span><span class="nt">selectPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Max</span>
+
+<span class="w">  </span><span class="nt">scaleDown</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">stabilizationWindowSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">600</span><span class="w">    </span><span class="c1"># Wait 10 minutes (long jobs)</span>
+<span class="w">    </span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pods</span>
+<span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">180</span>
+<span class="w">    </span><span class="nt">selectPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Min</span><span class="w">                  </span><span class="c1"># Scale down very slowly</span>
+</code></pre></div>
+<h4 id="3-real-timestreaming-pattern-aggressive"><strong>3. Real-time/Streaming Pattern (Aggressive)</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">behavior</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">scaleUp</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">stabilizationWindowSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">    </span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Percent</span>
+<span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w">      </span><span class="c1"># Can double pod count</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">    </span><span class="nt">selectPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Max</span>
+
+<span class="w">  </span><span class="nt">scaleDown</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">stabilizationWindowSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
+<span class="w">    </span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Percent</span>
+<span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w">      </span><span class="c1"># Can remove all extra pods</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">    </span><span class="nt">selectPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Max</span>
+</code></pre></div>
+<h2 id="load-testing-with-stress-command">🧪 <strong>Load Testing with <code>stress</code> Command</strong></h2>
+<h3 id="purpose-of-load-testing"><strong>Purpose of Load Testing</strong></h3>
+<ul>
+<li>Verify HPA triggers at correct thresholds</li>
+<li>Test scaling behavior under controlled conditions</li>
+<li>Identify optimal resource requests and limits</li>
+</ul>
+<h3 id="using-the-polinuxstress-image"><strong>Using the <code>polinux/stress</code> Image</strong></h3>
+<h4 id="basic-test-pod"><strong>Basic Test Pod</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create a pod for testing</span>
+kubectl<span class="w"> </span>run<span class="w"> </span>stress-test<span class="w"> </span>--image<span class="o">=</span>polinux/stress<span class="w"> </span>--command<span class="w"> </span>--<span class="w"> </span>sleep<span class="w"> </span><span class="m">3600</span>
+
+<span class="c1"># Run stress commands inside the pod</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>stress-test<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>100M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">60</span>
+</code></pre></div>
+<h4 id="memory-stress-testing"><strong>Memory Stress Testing</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Memory Stress Only</span>
+<span class="c1"># Syntax: --vm N (workers) --vm-bytes X (memory per worker) --timeout T (seconds)</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--vm<span class="w"> </span><span class="m">2</span><span class="w"> </span>--vm-bytes<span class="w"> </span>150M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">120</span>
+
+<span class="c1"># 2. Heavy Memory Load</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--vm<span class="w"> </span><span class="m">4</span><span class="w"> </span>--vm-bytes<span class="w"> </span>500M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">180</span>
+
+<span class="c1"># 3. Continuous Memory Stress (background)</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>100M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">600</span><span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div>
+<h4 id="cpu-stress-testing"><strong>CPU Stress Testing</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. CPU Stress Only</span>
+<span class="c1"># Syntax: --cpu N (workers) --timeout T (seconds)</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">4</span><span class="w"> </span>--timeout<span class="w"> </span><span class="m">90</span>
+
+<span class="c1"># 2. Heavy CPU Load (all cores)</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">8</span><span class="w"> </span>--timeout<span class="w"> </span><span class="m">120</span>
+
+<span class="c1"># 3. Mixed CPU Load (varying intensity)</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">2</span><span class="w"> </span>--timeout<span class="w"> </span><span class="m">60</span><span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="se">\</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">4</span><span class="w"> </span>--timeout<span class="w"> </span><span class="m">60</span>
+</code></pre></div>
+<h4 id="combined-stress-testing"><strong>Combined Stress Testing</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Memory + CPU Combined Stress</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>200M<span class="w"> </span>--cpu<span class="w"> </span><span class="m">2</span><span class="w"> </span>--timeout<span class="w"> </span><span class="m">180</span>
+
+<span class="c1"># 2. Heavy Combined Load</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--vm<span class="w"> </span><span class="m">2</span><span class="w"> </span>--vm-bytes<span class="w"> </span>300M<span class="w"> </span>--cpu<span class="w"> </span><span class="m">4</span><span class="w"> </span>--timeout<span class="w"> </span><span class="m">240</span>
+
+<span class="c1"># 3. Sequential Stress Testing</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">4</span><span class="w"> </span>--timeout<span class="w"> </span><span class="m">60</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--vm<span class="w"> </span><span class="m">2</span><span class="w"> </span>--vm-bytes<span class="w"> </span>100M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">60</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">2</span><span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>150M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">90</span>
+</code></pre></div>
+<h4 id="testing-hpa-with-memory-metrics"><strong>Testing HPA with Memory Metrics</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Given: HPA target is 70% memory utilization</span>
+<span class="c1"># Given: Pod requests 128Mi memory</span>
+<span class="c1"># Calculation: Need ~90Mi usage to trigger scaling (128Mi × 70% = 89.6Mi)</span>
+
+<span class="c1"># Trigger scaling</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deployment/your-app<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>100M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">300</span>
+
+<span class="c1"># Monitor scaling</span>
+watch<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s1">&#39;kubectl get hpa,pods &amp;&amp; echo &quot;---&quot; &amp;&amp; kubectl top pods&#39;</span>
+</code></pre></div>
+<h4 id="testing-hpa-with-cpu-metrics"><strong>Testing HPA with CPU Metrics</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Given: HPA target is 50% CPU utilization  </span>
+<span class="c1"># Given: Pod requests 500m CPU (0.5 cores)</span>
+<span class="c1"># Calculation: Need ~250m usage to trigger scaling (500m × 50% = 250m)</span>
+
+<span class="c1"># Trigger CPU scaling</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deployment/your-app<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">2</span><span class="w"> </span>--timeout<span class="w"> </span><span class="m">300</span>
+
+<span class="c1"># Monitor CPU-based scaling</span>
+watch<span class="w"> </span>-n<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="s1">&#39;kubectl get hpa &amp;&amp; echo &quot;CPU Usage:&quot; &amp;&amp; kubectl top pods | grep your-app&#39;</span>
+</code></pre></div>
+<h4 id="multi-metric-hpa-testing"><strong>Multi-Metric HPA Testing</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create HPA watching both CPU and Memory</span>
+cat<span class="w"> </span><span class="s">&lt;&lt;EOF | kubectl apply -f -</span>
+<span class="s">apiVersion: autoscaling/v2</span>
+<span class="s">kind: HorizontalPodAutoscaler</span>
+<span class="s">metadata:</span>
+<span class="s">  name: multi-hpa</span>
+<span class="s">spec:</span>
+<span class="s">  scaleTargetRef:</span>
+<span class="s">    apiVersion: apps/v1</span>
+<span class="s">    kind: Deployment</span>
+<span class="s">    name: your-app</span>
+<span class="s">  minReplicas: 1</span>
+<span class="s">  maxReplicas: 10</span>
+<span class="s">  metrics:</span>
+<span class="s">  - type: Resource</span>
+<span class="s">    resource:</span>
+<span class="s">      name: cpu</span>
+<span class="s">      target:</span>
+<span class="s">        type: Utilization</span>
+<span class="s">        averageUtilization: 60</span>
+<span class="s">  - type: Resource</span>
+<span class="s">    resource:</span>
+<span class="s">      name: memory</span>
+<span class="s">      target:</span>
+<span class="s">        type: Utilization</span>
+<span class="s">        averageUtilization: 70</span>
+<span class="s">EOF</span>
+
+<span class="c1"># Test both resources</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deployment/your-app<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">4</span><span class="w"> </span>--vm<span class="w"> </span><span class="m">2</span><span class="w"> </span>--vm-bytes<span class="w"> </span>200M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">300</span>
+</code></pre></div>
+<h2 id="hpa-status-interpretation">🔍 <strong>HPA Status Interpretation</strong></h2>
+<h3 id="checking-hpa-status"><strong>Checking HPA Status</strong></h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>hpa
+<span class="c1"># Output shows: REFERENCE, TARGETS, MINPODS, MAXPODS, REPLICAS</span>
+
+kubectl<span class="w"> </span>describe<span class="w"> </span>hpa<span class="w"> </span>your-hpa
+<span class="c1"># Shows conditions, events, and detailed metrics</span>
+</code></pre></div>
+<h3 id="key-hpa-conditions"><strong>Key HPA Conditions</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Condition</th>
+<th>Status</th>
+<th>Meaning</th>
+<th>Action Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AbleToScale</code></td>
+<td>True/False</td>
+<td>Can HPA modify replicas?</td>
+<td>Check permissions if False</td>
+</tr>
+<tr>
+<td><code>ScalingActive</code></td>
+<td>True/False</td>
+<td>Getting metrics successfully?</td>
+<td>Fix metrics server if False</td>
+</tr>
+<tr>
+<td><code>ScalingLimited</code></td>
+<td>True/False</td>
+<td>Hit min/max replica limits?</td>
+<td>Adjust min/max if True</td>
+</tr>
+</tbody>
+</table>
+<h3 id="common-hpa-events"><strong>Common HPA Events</strong></h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>describe<span class="w"> </span>hpa<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A5<span class="w"> </span><span class="s2">&quot;Events:&quot;</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Meaning</th>
+<th>Typical Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SuccessfulRescale</code></td>
+<td>HPA changed replica count</td>
+<td>Normal operation</td>
+</tr>
+<tr>
+<td><code>FailedGetResourceMetric</code></td>
+<td>Can't fetch metrics</td>
+<td>Metrics server down</td>
+</tr>
+<tr>
+<td><code>FailedComputeMetricsReplicas</code></td>
+<td>Can't calculate desired replicas</td>
+<td>Invalid metric configuration</td>
+</tr>
+</tbody>
+</table>
+<h2 id="troubleshooting-common-issues">🚨 <strong>Troubleshooting Common Issues</strong></h2>
+<h3 id="issue-1-hpa-shows-unknown-targets"><strong>Issue 1: HPA shows <code>&lt;unknown&gt;</code> targets</strong></h3>
+<p><strong>Cause</strong>: Metrics Server not working
+<strong>Solution</strong>:
+<div class="highlight"><pre><span></span><code><span class="c1"># Check metrics-server pod</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>metrics-server
+
+<span class="c1"># Check logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>deployment/metrics-server
+
+<span class="c1"># Reinstall if needed (with correct flags)</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>metrics-server<span class="w"> </span>--reuse-values<span class="w"> </span>--set<span class="w"> </span><span class="s1">&#39;args={--kubelet-insecure-tls}&#39;</span>
+</code></pre></div></p>
+<h3 id="issue-2-hpa-not-scaling-when-expected"><strong>Issue 2: HPA not scaling when expected</strong></h3>
+<p><strong>Checklist</strong>:
+1. Verify pod has resource requests (<code>kubectl get pod -o yaml | grep requests</code>)
+2. Check current vs target metrics (<code>kubectl describe hpa</code>)
+3. Verify HPA is not limited (<code>ScalingLimited</code> condition)
+4. Ensure metrics are above target threshold</p>
+<h3 id="issue-3-rapid-scaling-oscillations-flapping"><strong>Issue 3: Rapid scaling oscillations ("flapping")</strong></h3>
+<p><strong>Solution</strong>: Adjust behavior settings
+<div class="highlight"><pre><span></span><code><span class="nt">behavior</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">scaleDown</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">stabilizationWindowSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">600</span><span class="w">  </span><span class="c1"># Increase from 300 to 600</span>
+<span class="w">    </span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Percent</span>
+<span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span><span class="w">  </span><span class="c1"># Reduce from 50% to 20%</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">120</span>
+</code></pre></div></p>
+<h2 id="quick-reference-commands">📋 <strong>Quick Reference Commands</strong></h2>
+<h3 id="hpa-management"><strong>HPA Management</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create HPA with kubectl</span>
+kubectl<span class="w"> </span>autoscale<span class="w"> </span>deployment/my-app<span class="w"> </span>--cpu-percent<span class="o">=</span><span class="m">50</span><span class="w"> </span>--min<span class="o">=</span><span class="m">1</span><span class="w"> </span>--max<span class="o">=</span><span class="m">5</span>
+
+<span class="c1"># Get HPA information</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>hpa
+kubectl<span class="w"> </span>describe<span class="w"> </span>hpa<span class="w"> </span>&lt;name&gt;
+kubectl<span class="w"> </span>get<span class="w"> </span>hpa<span class="w"> </span>&lt;name&gt;<span class="w"> </span>-o<span class="w"> </span>yaml
+
+<span class="c1"># Edit HPA</span>
+kubectl<span class="w"> </span>edit<span class="w"> </span>hpa<span class="w"> </span>&lt;name&gt;
+
+<span class="c1"># Delete HPA</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>hpa<span class="w"> </span>&lt;name&gt;
+</code></pre></div>
+<h3 id="monitoring-testing"><strong>Monitoring &amp; Testing</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Watch scaling in real-time</span>
+watch<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="s1">&#39;kubectl get hpa,deploy,pods &amp;&amp; echo &quot;---&quot; &amp;&amp; kubectl top pods 2&gt;/dev/null || echo &quot;Metrics loading...&quot;&#39;</span>
+
+<span class="c1"># Generate memory load for testing</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deployment/&lt;name&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>150M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">120</span>
+
+<span class="c1"># Generate CPU load for testing</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deployment/&lt;name&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">4</span><span class="w"> </span>--timeout<span class="w"> </span><span class="m">120</span>
+
+<span class="c1"># Check resource usage</span>
+kubectl<span class="w"> </span>top<span class="w"> </span>pods
+kubectl<span class="w"> </span>top<span class="w"> </span>pods<span class="w"> </span>--containers<span class="w">  </span><span class="c1"># Show container-level usage</span>
+</code></pre></div>
+<h3 id="debugging"><strong>Debugging</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check HPA events</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>events<span class="w"> </span>--field-selector<span class="w"> </span>involvedObject.kind<span class="o">=</span>HorizontalPodAutoscaler<span class="w"> </span>--sort-by<span class="o">=</span>.metadata.creationTimestamp
+
+<span class="c1"># Verify API access</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>--raw<span class="w"> </span><span class="s2">&quot;/apis/metrics.k8s.io/v1beta1/nodes&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.items[0].usage&#39;</span>
+
+<span class="c1"># Check pod details</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A10<span class="w"> </span><span class="s2">&quot;Resources:&quot;</span>
+</code></pre></div>
+<h2 id="best-practices-summary">💡 <strong>Best Practices Summary</strong></h2>
+<ol>
+<li><strong>Always set resource requests</strong> in deployments (required for HPA calculations)</li>
+<li><strong>Start with conservative behavior</strong> and adjust based on observations</li>
+<li><strong>Test both CPU and memory scaling</strong> before production deployment</li>
+<li><strong>Monitor HPA events</strong> for failed scaling attempts</li>
+<li><strong>Use appropriate min/max values</strong> based on application needs and cluster capacity</li>
+<li><strong>Regularly review metrics</strong> to ensure targets are appropriate</li>
+<li><strong>Consider combining with VPA</strong> (Vertical Pod Autoscaler) for right-sizing requests</li>
+</ol>
+<h2 id="common-pitfalls-to-avoid">⚠️ <strong>Common Pitfalls to Avoid</strong></h2>
+<ul>
+<li>❌ Forgetting to install/configure Metrics Server</li>
+<li>❌ Not setting resource requests in pods</li>
+<li>❌ Setting <code>minReplicas</code> to 0 for stateful applications</li>
+<li>❌ Too aggressive scale-down causing application instability</li>
+<li>❌ Incorrect metric units (using <code>Mi</code> for CPU, <code>m</code> for memory)</li>
+<li>❌ Not monitoring HPA events for failures</li>
+<li>❌ Testing only one resource type (CPU or Memory) when both matter</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "navigation.indexes", "toc.follow", "content.code.copy", "content.tabs.link", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

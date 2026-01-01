@@ -1,0 +1,3095 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/docs/cluster%20architecture%2C%20installation%20%26%20configuration/cka-kubernetes-upgrade-complete-guide/">
+      
+      
+        <link rel="prev" href="../apiserver/">
+      
+      
+        <link rel="next" href="../etcd-backup-and-restore/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Complete Kubernetes Cluster Upgrade Guide for CKA - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#complete-kubernetes-cluster-upgrade-guide-for-cka" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Complete Kubernetes Cluster Upgrade Guide for CKA
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KillerCoda Notes – CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Configs that Mimic Kubernetes Ingress Behavior
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Mystery of (/|$): NGINX Ingress Controller's Secret Sauce
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-vs-ingress-compare/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nginx vs ingress compare
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Location Block Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/north-south-traffic-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes NGINX Ingress — Complete Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regex From Absolute Scratch - You WILL Understand This 🎯
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster architecture, installation & configuration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster architecture, installation & configuration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../apiserver-misconfigured-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kube-apiserver Crash (Static Pod)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../apiserver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Control Plane (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Kubernetes Cluster Upgrade Guide for CKA
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Kubernetes Cluster Upgrade Guide for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core-upgrade-principles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Upgrade Principles
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core Upgrade Principles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-version-compatibility-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Version Compatibility Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-upgrade-command-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Upgrade Command Matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detailed-upgrade-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detailed Upgrade Process
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Detailed Upgrade Process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-pre-upgrade-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: Pre-Upgrade Planning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: Pre-Upgrade Planning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-check-current-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Check Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-run-upgrade-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Run Upgrade Plan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-backup-critical-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Backup Critical Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-control-plane-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Control Plane Upgrade
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: Control Plane Upgrade">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-upgrade-kubeadm-first-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Upgrade kubeadm (First Step!)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-pull-upgrade-images-optional-but-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Pull Upgrade Images (Optional but Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-apply-control-plane-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Apply Control Plane Upgrade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-upgrade-control-plane-node-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Upgrade Control Plane Node Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-worker-node-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Worker Node Upgrade
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Worker Node Upgrade">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-drain-worker-node-cka-critical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Drain Worker Node (CKA Critical)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-ssh-to-worker-node-and-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 SSH to Worker Node and Upgrade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-uncordon-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Uncordon Node
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kubeconfig-management-for-cka" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kubeconfig Management for CKA
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kubeconfig Management for CKA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#understanding-kubeconfig-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Kubeconfig Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generating-kubeconfig-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generating Kubeconfig Files
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Generating Kubeconfig Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-1-using-existing-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 1: Using Existing Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-2-manual-kubeconfig-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 2: Manual Kubeconfig Creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-3-generate-kubeconfig-for-service-account" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 3: Generate Kubeconfig for Service Account
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kubeconfig-troubleshooting-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kubeconfig Troubleshooting Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cka-specific-upgrade-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CKA-Specific Upgrade Scenarios
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CKA-Specific Upgrade Scenarios">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario-1-partial-upgrade-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 1: Partial Upgrade Failure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-2-certificate-expiry-during-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 2: Certificate Expiry During Upgrade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-3-worker-node-cannot-join-after-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 3: Worker Node Cannot Join After Upgrade
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#important-files-and-directories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important Files and Directories
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Important Files and Directories">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#upgrade-related-directories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrade-Related Directories
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-commands-for-cka-exam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critical Commands for CKA Exam
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-upgrade-verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Upgrade Verification Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-exam-pitfalls-to-avoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Exam Pitfalls to Avoid
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-workflow-for-cka" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary Workflow for CKA
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../etcd-backup-and-restore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    etcd Snapshot Backup and Restore (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kubeadm-certificate-commands-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete kubeadm Certificate Management Command Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kubeadm-cluster-init-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Cluster Initialization and Node Join Process Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kubelet-misconfigured/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubelet Misconfigured
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../probing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Probes &amp; Health Endpoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rbac-namespace-scope-with-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespacing ClusterRoles Using RoleBindings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rbac-pipeline-serviceaccount-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes RBAC: Pipeline ServiceAccount with Cluster-Wide Read and Namespaced Deployment Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vimsetpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal Vim Configuration for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API: Complete Master Guide 🚀
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API vs Ingress Controller: Deep Dive into Complex Logic 🧠
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/load-of-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services & networking
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services & networking
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/ingress-cli-pathType-and-class/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Ingress via kubectl CLI with Prefix Paths and IngressClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-cross-namespace-egress-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restricting Cross-Namespace Traffic Using NetworkPolicies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-egress-cross-namespace-label-based/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Egress NetworkPolicy for Label-Based Cross-Namespace Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Storage
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/affinity-with-hostPath-and-selector-on-pvc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    affinity with hostPath and selector on pvc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/cheatshett/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cheatshett
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/consumption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Consumption
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/minimal-pv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal pv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/standard-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standard sc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/usage-of-manual-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual StorageClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workload & scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workload & scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/all-possible-way-to-create-secret/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Secrets - Complete Reference Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-env-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using ConfigMaps as Environment Variables and Volumes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-selective/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configmap selective
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/daemonset-troubleshooting-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DaemonSet YAML Troubleshooting Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment-nodeName-scheduling-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment Scheduling Failure Due to Hard-Coded nodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment.strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment.strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/multi-container-port-conflict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CrashLoopBackOff Due to Port Conflict in Multi-Container Pod
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-affinity-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Pod Affinity: Advanced Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-priority-and-priorityclass-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pod Priority Using PriorityClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core-upgrade-principles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Upgrade Principles
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core Upgrade Principles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-version-compatibility-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Version Compatibility Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-upgrade-command-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Upgrade Command Matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detailed-upgrade-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detailed Upgrade Process
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Detailed Upgrade Process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-pre-upgrade-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: Pre-Upgrade Planning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: Pre-Upgrade Planning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-check-current-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Check Current State
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-run-upgrade-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Run Upgrade Plan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-backup-critical-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Backup Critical Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-control-plane-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Control Plane Upgrade
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: Control Plane Upgrade">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-upgrade-kubeadm-first-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Upgrade kubeadm (First Step!)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-pull-upgrade-images-optional-but-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Pull Upgrade Images (Optional but Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-apply-control-plane-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Apply Control Plane Upgrade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-upgrade-control-plane-node-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Upgrade Control Plane Node Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-worker-node-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Worker Node Upgrade
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Worker Node Upgrade">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-drain-worker-node-cka-critical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Drain Worker Node (CKA Critical)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-ssh-to-worker-node-and-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 SSH to Worker Node and Upgrade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-uncordon-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Uncordon Node
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kubeconfig-management-for-cka" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kubeconfig Management for CKA
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kubeconfig Management for CKA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#understanding-kubeconfig-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Kubeconfig Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generating-kubeconfig-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generating Kubeconfig Files
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Generating Kubeconfig Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-1-using-existing-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 1: Using Existing Certificates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-2-manual-kubeconfig-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 2: Manual Kubeconfig Creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-3-generate-kubeconfig-for-service-account" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 3: Generate Kubeconfig for Service Account
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kubeconfig-troubleshooting-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kubeconfig Troubleshooting Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cka-specific-upgrade-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CKA-Specific Upgrade Scenarios
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CKA-Specific Upgrade Scenarios">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario-1-partial-upgrade-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 1: Partial Upgrade Failure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-2-certificate-expiry-during-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 2: Certificate Expiry During Upgrade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-3-worker-node-cannot-join-after-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 3: Worker Node Cannot Join After Upgrade
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#important-files-and-directories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important Files and Directories
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Important Files and Directories">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#upgrade-related-directories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrade-Related Directories
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-commands-for-cka-exam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critical Commands for CKA Exam
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-upgrade-verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Upgrade Verification Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-exam-pitfalls-to-avoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Exam Pitfalls to Avoid
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-workflow-for-cka" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary Workflow for CKA
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="complete-kubernetes-cluster-upgrade-guide-for-cka">Complete Kubernetes Cluster Upgrade Guide for CKA</h1>
+<p><strong>File name:</strong> <code>cka-kubernetes-upgrade-complete-guide.md</code></p>
+<h2 id="overview">Overview</h2>
+<p>This document details the complete process of upgrading a Kubernetes cluster using kubeadm, including control plane and worker node upgrades, with emphasis on concepts relevant to the Certified Kubernetes Administrator (CKA) exam.</p>
+<h2 id="core-upgrade-principles">Core Upgrade Principles</h2>
+<h3 id="1-version-compatibility-rules">1. Version Compatibility Rules</h3>
+<ul>
+<li><strong>One minor version at a time</strong>: Upgrade only one minor version at a time (e.g., 1.34.1 → 1.34.2 → 1.34.3)</li>
+<li><strong>kubeadm first</strong>: Always upgrade kubeadm before upgrading the cluster</li>
+<li><strong>Control plane first</strong>: Upgrade control plane nodes before worker nodes</li>
+<li><strong>kubelet manual</strong>: kubelet upgrades must be performed manually on each node</li>
+</ul>
+<h3 id="2-upgrade-command-matrix">2. Upgrade Command Matrix</h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+<th>Usage Location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kubeadm upgrade plan</code></td>
+<td>Check upgrade availability</td>
+<td>Control plane</td>
+</tr>
+<tr>
+<td><code>kubeadm upgrade apply</code></td>
+<td>Upgrade control plane</td>
+<td>Control plane</td>
+</tr>
+<tr>
+<td><code>kubeadm upgrade node</code></td>
+<td>Upgrade worker node</td>
+<td>Worker nodes</td>
+</tr>
+<tr>
+<td><code>kubeadm upgrade diff</code></td>
+<td>Show manifest differences</td>
+<td>Any node</td>
+</tr>
+</tbody>
+</table>
+<h2 id="detailed-upgrade-process">Detailed Upgrade Process</h2>
+<h3 id="phase-1-pre-upgrade-planning">Phase 1: Pre-Upgrade Planning</h3>
+<h4 id="11-check-current-state">1.1 Check Current State</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check cluster version</span>
+kubectl<span class="w"> </span>version<span class="w"> </span>--short
+
+<span class="c1"># Check node versions</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-o<span class="w"> </span>wide
+
+<span class="c1"># Check component status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>cs
+</code></pre></div>
+<h4 id="12-run-upgrade-plan">1.2 Run Upgrade Plan</h4>
+<p><div class="highlight"><pre><span></span><code>kubeadm<span class="w"> </span>upgrade<span class="w"> </span>plan
+</code></pre></div>
+<strong>Output Analysis for CKA:</strong>
+- Identifies available target version (v1.34.3 in example)
+- Shows components requiring manual upgrade (kubelet)
+- Lists control plane components to be upgraded
+- Checks config version compatibility</p>
+<h4 id="13-backup-critical-components">1.3 Backup Critical Components</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Backup etcd</span>
+<span class="nv">ETCDCTL_API</span><span class="o">=</span><span class="m">3</span><span class="w"> </span>etcdctl<span class="w"> </span>--endpoints<span class="o">=</span>https://127.0.0.1:2379<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cacert<span class="o">=</span>/etc/kubernetes/pki/etcd/ca.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cert<span class="o">=</span>/etc/kubernetes/pki/etcd/server.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--key<span class="o">=</span>/etc/kubernetes/pki/etcd/server.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>snapshot<span class="w"> </span>save<span class="w"> </span>/tmp/etcd-backup.db
+
+<span class="c1"># Backup kubeadm config</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>cm<span class="w"> </span>kubeadm-config<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span>&gt;<span class="w"> </span>kubeadm-config-backup.yaml
+
+<span class="c1"># Backup certificates</span>
+cp<span class="w"> </span>-r<span class="w"> </span>/etc/kubernetes/pki/<span class="w"> </span>/root/pki-backup/
+</code></pre></div>
+<h3 id="phase-2-control-plane-upgrade">Phase 2: Control Plane Upgrade</h3>
+<h4 id="21-upgrade-kubeadm-first-step">2.1 Upgrade kubeadm (First Step!)</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check available versions</span>
+apt-cache<span class="w"> </span>show<span class="w"> </span>kubeadm
+
+<span class="c1"># Install specific version</span>
+apt-get<span class="w"> </span>install<span class="w"> </span><span class="nv">kubeadm</span><span class="o">=</span><span class="m">1</span>.34.3-1.1
+
+<span class="c1"># Verify installation</span>
+kubeadm<span class="w"> </span>version
+</code></pre></div>
+<p><strong>Common Mistake (from terminal):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># WRONG - Missing package name</span>
+apt-get<span class="w"> </span>install<span class="w"> </span><span class="m">1</span>.34.3-1.1
+
+<span class="c1"># RIGHT - Include package name</span>
+apt-get<span class="w"> </span>install<span class="w"> </span><span class="nv">kubeadm</span><span class="o">=</span><span class="m">1</span>.34.3-1.1
+</code></pre></div></p>
+<h4 id="22-pull-upgrade-images-optional-but-recommended">2.2 Pull Upgrade Images (Optional but Recommended)</h4>
+<div class="highlight"><pre><span></span><code>kubeadm<span class="w"> </span>config<span class="w"> </span>images<span class="w"> </span>pull<span class="w"> </span>--kubernetes-version<span class="w"> </span>v1.34.3
+</code></pre></div>
+<h4 id="23-apply-control-plane-upgrade">2.3 Apply Control Plane Upgrade</h4>
+<div class="highlight"><pre><span></span><code>kubeadm<span class="w"> </span>upgrade<span class="w"> </span>apply<span class="w"> </span>v1.34.3
+</code></pre></div>
+<p><strong>Upgrade Process Flow (Important for CKA):</strong>
+1. <strong>Preflight checks</strong>: Cluster health validation
+2. <strong>Image pulling</strong>: Downloads new container images
+3. <strong>Component upgrade order</strong>:
+   - etcd (with certificate renewal)
+   - kube-apiserver (with certificate renewal)
+   - kube-controller-manager
+   - kube-scheduler
+4. <strong>Config updates</strong>: Updates kubeadm-config ConfigMap
+5. <strong>kubeconfig updates</strong>: Updates admin.conf and other kubeconfig files
+6. <strong>Addon updates</strong>: Updates CoreDNS and kube-proxy if needed</p>
+<p><strong>Certificate Renewal During Upgrade:</strong>
+- etcd-server, etcd-peer, etcd-healthcheck-client
+- apiserver, apiserver-kubelet-client
+- front-proxy-client, apiserver-etcd-client
+- controller-manager.conf, scheduler.conf</p>
+<h4 id="24-upgrade-control-plane-node-components">2.4 Upgrade Control Plane Node Components</h4>
+<p><div class="highlight"><pre><span></span><code>apt-get<span class="w"> </span>install<span class="w"> </span><span class="nv">kubectl</span><span class="o">=</span><span class="m">1</span>.34.3-1.1<span class="w"> </span><span class="nv">kubelet</span><span class="o">=</span><span class="m">1</span>.34.3-1.1
+</code></pre></div>
+<strong>Important</strong>: kubelet service automatically restarts after upgrade.</p>
+<h3 id="phase-3-worker-node-upgrade">Phase 3: Worker Node Upgrade</h3>
+<h4 id="31-drain-worker-node-cka-critical">3.1 Drain Worker Node (CKA Critical)</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># From control plane node</span>
+kubectl<span class="w"> </span>drain<span class="w"> </span>node01<span class="w"> </span>--ignore-daemonsets<span class="w"> </span>--delete-emptydir-data
+
+<span class="c1"># Verify node is cordoned</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+<span class="c1"># node01 should show &quot;SchedulingDisabled&quot;</span>
+</code></pre></div>
+<h4 id="32-ssh-to-worker-node-and-upgrade">3.2 SSH to Worker Node and Upgrade</h4>
+<div class="highlight"><pre><span></span><code>ssh<span class="w"> </span>node01
+
+<span class="c1"># Upgrade kubeadm first</span>
+apt-get<span class="w"> </span>install<span class="w"> </span><span class="nv">kubeadm</span><span class="o">=</span><span class="m">1</span>.34.3-1.1
+
+<span class="c1"># Use kubeadm upgrade node (NOT apply!)</span>
+kubeadm<span class="w"> </span>upgrade<span class="w"> </span>node
+
+<span class="c1"># Upgrade kubelet and kubectl</span>
+apt-get<span class="w"> </span>install<span class="w"> </span><span class="nv">kubectl</span><span class="o">=</span><span class="m">1</span>.34.3-1.1<span class="w"> </span><span class="nv">kubelet</span><span class="o">=</span><span class="m">1</span>.34.3-1.1
+
+<span class="c1"># Restart kubelet if not auto-restarted</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+</code></pre></div>
+<p><strong>Critical Difference for CKA:</strong>
+- Control plane: <code>kubeadm upgrade apply</code>
+- Worker nodes: <code>kubeadm upgrade node</code></p>
+<h4 id="33-uncordon-node">3.3 Uncordon Node</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># From control plane node</span>
+kubectl<span class="w"> </span>uncordon<span class="w"> </span>node01
+</code></pre></div>
+<h2 id="kubeconfig-management-for-cka">Kubeconfig Management for CKA</h2>
+<h3 id="understanding-kubeconfig-structure">Understanding Kubeconfig Structure</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Config</span>
+<span class="nt">clusters</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes</span>
+<span class="w">  </span><span class="nt">cluster</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://172.30.1.2:6443</span>
+<span class="w">    </span><span class="nt">certificate-authority-data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;base64-ca-cert&gt;</span>
+<span class="nt">contexts</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes-admin@kubernetes</span>
+<span class="w">  </span><span class="nt">context</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes</span>
+<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes-admin</span>
+<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">current-context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes-admin@kubernetes</span>
+<span class="nt">users</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes-admin</span>
+<span class="w">  </span><span class="nt">user</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">client-certificate-data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;base64-client-cert&gt;</span>
+<span class="w">    </span><span class="nt">client-key-data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;base64-client-key&gt;</span>
+</code></pre></div>
+<h3 id="generating-kubeconfig-files">Generating Kubeconfig Files</h3>
+<h4 id="method-1-using-existing-certificates">Method 1: Using Existing Certificates</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate kubeconfig for admin</span>
+kubeadm<span class="w"> </span>init<span class="w"> </span>phase<span class="w"> </span>kubeconfig<span class="w"> </span>admin<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--kubeconfig-dir<span class="o">=</span>/etc/kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cert-dir<span class="o">=</span>/etc/kubernetes/pki
+
+<span class="c1"># Generate kubeconfig for kubelet</span>
+kubeadm<span class="w"> </span>init<span class="w"> </span>phase<span class="w"> </span>kubeconfig<span class="w"> </span>kubelet<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--kubeconfig-dir<span class="o">=</span>/etc/kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cert-dir<span class="o">=</span>/etc/kubernetes/pki
+</code></pre></div>
+<h4 id="method-2-manual-kubeconfig-creation">Method 2: Manual Kubeconfig Creation</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Set cluster</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-cluster<span class="w"> </span>kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="o">=</span>https://172.30.1.2:6443<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--certificate-authority<span class="o">=</span>/etc/kubernetes/pki/ca.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embed-certs<span class="o">=</span><span class="nb">true</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--kubeconfig<span class="o">=</span>/tmp/new-kubeconfig
+
+<span class="c1"># Set credentials</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>admin<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-certificate<span class="o">=</span>/etc/kubernetes/pki/admin.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-key<span class="o">=</span>/etc/kubernetes/pki/admin.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embed-certs<span class="o">=</span><span class="nb">true</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--kubeconfig<span class="o">=</span>/tmp/new-kubeconfig
+
+<span class="c1"># Set context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>default<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--user<span class="o">=</span>admin<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--kubeconfig<span class="o">=</span>/tmp/new-kubeconfig
+
+<span class="c1"># Use context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>default<span class="w"> </span>--kubeconfig<span class="o">=</span>/tmp/new-kubeconfig
+</code></pre></div>
+<h4 id="method-3-generate-kubeconfig-for-service-account">Method 3: Generate Kubeconfig for Service Account</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create service account</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>serviceaccount<span class="w"> </span>my-user
+
+<span class="c1"># Create cluster role binding</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>clusterrolebinding<span class="w"> </span>my-user-binding<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--clusterrole<span class="o">=</span>cluster-admin<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--serviceaccount<span class="o">=</span>default:my-user
+
+<span class="c1"># Get token</span>
+<span class="nv">SECRET_NAME</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>serviceaccount<span class="w"> </span>my-user<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.secrets[0].name}&#39;</span><span class="k">)</span>
+<span class="nv">TOKEN</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span><span class="nv">$SECRET_NAME</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.token}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>--decode<span class="k">)</span>
+
+<span class="c1"># Create kubeconfig with token</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>my-user<span class="w"> </span>--token<span class="o">=</span><span class="nv">$TOKEN</span>
+</code></pre></div>
+<h3 id="kubeconfig-troubleshooting-commands">Kubeconfig Troubleshooting Commands</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check current context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>current-context
+
+<span class="c1"># View complete config</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view
+
+<span class="c1"># View raw config (with certificates)</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--raw
+
+<span class="c1"># Switch contexts</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>my-context
+
+<span class="c1"># Rename context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>rename-context<span class="w"> </span>old-name<span class="w"> </span>new-name
+
+<span class="c1"># Delete context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>delete-context<span class="w"> </span>unwanted-context
+
+<span class="c1"># Set namespace for context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>--current<span class="w"> </span>--namespace<span class="o">=</span>kube-system
+</code></pre></div>
+<h2 id="cka-specific-upgrade-scenarios">CKA-Specific Upgrade Scenarios</h2>
+<h3 id="scenario-1-partial-upgrade-failure">Scenario 1: Partial Upgrade Failure</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># If upgrade fails mid-way</span>
+<span class="c1"># Check component status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system
+
+<span class="c1"># Check kubelet logs</span>
+journalctl<span class="w"> </span>-u<span class="w"> </span>kubelet<span class="w"> </span>-f
+
+<span class="c1"># Manual intervention may be needed</span>
+<span class="c1"># Restore from backup manifests</span>
+cp<span class="w"> </span>/etc/kubernetes/tmp/kubeadm-backup-manifests-*/kube-apiserver.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>/etc/kubernetes/manifests/kube-apiserver.yaml
+</code></pre></div>
+<h3 id="scenario-2-certificate-expiry-during-upgrade">Scenario 2: Certificate Expiry During Upgrade</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check certificate expiry</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration
+
+<span class="c1"># Renew certificates</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>all
+
+<span class="c1"># Restart control plane components</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+</code></pre></div>
+<h3 id="scenario-3-worker-node-cannot-join-after-upgrade">Scenario 3: Worker Node Cannot Join After Upgrade</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check token validity</span>
+kubeadm<span class="w"> </span>token<span class="w"> </span>list
+
+<span class="c1"># Create new token if expired</span>
+kubeadm<span class="w"> </span>token<span class="w"> </span>create
+
+<span class="c1"># Get discovery token CA cert hash</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-pubkey<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/ca.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>openssl<span class="w"> </span>rsa<span class="w"> </span>-pubin<span class="w"> </span>-outform<span class="w"> </span>der<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>openssl<span class="w"> </span>dgst<span class="w"> </span>-sha256<span class="w"> </span>-hex<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/^.* //&#39;</span>
+
+<span class="c1"># Generate new join command</span>
+kubeadm<span class="w"> </span>token<span class="w"> </span>create<span class="w"> </span>--print-join-command
+</code></pre></div>
+<h2 id="important-files-and-directories">Important Files and Directories</h2>
+<h3 id="upgrade-related-directories">Upgrade-Related Directories</h3>
+<div class="highlight"><pre><span></span><code>/etc/kubernetes/
+├── manifests/           # Static pod manifests
+├── pki/                # Certificates
+├── admin.conf          # Admin kubeconfig
+└── tmp/
+    └── kubeadm-backup-manifests-*/  # Backup manifests during upgrade
+
+/var/lib/kubelet/
+├── config.yaml         # Kubelet configuration
+└── kubeadm-flags.env   # Kubelet flags
+</code></pre></div>
+<h3 id="critical-commands-for-cka-exam">Critical Commands for CKA Exam</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Drain node (always use --ignore-daemonsets)</span>
+kubectl<span class="w"> </span>drain<span class="w"> </span>&lt;node&gt;<span class="w"> </span>--ignore-daemonsets<span class="w"> </span>--delete-emptydir-data
+
+<span class="c1"># Uncordon node</span>
+kubectl<span class="w"> </span>uncordon<span class="w"> </span>&lt;node&gt;
+
+<span class="c1"># Check upgrade plan</span>
+kubeadm<span class="w"> </span>upgrade<span class="w"> </span>plan
+
+<span class="c1"># Apply upgrade</span>
+kubeadm<span class="w"> </span>upgrade<span class="w"> </span>apply<span class="w"> </span>&lt;version&gt;
+
+<span class="c1"># Node upgrade</span>
+kubeadm<span class="w"> </span>upgrade<span class="w"> </span>node
+
+<span class="c1"># Certificate management</span>
+kubeadm<span class="w"> </span>certs<span class="w"> </span>renew<span class="w"> </span>&lt;cert-name&gt;
+kubeadm<span class="w"> </span>certs<span class="w"> </span>check-expiration
+
+<span class="c1"># Token management</span>
+kubeadm<span class="w"> </span>token<span class="w"> </span>create<span class="w"> </span>--print-join-command
+kubeadm<span class="w"> </span>token<span class="w"> </span>list
+</code></pre></div>
+<h2 id="post-upgrade-verification-checklist">Post-Upgrade Verification Checklist</h2>
+<ol>
+<li><strong>Node Status</strong>: <code>kubectl get nodes</code> - All nodes should be Ready</li>
+<li><strong>Pod Status</strong>: <code>kubectl get pods --all-namespaces</code> - All pods Running</li>
+<li><strong>Component Status</strong>: <code>kubectl get cs</code> - All components Healthy</li>
+<li><strong>Version Verification</strong>: <code>kubectl version</code> - Client and server versions match target</li>
+<li><strong>Network Test</strong>: Deploy test pod and verify network connectivity</li>
+<li><strong>DNS Test</strong>: Verify CoreDNS resolution</li>
+<li><strong>API Access</strong>: Verify kubectl commands work without errors</li>
+</ol>
+<h2 id="common-exam-pitfalls-to-avoid">Common Exam Pitfalls to Avoid</h2>
+<ol>
+<li><strong>Upgrading kubelet before control plane</strong> - Wrong order</li>
+<li><strong>Using <code>apply</code> on worker nodes</strong> - Should use <code>node</code> command</li>
+<li><strong>Forgetting to drain nodes</strong> - Causes pod disruption</li>
+<li><strong>Not ignoring daemonsets during drain</strong> - Can't drain node completely</li>
+<li><strong>Missing <code>--ignore-preflight-errors</code> when needed</strong> - Upgrade fails on warnings</li>
+<li><strong>Not backing up etcd</strong> - No recovery option if upgrade fails</li>
+<li><strong>Forgetting to uncordon nodes</strong> - Node remains unschedulable</li>
+</ol>
+<h2 id="summary-workflow-for-cka">Summary Workflow for CKA</h2>
+<ol>
+<li><strong>Plan</strong>: <code>kubeadm upgrade plan</code></li>
+<li><strong>Backup</strong>: etcd and certificates</li>
+<li><strong>Upgrade kubeadm</strong>: <code>apt-get install kubeadm=&lt;version&gt;</code></li>
+<li><strong>Upgrade control plane</strong>: <code>kubeadm upgrade apply &lt;version&gt;</code></li>
+<li><strong>Upgrade control plane components</strong>: kubectl and kubelet</li>
+<li><strong>Drain worker node</strong>: <code>kubectl drain</code></li>
+<li><strong>Upgrade worker</strong>: <code>kubeadm upgrade node</code> + kubelet/kubectl</li>
+<li><strong>Uncordon worker</strong>: <code>kubectl uncordon</code></li>
+<li><strong>Repeat</strong>: For additional worker nodes</li>
+<li><strong>Verify</strong>: Complete cluster functionality</li>
+</ol>
+<p>This comprehensive guide covers all aspects of Kubernetes upgrades relevant to the CKA exam, including practical examples from the terminal session and critical thinking points for exam scenarios.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "content.code.copy", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

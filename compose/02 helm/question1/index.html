@@ -1,0 +1,4478 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/compose/02%20helm/question1/">
+      
+      
+        <link rel="prev" href="../practice-questions/">
+      
+      
+        <link rel="next" href="../question2/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Question1 - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#helm-practice-exercise-1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Question1
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concise Notes for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01 autoscaling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    01 autoscaling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/hpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Horizontal Pod Autoscaler (HPA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/keywords/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search Keywords+
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HPA &amp; VPA Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/vpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vertical Pod Autoscaler (VPA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02 helm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    02 helm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm Comprehensive Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Helm Charts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../practice-questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm Practice Questions - Progressive Learning Path
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question1
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#helm-practice-exercise-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Helm Practice Exercise - 1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-1-basic-chart-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 1: Basic Chart Structure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 1: Basic Chart Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-simple-dummy-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Simple Dummy Application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-add-configuration-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Add Configuration Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-2-template-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 2: Template Logic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 2: Template Logic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-conditional-sidecar-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Conditional Sidecar Container
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-dynamic-names-and-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Dynamic Names and Labels
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-3-advanced-templating" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 3: Advanced Templating
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 3: Advanced Templating">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-looping-environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Looping Environment Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-configmap-from-file-with-tpl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 ConfigMap from File with tpl
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-4-named-templates-helper-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 4: Named Templates &amp; Helper Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 4: Named Templates &amp; Helper Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-create-_helperstpl-for-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Create _helpers.tpl for Labels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-string-manipulation-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 String Manipulation Functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-default-values-with-default-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Default Values with default Function
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-5-data-structures-advanced-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 5: Data Structures &amp; Advanced Logic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 5: Data Structures &amp; Advanced Logic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-working-with-lists-and-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Working with Lists and range
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-conditionals-with-and-or-not" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Conditionals with and, or, not
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-required-values-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Required Values Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-6-yaml-formatting-complex-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 6: YAML Formatting &amp; Complex Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 6: YAML Formatting &amp; Complex Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-working-with-toyaml-and-nindent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Working with toYaml and nindent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-merging-values-with-merge-and-mustmerge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Merging Values with merge and mustMerge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-type-conversion-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Type Conversion Functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-7-production-ready-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 7: Production-Ready Patterns
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 7: Production-Ready Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-health-checks-probes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Health Checks (Probes)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-resource-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Resource Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-notestxt-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 NOTES.txt Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#final-challenge-comprehensive-chart-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Final Challenge: Comprehensive Chart Package
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Final Challenge: Comprehensive Chart Package">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#requirements-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements Checklist:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Commands:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-practice-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Practice Flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../question2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../question3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../question4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03 kustomize
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    03 kustomize
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-kustomize/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kustomize Master Guide: Advanced Patterns &amp; Modern Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-kustomize/question1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04 admission webhook
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    04 admission webhook
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-admission-webhook/commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-admission-webhook/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    05 kubeconfig
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    05 kubeconfig
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-kubeconfig/how-to-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-kubeconfig/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    06 cluster certificates and kube system [important]
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    06 cluster certificates and kube system [important]
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-cluster-certificates-and-kube-system%20%5Bimportant%5D/kubeadm-certs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kubeadm Certificate Checks &amp; Renewal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    07 crd's
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    07 crd's
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/crd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Resource Definitions (CRDs) and Custom Resources (CRs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/solutions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Solutions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    08 gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    08 gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-gateway-api/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10 scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/nodename/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/nodeselector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NodeSelector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_3" id="__nav_10_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    podAffinity nodeAffinity deployments
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    podAffinity nodeAffinity deployments
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/podAffinity-nodeAffinity-deployments/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Scheduling: Pod &amp; Node Affinity - Theory &amp; Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../11-coredns/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 coredns
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    11 coredns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 deployments
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    12 deployments
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_12_1" id="__nav_12_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Probing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_12_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Probing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-deployments/probing/probing-psotgres/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Probing psotgres
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 manage cluster via kubeadm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    13 manage cluster via kubeadm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/cluster-create/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kubeadm Cluster Create &amp; Upgrade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/etcd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Etcd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/high-availablity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    High availablity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/north-south-traffic-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Ingress
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Ingress Controller Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_15" >
+        
+          
+          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 troubleshoot controlplane
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_15">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    15 troubleshoot controlplane
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15-troubleshoot-controlplane/prerequisite-and-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Approach Control Plane Issues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17 authorization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    17 authorization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/cani/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cani
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/gotchas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RBAC Gotchas and Common Mistakes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/role-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RBAC Core Objects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/system-based-authorization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System based authorization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18 basic bash
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    18 basic bash
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../18-basic-bash/bash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19 secrets and configmap
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    19 secrets and configmap
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../19-secrets-and-configmap/environment-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment and volume
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20 services
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    20 services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../20-services/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cli
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_20" >
+        
+          
+          <label class="md-nav__link" for="__nav_20" id="__nav_20_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    21 storage class pv pvc
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_20_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    21 storage class pv pvc
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../21-storage-class-pv-pvc/example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../21-storage-class-pv-pvc/selector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Selector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#helm-practice-exercise-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Helm Practice Exercise - 1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-1-basic-chart-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 1: Basic Chart Structure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 1: Basic Chart Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-simple-dummy-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Simple Dummy Application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-add-configuration-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Add Configuration Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-2-template-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 2: Template Logic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 2: Template Logic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-conditional-sidecar-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Conditional Sidecar Container
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-dynamic-names-and-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Dynamic Names and Labels
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-3-advanced-templating" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 3: Advanced Templating
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 3: Advanced Templating">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-looping-environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Looping Environment Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-configmap-from-file-with-tpl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 ConfigMap from File with tpl
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-4-named-templates-helper-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 4: Named Templates &amp; Helper Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 4: Named Templates &amp; Helper Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-create-_helperstpl-for-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Create _helpers.tpl for Labels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-string-manipulation-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 String Manipulation Functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-default-values-with-default-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Default Values with default Function
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-5-data-structures-advanced-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 5: Data Structures &amp; Advanced Logic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 5: Data Structures &amp; Advanced Logic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-working-with-lists-and-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Working with Lists and range
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-conditionals-with-and-or-not" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Conditionals with and, or, not
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-required-values-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Required Values Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-6-yaml-formatting-complex-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 6: YAML Formatting &amp; Complex Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 6: YAML Formatting &amp; Complex Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-working-with-toyaml-and-nindent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Working with toYaml and nindent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-merging-values-with-merge-and-mustmerge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Merging Values with merge and mustMerge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-type-conversion-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Type Conversion Functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#level-7-production-ready-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Level 7: Production-Ready Patterns
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Level 7: Production-Ready Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-health-checks-probes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Health Checks (Probes)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-resource-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Resource Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-notestxt-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 NOTES.txt Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#final-challenge-comprehensive-chart-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Final Challenge: Comprehensive Chart Package
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Final Challenge: Comprehensive Chart Package">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#requirements-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements Checklist:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Commands:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-practice-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Practice Flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Question1</h1>
+
+<h2 id="helm-practice-exercise-1">Helm Practice Exercise - 1</h2>
+<p>These exercises are designed to help you <strong>master Helm mechanics only</strong>—chart structure, templating, values, conditionals, hooks, dependencies, upgrades, and reuse—using <strong>simple dummy workloads</strong> (<code>busybox</code>, <code>sleep</code>, <code>echo</code>).</p>
+<p>There is <strong>no application logic complexity</strong> involved.</p>
+<hr />
+<h2 id="level-1-basic-chart-structure">Level 1: Basic Chart Structure</h2>
+<h3 id="11-simple-dummy-application">1.1 Simple Dummy Application</h3>
+<p><strong>Objective:</strong>
+Create a Helm chart named <code>simple-app</code> that deploys a container which only sleeps.</p>
+<p><strong>Requirements:</strong></p>
+<ul>
+<li>
+<p>Chart metadata:</p>
+</li>
+<li>
+<p><code>name</code>: <code>simple-app</code></p>
+</li>
+<li><code>version</code>: <code>0.1.0</code></li>
+<li><code>appVersion</code>: <code>1.0</code></li>
+<li>
+<p>One <code>Deployment</code></p>
+</li>
+<li>
+<p><code>replicas: 1</code></p>
+</li>
+<li>Image: <code>busybox:latest</code></li>
+<li>
+<p>Command:</p>
+<p><div class="highlight"><pre><span></span><code><span class="p p-Indicator">[</span><span class="s">&quot;sh&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;echo</span><span class="nv"> </span><span class="s">&#39;App</span><span class="nv"> </span><span class="s">started&#39;</span><span class="nv"> </span><span class="s">&amp;&amp;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">3600&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+* One <code>Service</code></p>
+</li>
+<li>
+<p>Exposes port <code>8080</code> (even if unused)</p>
+</li>
+</ul>
+<p><strong>Constraint:</strong></p>
+<ul>
+<li>All configuration must be <strong>hardcoded</strong> in the manifests.</li>
+<li>No <code>values.yaml</code> usage yet.</li>
+</ul>
+<hr />
+<h3 id="12-add-configuration-values">1.2 Add Configuration Values</h3>
+<p><strong>Objective:</strong>
+Parameterize the chart using <code>values.yaml</code>.</p>
+<p><strong>Requirements:</strong>
+Create <code>values.yaml</code> with:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">replicaCount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+
+<span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox:latest</span>
+
+<span class="nt">command</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sh</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-c</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">echo &#39;Default command&#39; &amp;&amp; sleep 3600</span>
+
+<span class="nt">service</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+</code></pre></div>
+<p><strong>Template Expectations:</strong></p>
+<ul>
+<li>All values must be referenced using <code>{{ .Values.* }}</code></li>
+</ul>
+<p><strong>Test:</strong></p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span><span class="nb">test</span><span class="w"> </span>simple-app<span class="w"> </span>--set<span class="w"> </span><span class="nv">replicaCount</span><span class="o">=</span><span class="m">3</span>
+</code></pre></div>
+<p>Verify that <strong>3 Pods</strong> are created.</p>
+<hr />
+<h2 id="level-2-template-logic">Level 2: Template Logic</h2>
+<h3 id="21-conditional-sidecar-container">2.1 Conditional Sidecar Container</h3>
+<p><strong>Objective:</strong>
+Add a sidecar container conditionally.</p>
+<p><strong>Requirements (values.yaml):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">sidecar</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:alpine</span>
+<span class="w">  </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<p><strong>Template Logic:</strong></p>
+<ul>
+<li>Use:</li>
+</ul>
+<p><div class="highlight"><pre><span></span><code>{{- if .Values.sidecar.enabled }}
+</code></pre></div>
+* Add a second container:</p>
+<ul>
+<li>Name: <code>sidecar</code></li>
+<li>Image: from values</li>
+<li>Exposes <code>containerPort</code></li>
+</ul>
+<p><strong>Test:</strong></p>
+<ul>
+<li>Install normally → no sidecar</li>
+<li>Install with:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>--set<span class="w"> </span>sidecar.enabled<span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+<hr />
+<h3 id="22-dynamic-names-and-labels">2.2 Dynamic Names and Labels</h3>
+<p><strong>Objective:</strong>
+Generate labels and names dynamically.</p>
+<p><strong>Requirements (values.yaml):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span>
+<span class="nt">team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">platform</span>
+</code></pre></div>
+<p><strong>Deployment Labels:</strong></p>
+<ul>
+<li><code>environment: &lt;value&gt;</code></li>
+<li><code>team: &lt;value&gt;</code></li>
+<li><code>fullname: &lt;release-name&gt;-&lt;chart-name&gt;</code></li>
+</ul>
+<p><strong>Additional Resource:</strong>
+Create a <code>ConfigMap</code>:</p>
+<ul>
+<li>Name:</li>
+</ul>
+<p><div class="highlight"><pre><span></span><code>{{ .Release.Name }}-config
+</code></pre></div>
+* Data:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;value&gt;</span>
+</code></pre></div>
+<p><strong>Key Challenge:</strong></p>
+<ul>
+<li>Proper quoting and sanitization of label values.</li>
+</ul>
+<hr />
+<h2 id="level-3-advanced-templating">Level 3: Advanced Templating</h2>
+<h3 id="31-looping-environment-variables">3.1 Looping Environment Variables</h3>
+<p><strong>Objective:</strong>
+Dynamically inject environment variables.</p>
+<p><strong>values.yaml:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">env</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LOG_LEVEL</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;INFO&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TIMEOUT</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;30&quot;</span>
+
+<span class="nt">envSecrets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+</code></pre></div>
+<p><strong>Requirements:</strong></p>
+<ul>
+<li>Use:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>{{- range .Values.env }}
+</code></pre></div>
+<p>to render environment variables.
+* Create a <strong>demo Secret</strong> with a similar structure.
+* Conditionally mount secrets <strong>only if</strong> <code>envSecrets</code> is non-empty.</p>
+<hr />
+<h3 id="32-configmap-from-file-with-tpl">3.2 ConfigMap from File with <code>tpl</code></h3>
+<p><strong>Objective:</strong>
+Render templated config content stored in values.</p>
+<p><strong>values.yaml:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">configData</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">app.name: {{ .Chart.Name }}</span>
+<span class="w">  </span><span class="no">app.version: {{ .Chart.Version }}</span>
+</code></pre></div>
+<p><strong>templates/config.yaml:</strong></p>
+<ul>
+<li>Use:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>{{ tpl .Values.configData . }}
+</code></pre></div>
+<p><strong>Mounting:</strong></p>
+<ul>
+<li>Mount ConfigMap at:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>/app/config/app.conf
+</code></pre></div>
+<p><strong>Test:</strong></p>
+<ul>
+<li>Verify rendered ConfigMap shows <strong>actual chart name and version</strong>, not template text.</li>
+</ul>
+<hr />
+<h2 id="level-4-named-templates-helper-functions">Level 4: Named Templates &amp; Helper Functions</h2>
+<h3 id="41-create-_helperstpl-for-labels">4.1 Create <code>_helpers.tpl</code> for Labels</h3>
+<p><strong>Objective:</strong>
+Extract common labels into reusable named templates.</p>
+<p><strong>Create <code>templates/_helpers.tpl</code>:</strong></p>
+<p>Define these named templates:</p>
+<ol>
+<li><code>simple-app.labels</code> - standard labels</li>
+<li><code>simple-app.selectorLabels</code> - selector labels only</li>
+<li><code>simple-app.name</code> - chart name</li>
+<li><code>simple-app.fullname</code> - full resource name</li>
+</ol>
+<p><strong>Example Structure:</strong></p>
+<div class="highlight"><pre><span></span><code>{{- define &quot;simple-app.labels&quot; -}}
+app.kubernetes.io/name: {{ include &quot;simple-app.name&quot; . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+</code></pre></div>
+<p><strong>Requirements:</strong></p>
+<ul>
+<li>Update Deployment and Service to use:</li>
+</ul>
+<p><div class="highlight"><pre><span></span><code>labels:
+  {{- include &quot;simple-app.labels&quot; . | nindent 4 }}
+</code></pre></div>
+* Use proper <code>nindent</code> for alignment</p>
+<hr />
+<h3 id="42-string-manipulation-functions">4.2 String Manipulation Functions</h3>
+<p><strong>Objective:</strong>
+Practice Helm string functions.</p>
+<p><strong>values.yaml additions:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">appName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;My</span><span class="nv"> </span><span class="s">Demo</span><span class="nv"> </span><span class="s">App&quot;</span>
+<span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;production&quot;</span>
+<span class="nt">imageTag</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;v1.2.3-alpha&quot;</span>
+</code></pre></div>
+<p><strong>Template Requirements:</strong></p>
+<p>Create a ConfigMap that demonstrates:</p>
+<ul>
+<li><code>upper</code> - convert appName to uppercase</li>
+<li><code>lower</code> - convert namespace to lowercase</li>
+<li><code>title</code> - title case the appName</li>
+<li><code>trim</code> - remove whitespace</li>
+<li><code>trimSuffix</code> - remove <code>-alpha</code> from tag</li>
+<li><code>replace</code> - replace spaces with dashes</li>
+<li><code>quote</code> - properly quote values</li>
+</ul>
+<p><strong>Example Data:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">APP_NAME_UPPER</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.appName | upper | quote</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">NAMESPACE_LOWER</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.namespace | lower | quote</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">TAG_CLEAN</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.imageTag | trimSuffix &quot;-alpha&quot; | quote</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">APP_SLUG</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.appName | replace &quot; &quot; &quot;-&quot; | lower | quote</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+</code></pre></div>
+<hr />
+<h3 id="43-default-values-with-default-function">4.3 Default Values with <code>default</code> Function</h3>
+<p><strong>Objective:</strong>
+Handle missing or optional values gracefully.</p>
+<p><strong>values.yaml:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">service</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIP</span>
+<span class="w">  </span><span class="c1"># port is intentionally missing</span>
+
+<span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="c1"># limits and requests are optional</span>
+</code></pre></div>
+<p><strong>Template Logic:</strong></p>
+<p>In Service template:</p>
+<div class="highlight"><pre><span></span><code>port: {{ default 8080 .Values.service.port }}
+</code></pre></div>
+<p>In Deployment template:</p>
+<div class="highlight"><pre><span></span><code>resources:
+  {{- if .Values.resources.limits }}
+  limits:
+    cpu: {{ default &quot;100m&quot; .Values.resources.limits.cpu }}
+    memory: {{ default &quot;128Mi&quot; .Values.resources.limits.memory }}
+  {{- end }}
+  requests:
+    cpu: {{ default &quot;50m&quot; .Values.resources.requests.cpu }}
+    memory: {{ default &quot;64Mi&quot; .Values.resources.requests.memory }}
+</code></pre></div>
+<p><strong>Test:</strong></p>
+<ul>
+<li>Install without setting values → uses defaults</li>
+<li>Override specific values → uses overrides</li>
+</ul>
+<hr />
+<h2 id="level-5-data-structures-advanced-logic">Level 5: Data Structures &amp; Advanced Logic</h2>
+<h3 id="51-working-with-lists-and-range">5.1 Working with Lists and <code>range</code></h3>
+<p><strong>Objective:</strong>
+Master iteration over lists and maps.</p>
+<p><strong>values.yaml:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">additionalLabels</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cost-center</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;engineering&quot;</span>
+<span class="w">  </span><span class="nt">project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;demo&quot;</span>
+<span class="w">  </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;platform-team&quot;</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cache</span>
+<span class="w">    </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/cache</span>
+<span class="w">    </span><span class="nt">emptyDir</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span>
+<span class="w">    </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data</span>
+<span class="w">    </span><span class="nt">emptyDir</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">sizeLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1Gi</span>
+</code></pre></div>
+<p><strong>Deployment Template:</strong></p>
+<p>Add labels section:</p>
+<div class="highlight"><pre><span></span><code>labels:
+  {{- include &quot;simple-app.labels&quot; . | nindent 4 }}
+  {{- range $key, $value := .Values.additionalLabels }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+</code></pre></div>
+<p>Add volumes and volumeMounts:</p>
+<div class="highlight"><pre><span></span><code>volumes:
+{{- range .Values.volumes }}
+- name: {{ .name }}
+  emptyDir:
+    {{- toYaml .emptyDir | nindent 4 }}
+{{- end }}
+
+volumeMounts:
+{{- range .Values.volumes }}
+- name: {{ .name }}
+  mountPath: {{ .mountPath }}
+{{- end }}
+</code></pre></div>
+<hr />
+<h3 id="52-conditionals-with-and-or-not">5.2 Conditionals with <code>and</code>, <code>or</code>, <code>not</code></h3>
+<p><strong>Objective:</strong>
+Use logical operators for complex conditions.</p>
+<p><strong>values.yaml:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">monitoring</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">prometheus</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">grafana</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="nt">security</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">readOnlyRootFilesystem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">runAsNonRoot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+<p><strong>Template Logic:</strong></p>
+<div class="highlight"><pre><span></span><code>{{- if and .Values.monitoring.enabled .Values.monitoring.prometheus }}
+annotations:
+  prometheus.io/scrape: &quot;true&quot;
+  prometheus.io/port: &quot;8080&quot;
+{{- end }}
+
+{{- if or .Values.security.enabled .Values.security.runAsNonRoot }}
+securityContext:
+  {{- if .Values.security.runAsNonRoot }}
+  runAsNonRoot: true
+  runAsUser: 1000
+  {{- end }}
+  {{- if .Values.security.readOnlyRootFilesystem }}
+  readOnlyRootFilesystem: true
+  {{- end }}
+{{- end }}
+</code></pre></div>
+<hr />
+<h3 id="53-required-values-validation">5.3 Required Values Validation</h3>
+<p><strong>Objective:</strong>
+Ensure critical values are provided.</p>
+<p><strong>values.yaml:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># image is required - no default</span>
+<span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+
+<span class="nt">database</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># host is required</span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">  </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5432</span>
+</code></pre></div>
+<p><strong>Template with Validation:</strong></p>
+<div class="highlight"><pre><span></span><code>image: {{ required &quot;A valid .Values.image is required!&quot; .Values.image }}
+
+env:
+- name: DB_HOST
+  value: {{ required &quot;database.host is required!&quot; .Values.database.host | quote }}
+- name: DB_PORT
+  value: {{ .Values.database.port | quote }}
+</code></pre></div>
+<p><strong>Test:</strong></p>
+<ul>
+<li>Install without image → should fail with error message</li>
+<li>Install with image → succeeds</li>
+</ul>
+<hr />
+<h2 id="level-6-yaml-formatting-complex-types">Level 6: YAML Formatting &amp; Complex Types</h2>
+<h3 id="61-working-with-toyaml-and-nindent">6.1 Working with <code>toYaml</code> and <code>nindent</code></h3>
+<p><strong>Objective:</strong>
+Properly render complex YAML structures.</p>
+<p><strong>values.yaml:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">podAnnotations</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">backup.velero.io/backup-volumes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span>
+<span class="w">  </span><span class="nt">prometheus.io/scrape</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+
+<span class="nt">tolerations</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;node.kubernetes.io/disk-pressure&quot;</span>
+<span class="w">    </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Exists&quot;</span>
+<span class="w">    </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NoSchedule&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;environment&quot;</span>
+<span class="w">    </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Equal&quot;</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;production&quot;</span>
+<span class="w">    </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NoSchedule&quot;</span>
+
+<span class="nt">nodeSelector</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">disktype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ssd</span>
+<span class="w">  </span><span class="nt">zone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-west-1a</span>
+</code></pre></div>
+<p><strong>Deployment Template:</strong></p>
+<div class="highlight"><pre><span></span><code>{{- with .Values.podAnnotations }}
+annotations:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+
+spec:
+  {{- with .Values.nodeSelector }}
+  nodeSelector:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- with .Values.tolerations }}
+  tolerations:
+    {{- toYaml . | nindent 2 }}
+  {{- end }}
+</code></pre></div>
+<p><strong>Key Concepts:</strong></p>
+<ul>
+<li><code>with</code> for scoping</li>
+<li><code>toYaml</code> for complex structures</li>
+<li>Correct <code>nindent</code> values for alignment</li>
+</ul>
+<hr />
+<h3 id="62-merging-values-with-merge-and-mustmerge">6.2 Merging Values with <code>merge</code> and <code>mustMerge</code></h3>
+<p><strong>Objective:</strong>
+Combine multiple value sources.</p>
+<p><strong>values.yaml:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">commonLabels</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">platform</span>
+<span class="w">  </span><span class="nt">managed-by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">helm</span>
+
+<span class="nt">deploymentLabels</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend</span>
+
+<span class="nt">podLabels</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</code></pre></div>
+<p><strong>Template:</strong></p>
+<div class="highlight"><pre><span></span><code>{{- $labels := merge .Values.podLabels .Values.deploymentLabels .Values.commonLabels }}
+labels:
+  {{- range $key, $value := $labels }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+</code></pre></div>
+<p><strong>Expected Result:</strong>
+All three label sets merged together (podLabels takes precedence).</p>
+<hr />
+<h3 id="63-type-conversion-functions">6.3 Type Conversion Functions</h3>
+<p><strong>Objective:</strong>
+Convert between types safely.</p>
+<p><strong>values.yaml:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w">  </span><span class="c1"># string instead of int</span>
+<span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span><span class="w">     </span><span class="c1"># int</span>
+
+<span class="nt">features</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">caching</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w">  </span><span class="c1"># string bool</span>
+<span class="w">  </span><span class="nt">debug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">     </span><span class="c1"># real bool</span>
+</code></pre></div>
+<p><strong>Template:</strong></p>
+<div class="highlight"><pre><span></span><code>replicas: {{ .Values.replicas | int }}
+
+env:
+- name: CACHE_ENABLED
+  value: {{ .Values.features.caching | toString | quote }}
+- name: DEBUG
+  value: {{ .Values.features.debug | toString | quote }}
+</code></pre></div>
+<p><strong>Functions to Practice:</strong></p>
+<ul>
+<li><code>int</code> - convert to integer</li>
+<li><code>toString</code> - convert to string</li>
+<li><code>float64</code> - convert to float</li>
+</ul>
+<hr />
+<h2 id="level-7-production-ready-patterns">Level 7: Production-Ready Patterns</h2>
+<h3 id="71-health-checks-probes">7.1 Health Checks (Probes)</h3>
+<p><strong>Objective:</strong>
+Add comprehensive health checking.</p>
+<p><strong>values.yaml:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">livenessProbe</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">httpGet</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/healthz</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">  </span><span class="nt">initialDelaySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">  </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">  </span><span class="nt">timeoutSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">  </span><span class="nt">failureThreshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+
+<span class="nt">readinessProbe</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">httpGet</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/ready</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">  </span><span class="nt">initialDelaySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">  </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">  </span><span class="nt">timeoutSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">failureThreshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+
+<span class="nt">startupProbe</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">httpGet</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/startup</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">  </span><span class="nt">initialDelaySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">  </span><span class="nt">failureThreshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+</code></pre></div>
+<p><strong>Deployment Template:</strong></p>
+<div class="highlight"><pre><span></span><code>{{- if .Values.livenessProbe }}
+livenessProbe:
+  {{- toYaml .Values.livenessProbe | nindent 2 }}
+{{- end }}
+
+{{- if .Values.readinessProbe }}
+readinessProbe:
+  {{- toYaml .Values.readinessProbe | nindent 2 }}
+{{- end }}
+
+{{- if .Values.startupProbe }}
+startupProbe:
+  {{- toYaml .Values.startupProbe | nindent 2 }}
+{{- end }}
+</code></pre></div>
+<hr />
+<h3 id="72-resource-management">7.2 Resource Management</h3>
+<p><strong>Objective:</strong>
+Properly define resource requests and limits.</p>
+<p><strong>values.yaml:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">resources</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500m</span>
+<span class="w">    </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">512Mi</span>
+<span class="w">  </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100m</span>
+<span class="w">    </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128Mi</span>
+
+<span class="nt">autoscaling</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">  </span><span class="nt">targetCPUUtilizationPercentage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">  </span><span class="nt">targetMemoryUtilizationPercentage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<p><strong>Deployment:</strong></p>
+<div class="highlight"><pre><span></span><code>resources:
+  {{- toYaml .Values.resources | nindent 2 }}
+</code></pre></div>
+<p><strong>Create <code>hpa.yaml</code>:</strong></p>
+<div class="highlight"><pre><span></span><code>{{- if .Values.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include &quot;simple-app.fullname&quot; . }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include &quot;simple-app.fullname&quot; . }}
+  minReplicas: {{ .Values.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  metrics:
+  {{- if .Values.autoscaling.targetCPUUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
+  {{- end }}
+  {{- if .Values.autoscaling.targetMemoryUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
+  {{- end }}
+{{- end }}
+</code></pre></div>
+<hr />
+<h3 id="73-notestxt-template">7.3 NOTES.txt Template</h3>
+<p><strong>Objective:</strong>
+Create helpful installation output.</p>
+<p><strong>Create <code>templates/NOTES.txt</code>:</strong></p>
+<div class="highlight"><pre><span></span><code>Thank you for installing {{ .Chart.Name }}!
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }}
+  $ helm get all {{ .Release.Name }}
+
+{{- if .Values.service.type }}
+
+Service Type: {{ .Values.service.type }}
+
+{{- if eq .Values.service.type &quot;NodePort&quot; }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath=&quot;{.spec.ports[0].nodePort}&quot; services {{ include &quot;simple-app.fullname&quot; . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath=&quot;{.items[0].status.addresses[0].address}&quot;)
+  echo http://$NODE_IP:$NODE_PORT
+{{- else if eq .Values.service.type &quot;LoadBalancer&quot; }}
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+  Watch the status with: 
+    kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include &quot;simple-app.fullname&quot; . }}
+{{- else if eq .Values.service.type &quot;ClusterIP&quot; }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l &quot;app.kubernetes.io/name={{ include &quot;simple-app.name&quot; . }},app.kubernetes.io/instance={{ .Release.Name }}&quot; -o jsonpath=&quot;{.items[0].metadata.name}&quot;)
+  echo &quot;Visit http://127.0.0.1:8080&quot;
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:{{ .Values.service.port }}
+{{- end }}
+{{- end }}
+
+{{- if .Values.autoscaling.enabled }}
+
+Autoscaling is ENABLED:
+  Min Replicas: {{ .Values.autoscaling.minReplicas }}
+  Max Replicas: {{ .Values.autoscaling.maxReplicas }}
+{{- else }}
+
+Autoscaling is DISABLED. Using {{ .Values.replicaCount }} replica(s).
+{{- end }}
+</code></pre></div>
+<hr />
+<h2 id="final-challenge-comprehensive-chart-package">Final Challenge: Comprehensive Chart Package</h2>
+<p><strong>Objective:</strong>
+Combine everything into a production-ready chart.</p>
+<h3 id="requirements-checklist">Requirements Checklist:</h3>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Chart.yaml with proper metadata (name, version, description, keywords, maintainers)</li>
+<li class="task-list-item"><input type="checkbox" disabled/> values.yaml with comprehensive defaults and comments</li>
+<li class="task-list-item"><input type="checkbox" disabled/> _helpers.tpl with all named templates</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Deployment with:</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Named template labels</li>
+<li class="task-list-item"><input type="checkbox" disabled/> ConfigMap/Secret mounts</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Resource limits</li>
+<li class="task-list-item"><input type="checkbox" disabled/> All three probe types</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Security context</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Node selectors and tolerations</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Service with configurable type</li>
+<li class="task-list-item"><input type="checkbox" disabled/> ConfigMap with templated content</li>
+<li class="task-list-item"><input type="checkbox" disabled/> HorizontalPodAutoscaler (conditional)</li>
+<li class="task-list-item"><input type="checkbox" disabled/> ServiceAccount (conditional)</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Ingress (conditional)</li>
+<li class="task-list-item"><input type="checkbox" disabled/> NOTES.txt with helpful instructions</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Proper <code>toYaml</code>, <code>nindent</code>, <code>quote</code> usage throughout</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Required value validation</li>
+<li class="task-list-item"><input type="checkbox" disabled/> No hardcoded values</li>
+</ul>
+<h3 id="validation-commands">Validation Commands:</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Lint the chart</span>
+helm<span class="w"> </span>lint<span class="w"> </span>.
+
+<span class="c1"># Dry run with debug</span>
+helm<span class="w"> </span>install<span class="w"> </span>--dry-run<span class="w"> </span>--debug<span class="w"> </span>test-release<span class="w"> </span>.
+
+<span class="c1"># Template with different values</span>
+helm<span class="w"> </span>template<span class="w"> </span>test-release<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-prod.yaml
+
+<span class="c1"># Install and verify</span>
+helm<span class="w"> </span>install<span class="w"> </span>my-app<span class="w"> </span>.
+kubectl<span class="w"> </span>get<span class="w"> </span>all
+helm<span class="w"> </span>get<span class="w"> </span>values<span class="w"> </span>my-app
+
+<span class="c1"># Upgrade</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>my-app<span class="w"> </span>.<span class="w"> </span>--set<span class="w"> </span><span class="nv">replicaCount</span><span class="o">=</span><span class="m">3</span>
+
+<span class="c1"># Check history</span>
+helm<span class="w"> </span><span class="nb">history</span><span class="w"> </span>my-app
+</code></pre></div>
+<hr />
+<h2 id="recommended-practice-flow">Recommended Practice Flow</h2>
+<ol>
+<li><strong>Level 1-2</strong>: Get basic structure working</li>
+<li><strong>Level 3</strong>: Add templating and loops</li>
+<li><strong>Level 4</strong>: Create helpers and use functions</li>
+<li><strong>Level 5-6</strong>: Master data structures and YAML handling</li>
+<li><strong>Level 7</strong>: Production-ready features</li>
+<li><strong>Final Challenge</strong>: Package everything together</li>
+</ol>
+<p><strong>Pro Tips:</strong></p>
+<ul>
+<li>Always use <code>helm lint</code> before installing</li>
+<li>Use <code>--dry-run --debug</code> to see rendered templates</li>
+<li>Test with <code>helm template</code> to avoid cluster pollution</li>
+<li>Validate YAML syntax with <code>yamllint</code></li>
+<li>Keep templates readable with proper indentation</li>
+<li>Document values.yaml thoroughly</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "navigation.indexes", "toc.follow", "content.code.copy", "content.tabs.link", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

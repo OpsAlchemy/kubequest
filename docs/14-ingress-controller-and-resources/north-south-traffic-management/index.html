@@ -1,0 +1,4864 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/docs/14-ingress-controller-and-resources/north-south-traffic-management/">
+      
+      
+        <link rel="prev" href="../nginx/">
+      
+      
+        <link rel="next" href="../regex/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Kubernetes NGINX Ingress — Complete Master Guide - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#kubernetes-nginx-ingress-complete-master-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Kubernetes NGINX Ingress — Complete Master Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KillerCoda Notes – CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nginx-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Configs that Mimic Kubernetes Ingress Behavior
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nginx-regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Mystery of (/|$): NGINX Ingress Controller's Secret Sauce
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nginx-vs-ingress-compare/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nginx vs ingress compare
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nginx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Location Block Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes NGINX Ingress — Complete Master Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes NGINX Ingress — Complete Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#core-mental-model-the-universal-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Mental Model: The Universal Pattern
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-1-fundamental-building-blocks-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 1: Fundamental Building Blocks Explained
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 1: Fundamental Building Blocks Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matching-types-the-when-decides-if-rule-applies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MATCHING TYPES (The "When" - Decides if rule applies)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#action-types-the-what-decides-what-happens-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACTION TYPES (The "What" - Decides what happens next)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-complete-examples-by-pattern-with-detailed-explanations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 2: Complete Examples by Pattern with Detailed Explanations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 2: Complete Examples by Pattern with Detailed Explanations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pattern-1-simple-forwarding-direct-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 1: Simple Forwarding (Direct Routing)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 1: Simple Forwarding (Direct Routing)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-exact-match-forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Exact Match → Forward
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-prefix-match-forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Prefix Match → Forward
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-host-path-match-forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Host + Path Match → Forward
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-2-rewriting-paths-path-transformation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 2: Rewriting Paths (Path Transformation)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 2: Rewriting Paths (Path Transformation)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-prefix-rewrite-most-common-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Prefix + Rewrite (Most Common Pattern)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-complex-rewrite-with-capture-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Complex Rewrite with Capture Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-host-specific-rewrite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Host-specific Rewrite
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-3-redirects-client-side-url-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 3: Redirects (Client-side URL Changes)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 3: Redirects (Client-side URL Changes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-permanent-redirect-301" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Permanent Redirect (301)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-temporary-redirect-302" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Temporary Redirect (302)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-path-specific-redirect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Path-specific Redirect
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-4-regex-patterns-advanced-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 4: Regex Patterns (Advanced Matching)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 4: Regex Patterns (Advanced Matching)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-simple-regex-match" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Simple Regex Match
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-versioned-api-regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Versioned API Regex
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-regex-with-rewrite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Regex with Rewrite
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-5-priority-and-specificity-order-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 5: Priority and Specificity (Order Matters)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 5: Priority and Specificity (Order Matters)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-exact-vs-prefix-priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Exact vs Prefix Priority
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-multiple-specific-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Multiple Specific Paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-6-advanced-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 6: Advanced Configurations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 6: Advanced Configurations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-multiple-paths-single-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Multiple Paths → Single Backend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-catch-all-fallback-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Catch-All Fallback Route
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-ssltls-redirect-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 SSL/TLS Redirect + Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-path-based-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Path-based TLS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-7-real-world-production-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 7: Real-World Production Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 7: Real-World Production Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-api-gateway-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 API Gateway Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-microservices-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Microservices Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-ab-testing-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 A/B Testing Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-geographic-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 Geographic Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-8-complex-regex-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 8: Complex Regex Patterns
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 8: Complex Regex Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-uuid-pattern-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 UUID Pattern Matching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-file-extension-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 File Extension Matching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-complex-path-restructuring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 Complex Path Restructuring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-9-rate-limiting-and-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 9: Rate Limiting and Security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 9: Rate Limiting and Security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-path-based-rate-limiting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 Path-based Rate Limiting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-authentication-required-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 Authentication Required Paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-10-header-based-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 10: Header-based Routing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 10: Header-based Routing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#101-mobile-vs-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 Mobile vs Desktop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#102-api-version-header" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 API Version Header
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-golden-rules-best-practices-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 3: Golden Rules &amp; Best Practices Explained
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 3: Golden Rules &amp; Best Practices Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-matching-priority-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Matching Priority Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-rewrite-pattern-guidelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Rewrite Pattern Guidelines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-redirect-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Redirect Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-regex-specific-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Regex-Specific Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-testing-checklist-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Testing Checklist Explained
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-troubleshooting-common-issues-detailed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 4: Troubleshooting Common Issues (Detailed)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 4: Troubleshooting Common Issues (Detailed)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-rule-not-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Rule Not Matching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-rewrite-not-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Rewrite Not Working
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-redirect-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Redirect Loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-priority-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Priority Problems
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-tlsssl-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. TLS/SSL Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-5-performance-optimization-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 5: Performance Optimization Tips
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 5: Performance Optimization Tips">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-path-matching-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Path Matching Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-rewrite-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Rewrite Performance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-scale-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Scale Considerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-6-migration-and-versioning-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 6: Migration and Versioning Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 6: Migration and Versioning Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-api-version-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. API Version Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-path-migration-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Path Migration Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#final-summary-mental-model-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Final Summary: Mental Model Diagram
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regex From Absolute Scratch - You WILL Understand This 🎯
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster architecture, installation & configuration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster architecture, installation & configuration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/apiserver-misconfigured-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kube-apiserver Crash (Static Pod)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/apiserver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Control Plane (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/cka-kubernetes-upgrade-complete-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Kubernetes Cluster Upgrade Guide for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/etcd-backup-and-restore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    etcd Snapshot Backup and Restore (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubeadm-certificate-commands-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete kubeadm Certificate Management Command Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubeadm-cluster-init-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Cluster Initialization and Node Join Process Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubelet-misconfigured/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubelet Misconfigured
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/probing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Probes &amp; Health Endpoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/rbac-namespace-scope-with-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespacing ClusterRoles Using RoleBindings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/rbac-pipeline-serviceaccount-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes RBAC: Pipeline ServiceAccount with Cluster-Wide Read and Namespaced Deployment Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/vimsetpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal Vim Configuration for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API: Complete Master Guide 🚀
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API vs Ingress Controller: Deep Dive into Complex Logic 🧠
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/load-of-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services & networking
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services & networking
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/ingress-cli-pathType-and-class/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Ingress via kubectl CLI with Prefix Paths and IngressClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-cross-namespace-egress-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restricting Cross-Namespace Traffic Using NetworkPolicies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-egress-cross-namespace-label-based/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Egress NetworkPolicy for Label-Based Cross-Namespace Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Storage
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/affinity-with-hostPath-and-selector-on-pvc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    affinity with hostPath and selector on pvc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/cheatshett/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cheatshett
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/consumption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Consumption
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/minimal-pv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal pv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/standard-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standard sc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/usage-of-manual-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual StorageClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workload & scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workload & scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/all-possible-way-to-create-secret/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Secrets - Complete Reference Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-env-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using ConfigMaps as Environment Variables and Volumes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-selective/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configmap selective
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/daemonset-troubleshooting-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DaemonSet YAML Troubleshooting Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment-nodeName-scheduling-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment Scheduling Failure Due to Hard-Coded nodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment.strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment.strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/multi-container-port-conflict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CrashLoopBackOff Due to Port Conflict in Multi-Container Pod
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-affinity-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Pod Affinity: Advanced Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-priority-and-priorityclass-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pod Priority Using PriorityClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#core-mental-model-the-universal-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Mental Model: The Universal Pattern
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-1-fundamental-building-blocks-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 1: Fundamental Building Blocks Explained
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 1: Fundamental Building Blocks Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matching-types-the-when-decides-if-rule-applies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MATCHING TYPES (The "When" - Decides if rule applies)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#action-types-the-what-decides-what-happens-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACTION TYPES (The "What" - Decides what happens next)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-complete-examples-by-pattern-with-detailed-explanations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 2: Complete Examples by Pattern with Detailed Explanations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 2: Complete Examples by Pattern with Detailed Explanations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pattern-1-simple-forwarding-direct-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 1: Simple Forwarding (Direct Routing)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 1: Simple Forwarding (Direct Routing)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-exact-match-forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Exact Match → Forward
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-prefix-match-forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Prefix Match → Forward
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-host-path-match-forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Host + Path Match → Forward
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-2-rewriting-paths-path-transformation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 2: Rewriting Paths (Path Transformation)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 2: Rewriting Paths (Path Transformation)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-prefix-rewrite-most-common-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Prefix + Rewrite (Most Common Pattern)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-complex-rewrite-with-capture-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Complex Rewrite with Capture Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-host-specific-rewrite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Host-specific Rewrite
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-3-redirects-client-side-url-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 3: Redirects (Client-side URL Changes)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 3: Redirects (Client-side URL Changes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-permanent-redirect-301" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Permanent Redirect (301)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-temporary-redirect-302" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Temporary Redirect (302)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-path-specific-redirect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Path-specific Redirect
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-4-regex-patterns-advanced-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 4: Regex Patterns (Advanced Matching)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 4: Regex Patterns (Advanced Matching)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-simple-regex-match" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Simple Regex Match
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-versioned-api-regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Versioned API Regex
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-regex-with-rewrite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Regex with Rewrite
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-5-priority-and-specificity-order-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 5: Priority and Specificity (Order Matters)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 5: Priority and Specificity (Order Matters)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-exact-vs-prefix-priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Exact vs Prefix Priority
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-multiple-specific-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Multiple Specific Paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-6-advanced-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 6: Advanced Configurations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 6: Advanced Configurations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-multiple-paths-single-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Multiple Paths → Single Backend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-catch-all-fallback-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Catch-All Fallback Route
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-ssltls-redirect-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 SSL/TLS Redirect + Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-path-based-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Path-based TLS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-7-real-world-production-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 7: Real-World Production Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 7: Real-World Production Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-api-gateway-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 API Gateway Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-microservices-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Microservices Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-ab-testing-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 A/B Testing Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-geographic-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 Geographic Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-8-complex-regex-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 8: Complex Regex Patterns
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 8: Complex Regex Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-uuid-pattern-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 UUID Pattern Matching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-file-extension-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 File Extension Matching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-complex-path-restructuring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 Complex Path Restructuring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-9-rate-limiting-and-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 9: Rate Limiting and Security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 9: Rate Limiting and Security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-path-based-rate-limiting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 Path-based Rate Limiting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-authentication-required-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 Authentication Required Paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-10-header-based-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 10: Header-based Routing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern 10: Header-based Routing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#101-mobile-vs-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 Mobile vs Desktop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#102-api-version-header" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 API Version Header
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-golden-rules-best-practices-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 3: Golden Rules &amp; Best Practices Explained
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 3: Golden Rules &amp; Best Practices Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-matching-priority-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Matching Priority Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-rewrite-pattern-guidelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Rewrite Pattern Guidelines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-redirect-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Redirect Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-regex-specific-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Regex-Specific Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-testing-checklist-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Testing Checklist Explained
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-troubleshooting-common-issues-detailed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 4: Troubleshooting Common Issues (Detailed)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 4: Troubleshooting Common Issues (Detailed)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-rule-not-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Rule Not Matching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-rewrite-not-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Rewrite Not Working
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-redirect-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Redirect Loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-priority-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Priority Problems
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-tlsssl-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. TLS/SSL Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-5-performance-optimization-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 5: Performance Optimization Tips
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 5: Performance Optimization Tips">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-path-matching-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Path Matching Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-rewrite-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Rewrite Performance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-scale-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Scale Considerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-6-migration-and-versioning-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 6: Migration and Versioning Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 6: Migration and Versioning Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-api-version-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. API Version Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-path-migration-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Path Migration Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#final-summary-mental-model-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Final Summary: Mental Model Diagram
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="kubernetes-nginx-ingress-complete-master-guide">Kubernetes NGINX Ingress — Complete Master Guide</h1>
+<h2 id="core-mental-model-the-universal-pattern">Core Mental Model: The Universal Pattern</h2>
+<p><strong>Ingress routing never invents new behavior — it only combines matching rules with actions.</strong></p>
+<div class="highlight"><pre><span></span><code>MATCH  +  ACTION
+</code></pre></div>
+<ul>
+<li><strong>MATCH</strong> determines <em>when</em> a rule applies (host, path, pathType)</li>
+<li><strong>ACTION</strong> determines <em>what happens</em> after match (forward, rewrite, redirect)</li>
+</ul>
+<p><strong>CRITICAL INSIGHT:</strong> Every Ingress configuration, no matter how complex, is just a combination of these fundamental building blocks. Once you understand the patterns, you can read and write any Ingress configuration.</p>
+<hr />
+<h2 id="part-1-fundamental-building-blocks-explained">Part 1: Fundamental Building Blocks Explained</h2>
+<h3 id="matching-types-the-when-decides-if-rule-applies">MATCHING TYPES (The "When" - Decides if rule applies)</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+<th>Use Case</th>
+<th>Technical Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Exact</strong></td>
+<td>Matches only the exact path string</td>
+<td>Login endpoints, specific API routes</td>
+<td>Most specific match, highest priority</td>
+</tr>
+<tr>
+<td><strong>Prefix</strong></td>
+<td>Matches path and everything under it</td>
+<td>API gateways, static file directories</td>
+<td>Most commonly used, good for hierarchies</td>
+</tr>
+<tr>
+<td><strong>Regex</strong></td>
+<td>Pattern-based matching using regular expressions</td>
+<td>Versioned APIs, complex URL patterns</td>
+<td>Most flexible but requires special annotations</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Important:</strong> Matching never changes the request. It only decides if the rule should be applied.</p>
+<h3 id="action-types-the-what-decides-what-happens-next">ACTION TYPES (The "What" - Decides what happens next)</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+<th>Client URL Changes?</th>
+<th>HTTP Status</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Forward</strong></td>
+<td>Send to backend service</td>
+<td>No</td>
+<td>200+</td>
+<td>Normal routing</td>
+</tr>
+<tr>
+<td><strong>Rewrite</strong></td>
+<td>Change path before backend</td>
+<td>No</td>
+<td>200+</td>
+<td>API gateways, path mapping</td>
+</tr>
+<tr>
+<td><strong>Redirect</strong></td>
+<td>Tell client to make new request</td>
+<td>Yes</td>
+<td>301/302</td>
+<td>URL migration, maintenance</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-2-complete-examples-by-pattern-with-detailed-explanations">Part 2: Complete Examples by Pattern with Detailed Explanations</h2>
+<h3 id="pattern-1-simple-forwarding-direct-routing">Pattern 1: Simple Forwarding (Direct Routing)</h3>
+<h4 id="11-exact-match-forward">1.1 Exact Match → Forward</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exact-match</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/login</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Exact</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">auth-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Request comes to <code>example.com/login</code>
+2. Ingress controller checks for Exact match on <code>/login</code>
+3. Route matched → forwards to <code>auth-service:80</code>
+4. Backend receives <code>/login</code> unchanged</p>
+<p><strong>When to use:</strong> When you need precise endpoint matching, like login, logout, or specific API endpoints that shouldn't match subpaths.</p>
+<p><strong>Key behavior:</strong>
+- ✅ Matches: <code>example.com/login</code>
+- ❌ Does NOT match: <code>example.com/login/</code>, <code>example.com/login/admin</code>
+- Priority: Highest (Exact beats Prefix for same path)</p>
+<h4 id="12-prefix-match-forward">1.2 Prefix Match → Forward</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prefix-match</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Request comes to <code>example.com/api/users</code>
+2. Ingress checks Prefix match on <code>/api</code>
+3. Request starts with <code>/api</code> → match found
+4. Forwards to <code>api-service:80</code> with full path</p>
+<p><strong>When to use:</strong> For API gateways, microservices routing, or any hierarchical URL structure where you want all subpaths handled by the same service.</p>
+<p><strong>Key behavior:</strong>
+- ✅ Matches: <code>example.com/api</code>, <code>example.com/api/users</code>, <code>example.com/api/v1/orders</code>
+- ❌ Does NOT match: <code>example.com/ap</code>, <code>example.com/myapi</code>
+- Backend receives path unchanged</p>
+<h4 id="13-host-path-match-forward">1.3 Host + Path Match → Forward</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">host-path-match</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/v1</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-v1</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. DNS resolves <code>api.example.com</code> to Ingress IP
+2. Host header must exactly match <code>api.example.com</code>
+3. Path must start with <code>/v1</code>
+4. Both conditions met → route to <code>api-v1</code></p>
+<p><strong>When to use:</strong> Multi-tenant applications, API versioning by subdomain, or separating services by domain.</p>
+<p><strong>Key behavior:</strong>
+- ✅ Matches: <code>api.example.com/v1</code>, <code>api.example.com/v1/users</code>
+- ❌ Does NOT match: <code>example.com/v1</code> (wrong host), <code>api.example.com/v2</code> (wrong path)
+- Host matching is case-insensitive but exact string match</p>
+<hr />
+<h3 id="pattern-2-rewriting-paths-path-transformation">Pattern 2: Rewriting Paths (Path Transformation)</h3>
+<h4 id="21-prefix-rewrite-most-common-pattern">2.1 Prefix + Rewrite (Most Common Pattern)</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prefix-rewrite</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/$2</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api(/|$)(.*)</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend-api</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Request to <code>example.com/api/users</code>
+2. Path matches pattern <code>/api(/|$)(.*)</code>
+3. <code>$2</code> captures <code>users</code> (the <code>.*</code> after <code>/api</code>)
+4. Rewrite target <code>/users</code> sent to backend
+5. Client still sees <code>/api/users</code> in browser</p>
+<p><strong>Regex breakdown:</strong>
+- <code>/api</code> - literal match
+- <code>(/|$)</code> - either slash or end of string
+- <code>(.*)</code> - capture everything after to <code>$2</code></p>
+<p><strong>When to use:</strong> API gateways, legacy path migration, or when backend expects different URL structure than public API.</p>
+<p><strong>Key behavior:</strong>
+- Client URL stays <code>/api/users</code>
+- Backend receives <code>/users</code>
+- Perfect for hiding internal structure</p>
+<h4 id="22-complex-rewrite-with-capture-groups">2.2 Complex Rewrite with Capture Groups</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">complex-rewrite</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/v2/$1</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/legacy/(.*)</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">modern-api</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Request to <code>example.com/legacy/users/123</code>
+2. <code>(.*)</code> captures <code>users/123</code> as <code>$1</code>
+3. Rewrite target <code>/v2/$1</code> becomes <code>/v2/users/123</code>
+4. Backend receives new path</p>
+<p><strong>Capture group notes:</strong>
+- <code>$1</code> = first capture group <code>(.*)</code>
+- <code>$2</code> = second capture group
+- Can have up to 9 capture groups (<code>$1</code> through <code>$9</code>)</p>
+<p><strong>When to use:</strong> Version upgrades, migrating from legacy to new API structure, or path normalization.</p>
+<h4 id="23-host-specific-rewrite">2.3 Host-specific Rewrite</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">host-specific-rewrite</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/$2</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api.company.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/company-api(/|$)(.*)</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">internal-api</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Only applies to <code>api.company.com</code>
+2. Strips <code>/company-api</code> prefix
+3. Forwards clean path to backend
+4. Different hosts can have different rewrite rules</p>
+<p><strong>When to use:</strong> White-label APIs, partner integrations, or multi-brand deployments.</p>
+<hr />
+<h3 id="pattern-3-redirects-client-side-url-changes">Pattern 3: Redirects (Client-side URL Changes)</h3>
+<h4 id="31-permanent-redirect-301">3.1 Permanent Redirect (301)</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">permanent-redirect</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/permanent-redirect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://new.example.com</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">old.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">placeholder</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Request to <code>http://old.example.com/any-path</code>
+2. Ingress returns HTTP 301 status
+3. <code>Location: https://new.example.com</code> header
+4. Browser automatically makes new request</p>
+<p><strong>301 vs 302:</strong>
+- <strong>301 Permanent</strong>: Browser caches, SEO passes ranking
+- <strong>302 Temporary</strong>: Browser doesn't cache, SEO doesn't pass ranking</p>
+<p><strong>When to use:</strong> Domain migration, HTTPS enforcement, permanent URL changes.</p>
+<h4 id="32-temporary-redirect-302">3.2 Temporary Redirect (302)</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">temporary-redirect</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/temporary-redirect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/maintenance</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/app</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">placeholder</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Request to <code>example.com/app/dashboard</code>
+2. Returns HTTP 302 with <code>Location: /maintenance</code>
+3. Browser requests <code>example.com/maintenance</code>
+4. Useful for temporary maintenance pages</p>
+<p><strong>When to use:</strong> Maintenance mode, A/B testing, temporary promotions.</p>
+<h4 id="33-path-specific-redirect">3.3 Path-specific Redirect</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">path-redirect</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/permanent-redirect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/new-path</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/old-path</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Exact</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">placeholder</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Only <code>/old-path</code> triggers redirect
+2. Other paths continue normally
+3. Precise control over what gets redirected</p>
+<p><strong>When to use:</strong> Individual page migrations, deprecated endpoints.</p>
+<hr />
+<h3 id="pattern-4-regex-patterns-advanced-matching">Pattern 4: Regex Patterns (Advanced Matching)</h3>
+<h4 id="41-simple-regex-match">4.1 Simple Regex Match</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">simple-regex</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/use-regex</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^/users/[0-9]+$</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ImplementationSpecific</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Regex <code>^/users/[0-9]+$</code> matches:
+   - Starts with <code>/users/</code>
+   - Followed by one or more digits (<code>[0-9]+</code>)
+   - End of string (<code>$</code>)
+2. Only numeric user IDs match</p>
+<p><strong>Regex syntax:</strong>
+- <code>^</code> = start of string
+- <code>[0-9]</code> = digit character
+- <code>+</code> = one or more
+- <code>$</code> = end of string</p>
+<p><strong>When to use:</strong> Validating URL patterns, restricting to certain formats.</p>
+<p><strong>Key behavior:</strong>
+- ✅ Matches: <code>/users/123</code>, <code>/users/456</code>
+- ❌ Does NOT match: <code>/users/abc</code>, <code>/users/123/profile</code></p>
+<h4 id="42-versioned-api-regex">4.2 Versioned API Regex</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">versioned-api</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/use-regex</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^/v[0-9]+/products$</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ImplementationSpecific</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">product-api</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Matches <code>/v</code> + digit + <code>/products</code>
+2. <code>[0-9]+</code> = one or more digits
+3. Flexible version handling</p>
+<p><strong>Regex pattern:</strong>
+- <code>^/v</code> = starts with <code>/v</code>
+- <code>[0-9]+</code> = version number
+- <code>/products$</code> = ends with <code>/products</code></p>
+<p><strong>When to use:</strong> API versioning, future-proof version matching.</p>
+<h4 id="43-regex-with-rewrite">4.3 Regex with Rewrite</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">regex-rewrite</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/use-regex</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/$1</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^/v[0-9]+/(.*)</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ImplementationSpecific</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unified-api</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Request <code>example.com/v2/users/profile</code>
+2. Regex captures <code>users/profile</code> as <code>$1</code>
+3. Rewrites to <code>/api/users/profile</code>
+4. All versions map to same backend path</p>
+<p><strong>When to use:</strong> Version abstraction, unified backend API.</p>
+<hr />
+<h3 id="pattern-5-priority-and-specificity-order-matters">Pattern 5: Priority and Specificity (Order Matters)</h3>
+<h4 id="51-exact-vs-prefix-priority">5.1 Exact vs Prefix Priority</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">priority-example</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># Highest priority: Exact match</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Exact</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-gateway</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">      </span><span class="c1"># Lower priority: Prefix match</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-v2</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">      </span><span class="c1"># Even lower: Shorter prefix</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/ap</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">legacy-api</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>Priority Order:</strong>
+1. <code>Exact</code> match - highest priority
+2. <code>Longer Prefix</code> - more specific path wins
+3. <code>Shorter Prefix</code> - less specific path</p>
+<p><strong>What happens:</strong>
+- <code>example.com/api</code> → <code>api-gateway</code> (Exact wins)
+- <code>example.com/api/users</code> → <code>api-v2</code> (Prefix match)
+- <code>example.com/app</code> → <code>legacy-api</code> (Different prefix)</p>
+<p><strong>When to use:</strong> Override specific endpoints while keeping general routing.</p>
+<h4 id="52-multiple-specific-paths">5.2 Multiple Specific Paths</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multi-path</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/users</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Exact</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/orders</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Exact</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">order-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-gateway</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Specific endpoints handled by specialized services
+2. General <code>/api/*</code> handled by gateway
+3. Clear separation of concerns</p>
+<p><strong>When to use:</strong> Microservices architecture, specialized endpoints.</p>
+<hr />
+<h3 id="pattern-6-advanced-configurations">Pattern 6: Advanced Configurations</h3>
+<h4 id="61-multiple-paths-single-backend">6.1 Multiple Paths → Single Backend</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multi-to-one</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/web</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend-app</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/app</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend-app</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/portal</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend-app</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+- Three different entry points
+- All route to same backend service
+- Useful for marketing multiple URLs</p>
+<p><strong>When to use:</strong> Brand aliases, legacy URL support, vanity URLs.</p>
+<h4 id="62-catch-all-fallback-route">6.2 Catch-All Fallback Route</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catch-all</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default-app</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Matches EVERY path on the host
+2. Lowest priority (placed after specific routes)
+3. Serves as default/404 handler</p>
+<p><strong>Placement:</strong> Should be LAST in the paths list or in separate Ingress.</p>
+<p><strong>When to use:</strong> Default UI, custom 404 pages, maintenance mode.</p>
+<h4 id="63-ssltls-redirect-routing">6.3 SSL/TLS Redirect + Routing</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tls-redirect</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/ssl-redirect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/force-ssl-redirect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">tls</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hosts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example-tls</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-app</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. HTTP request on port 80
+2. 301 redirect to HTTPS (port 443)
+3. TLS termination at Ingress
+4. Decrypted traffic forwarded to backend</p>
+<p><strong>Annotations:</strong>
+- <code>ssl-redirect</code>: Redirect HTTP to HTTPS
+- <code>force-ssl-redirect</code>: Always redirect, even without TLS config</p>
+<p><strong>When to use:</strong> Production websites, security compliance.</p>
+<h4 id="64-path-based-tls">6.4 Path-based TLS</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">path-tls</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">tls</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hosts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secure.example.com</span>
+<span class="w">    </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secure-tls</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secure.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/admin</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin-panel</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">443</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">public-site</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+- <code>secure.example.com/admin</code> → HTTPS only
+- <code>example.com</code> → HTTP allowed
+- Different security levels per path</p>
+<p><strong>When to use:</strong> Mixed security requirements, admin vs public areas.</p>
+<hr />
+<h3 id="pattern-7-real-world-production-examples">Pattern 7: Real-World Production Examples</h3>
+<h4 id="71-api-gateway-pattern">7.1 API Gateway Pattern</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-gateway</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/$2</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/configuration-snippet</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">more_set_headers &quot;X-API-Version: v1&quot;;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api.company.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/auth(/|$)(.*)</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">auth-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/users(/|$)(.*)</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/orders(/|$)(.*)</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">order-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Single entry point for all services
+2. Path-based service routing
+3. Headers injected for versioning
+4. Clean separation of concerns</p>
+<p><strong>Gateway benefits:</strong>
+- Single SSL certificate
+- Centralized logging
+- Consistent API structure
+- Easy service discovery</p>
+<h4 id="72-microservices-routing">7.2 Microservices Routing</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">microservices</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/$2</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/product-service(/|$)(.*)</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">product-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/cart-service(/|$)(.*)</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cart-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3001</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/payment-service(/|$)(.*)</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">payment-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3002</span>
+</code></pre></div>
+<strong>What happens:</strong>
+- Each service has dedicated path prefix
+- Rewrite removes service name prefix
+- Services remain independent</p>
+<p><strong>Microservices benefits:</strong>
+- Independent scaling
+- Separate deployments
+- Technology diversity
+- Team autonomy</p>
+<h4 id="73-ab-testing-routing">7.3 A/B Testing Routing</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ab-testing</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/canary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/canary-weight</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;30&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-v2</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main-app</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-v1</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+- 30% traffic to <code>app-v2</code>
+- 70% traffic to <code>app-v1</code>
+- Weight-based load balancing</p>
+<p><strong>Canary annotations:</strong>
+- <code>canary: "true"</code> - marks as canary ingress
+- <code>canary-weight: "30"</code> - percentage to canary
+- <code>canary-by-header</code> - header-based routing</p>
+<p><strong>When to use:</strong> Gradual rollouts, feature flags, experimentation.</p>
+<h4 id="74-geographic-routing">7.4 Geographic Routing</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">geo-routing</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/server-snippet</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">if ($http_cf_ipcountry = &quot;US&quot;) {</span>
+<span class="w">        </span><span class="no">set $upstream &quot;us-service&quot;;</span>
+<span class="w">      </span><span class="no">}</span>
+<span class="w">      </span><span class="no">if ($http_cf_ipcountry = &quot;EU&quot;) {</span>
+<span class="w">        </span><span class="no">set $upstream &quot;eu-service&quot;;</span>
+<span class="w">      </span><span class="no">}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">global.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+- Cloudflare header <code>CF-IPCountry</code> checked
+- US traffic → US service
+- EU traffic → EU service
+- Fallback to default</p>
+<p><strong>Geo-routing benefits:</strong>
+- Reduced latency
+- Data sovereignty compliance
+- Regional features</p>
+<hr />
+<h3 id="pattern-8-complex-regex-patterns">Pattern 8: Complex Regex Patterns</h3>
+<h4 id="81-uuid-pattern-matching">8.1 UUID Pattern Matching</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uuid-pattern</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/use-regex</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^/users/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ImplementationSpecific</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user-detail-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+</code></pre></div>
+<strong>Regex breakdown:</strong>
+- <code>[0-9a-f]</code> - hex character
+- <code>{8}</code> - exactly 8 characters
+- Standard UUID format
+- Validates URL structure</p>
+<p><strong>When to use:</strong> Resource endpoints with UUID identifiers.</p>
+<h4 id="82-file-extension-matching">8.2 File Extension Matching</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">file-extensions</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/use-regex</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^.*\.(jpg|jpeg|png|gif|ico)$</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ImplementationSpecific</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">image-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^.*\.(js|css)$</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ImplementationSpecific</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asset-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+- Images → image optimization service
+- JS/CSS → asset pipeline service
+- Content-type based routing</p>
+<p><strong>Regex pattern:</strong>
+- <code>.*</code> - any characters
+- <code>\.</code> - literal dot
+- <code>(jpg|jpeg|png|gif|ico)</code> - extension list</p>
+<h4 id="83-complex-path-restructuring">8.3 Complex Path Restructuring</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">path-restructure</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/use-regex</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/v2/$2/$1</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">migrate.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^/old/v1/([^/]+)/([^/]+)/?</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ImplementationSpecific</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">new-api</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+</code></pre></div>
+<strong>What happens:</strong>
+- <code>^/old/v1/([^/]+)/([^/]+)/?</code>
+- <code>$1</code> = first segment after <code>/old/v1/</code>
+- <code>$2</code> = second segment
+- Reorders to <code>/api/v2/$2/$1</code></p>
+<p><strong>Example transformation:</strong>
+- <code>/old/v1/users/profile</code> → <code>/api/v2/profile/users</code>
+- Complete URL restructuring</p>
+<hr />
+<h3 id="pattern-9-rate-limiting-and-security">Pattern 9: Rate Limiting and Security</h3>
+<h4 id="91-path-based-rate-limiting">9.1 Path-based Rate Limiting</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rate-limited</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/limit-rps</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;10&quot;</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/limit-rpm</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100&quot;</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/limit-whitelist</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;10.0.0.0/8&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/public</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">public-api</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/internal</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">internal-api</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+</code></pre></div>
+<strong>Rate limiting settings:</strong>
+- <code>limit-rps</code>: 10 requests per second
+- <code>limit-rpm</code>: 100 requests per minute
+- <code>limit-whitelist</code>: IPs exempt from limits</p>
+<p><strong>When to use:</strong> API protection, DDoS mitigation, fair usage policies.</p>
+<h4 id="92-authentication-required-paths">9.2 Authentication Required Paths</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">auth-paths</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/auth-type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basic</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/auth-secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basic-auth</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/auth-realm</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Authentication</span><span class="nv"> </span><span class="s">Required&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin-panel</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+1. Request to admin area
+2. 401 Unauthorized returned
+3. Browser shows auth dialog
+4. Valid credentials → access granted</p>
+<p><strong>Auth types supported:</strong>
+- Basic auth (shown)
+- External auth (OAuth, JWT)
+- Client certificate</p>
+<hr />
+<h3 id="pattern-10-header-based-routing">Pattern 10: Header-based Routing</h3>
+<h4 id="101-mobile-vs-desktop">10.1 Mobile vs Desktop</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">device-routing</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/server-snippet</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">set $mobile_rewrite &quot;no&quot;;</span>
+<span class="w">      </span><span class="no">if ($http_user_agent ~* &quot;(android|iphone|mobile)&quot;) {</span>
+<span class="w">        </span><span class="no">set $mobile_rewrite &quot;yes&quot;;</span>
+<span class="w">      </span><span class="no">}</span>
+<span class="w">      </span><span class="no">if ($mobile_rewrite = &quot;yes&quot;) {</span>
+<span class="w">        </span><span class="no">rewrite ^/(.*)$ /mobile/$1 break;</span>
+<span class="w">      </span><span class="no">}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-app</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+<strong>What happens:</strong>
+- Checks <code>User-Agent</code> header
+- Mobile devices → <code>/mobile/</code> prefix
+- Desktop → normal routing
+- Device-specific experiences</p>
+<p><strong>When to use:</strong> Responsive web apps, mobile optimization.</p>
+<h4 id="102-api-version-header">10.2 API Version Header</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">header-versioning</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/configuration-snippet</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">if ($http_x_api_version = &quot;v2&quot;) {</span>
+<span class="w">        </span><span class="no">rewrite ^/(.*)$ /v2/$1 break;</span>
+<span class="w">      </span><span class="no">}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-service</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+</code></pre></div>
+<strong>What happens:</strong>
+- Header <code>X-API-Version: v2</code> triggers rewrite
+- Path prefix added based on header
+- Clean version negotiation</p>
+<p><strong>Header-based benefits:</strong>
+- URL remains clean
+- Client controls version
+- Easy to test different versions</p>
+<hr />
+<h2 id="part-3-golden-rules-best-practices-explained">Part 3: Golden Rules &amp; Best Practices Explained</h2>
+<h3 id="1-matching-priority-rules">1. Matching Priority Rules</h3>
+<p><strong>Order of precedence:</strong>
+1. <strong>Exact path match</strong> - Most specific
+2. <strong>Longer prefix path</strong> - More specific prefix
+3. <strong>Shorter prefix path</strong> - Less specific prefix
+4. <strong>Catch-all</strong> - Least specific</p>
+<p><strong>Example of priority:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Order matters within same Ingress</span>
+<span class="c1"># 1. Exact /api → highest priority</span>
+<span class="c1"># 2. Prefix /api/v2 → medium priority  </span>
+<span class="c1"># 3. Prefix /api → lower priority</span>
+<span class="c1"># 4. Prefix / → lowest priority</span>
+</code></pre></div></p>
+<h3 id="2-rewrite-pattern-guidelines">2. Rewrite Pattern Guidelines</h3>
+<p><strong>Capture group numbering:</strong>
+- <code>$1</code> = first parentheses group
+- <code>$2</code> = second parentheses group
+- Max 9 groups (<code>$1</code> through <code>$9</code>)</p>
+<p><strong>Common patterns:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Strip prefix</span>
+<span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api(/|$)(.*)</span>
+<span class="nt">rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/$2</span>
+
+<span class="c1"># Add prefix  </span>
+<span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/(.*)</span>
+<span class="nt">rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/$1</span>
+
+<span class="c1"># Complex transformation</span>
+<span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/old/([^/]+)/([^/]+)</span>
+<span class="nt">rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/new/$2/$1</span>
+</code></pre></div></p>
+<h3 id="3-redirect-best-practices">3. Redirect Best Practices</h3>
+<p><strong>Status code selection:</strong>
+- <strong>301 Permanent</strong>: Domain moves, permanent changes
+- <strong>302 Temporary</strong>: Maintenance, A/B testing
+- <strong>307/308</strong>: Preserve HTTP method (rarely used in Ingress)</p>
+<p><strong>Common mistakes:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># WRONG: Redirect loop</span>
+<span class="nt">permanent-redirect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span><span class="w">  </span><span class="c1"># redirects to itself</span>
+
+<span class="c1"># CORRECT: External URL or different path</span>
+<span class="nt">permanent-redirect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://new.example.com</span>
+</code></pre></div></p>
+<h3 id="4-regex-specific-requirements">4. Regex-Specific Requirements</h3>
+<p><strong>Mandatory for regex:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nginx.ingress.kubernetes.io/use-regex</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+
+<span class="nt">paths</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^/pattern$</span>
+<span class="w">  </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ImplementationSpecific</span><span class="w">  </span><span class="c1"># MUST be this</span>
+</code></pre></div></p>
+<p><strong>Regex testing tips:</strong>
+1. Test patterns locally first
+2. Use regex testers
+3. Start simple, add complexity
+4. Consider performance impact</p>
+<h3 id="5-testing-checklist-explained">5. Testing Checklist Explained</h3>
+<p><strong>Step-by-step validation:</strong></p>
+<ol>
+<li>
+<p><strong>Host matching:</strong>
+   <div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Host: example.com&quot;</span><span class="w"> </span>http://ingress-ip/
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Path matching:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># Test exact</span>
+curl<span class="w"> </span>http://ingress-ip/login
+
+<span class="c1"># Test prefix</span>
+curl<span class="w"> </span>http://ingress-ip/api/users
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Rewrite verification:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># Check backend logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>deployment/backend
+
+<span class="c1"># Or proxy through to see</span>
+kubectl<span class="w"> </span>port-forward<span class="w"> </span>service/backend<span class="w"> </span><span class="m">8080</span>:80
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Redirect testing:</strong>
+   <div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-v<span class="w"> </span>http://ingress-ip/old-path
+<span class="c1"># Should see 301/302 and Location header</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Priority testing:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># Test overlapping paths</span>
+curl<span class="w"> </span>http://ingress-ip/api<span class="w">  </span><span class="c1"># Should use exact if exists</span>
+curl<span class="w"> </span>http://ingress-ip/api/v2<span class="w">  </span><span class="c1"># Should use prefix</span>
+</code></pre></div></p>
+</li>
+</ol>
+<hr />
+<h2 id="part-4-troubleshooting-common-issues-detailed">Part 4: Troubleshooting Common Issues (Detailed)</h2>
+<h3 id="1-rule-not-matching">1. Rule Not Matching</h3>
+<p><strong>Symptoms:</strong>
+- 404 errors
+- Wrong backend service
+- Default backend used</p>
+<p><strong>Debug steps:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Check Ingress configuration</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>ingress<span class="w"> </span>&lt;name&gt;
+
+<span class="c1"># 2. Check Ingress controller logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>ingress-nginx<span class="w"> </span>&lt;controller-pod&gt;
+
+<span class="c1"># 3. Verify host header</span>
+curl<span class="w"> </span>-v<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Host: correct-host.com&quot;</span><span class="w"> </span>http://ingress-ip/
+
+<span class="c1"># 4. Check pathType matches expectation</span>
+<span class="c1"># Exact vs Prefix confusion is common</span>
+</code></pre></div></p>
+<p><strong>Common causes:</strong>
+- Wrong hostname in request
+- PathType mismatch
+- Trailing slash differences
+- Higher priority rule intercepting</p>
+<h3 id="2-rewrite-not-working">2. Rewrite Not Working</h3>
+<p><strong>Symptoms:</strong>
+- Backend receives wrong path
+- 404 from backend
+- Path transformation not happening</p>
+<p><strong>Debug steps:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Check rewrite annotation syntax</span>
+<span class="c1"># Common error: wrong capture group number</span>
+
+<span class="c1"># 2. Verify path pattern matches</span>
+<span class="c1"># Test pattern: does it capture what you expect?</span>
+
+<span class="c1"># 3. Check backend expectations</span>
+<span class="c1"># Does backend expect rewritten path?</span>
+
+<span class="c1"># 4. Look at nginx config</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>ingress-nginx<span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>cat<span class="w"> </span>/etc/nginx/nginx.conf<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>rewrite
+</code></pre></div></p>
+<p><strong>Common mistakes:</strong>
+- Capture groups don't match path pattern
+- Using <code>$1</code> when should use <code>$2</code>
+- Missing regex <code>use-regex: "true"</code> annotation
+- PathType not <code>ImplementationSpecific</code> for regex</p>
+<h3 id="3-redirect-loop">3. Redirect Loop</h3>
+<p><strong>Symptoms:</strong>
+- Infinite redirects
+- Browser shows "too many redirects"
+- Network tab shows chain of 301/302</p>
+<p><strong>Debug steps:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Check redirect target</span>
+<span class="c1"># Is it redirecting to itself?</span>
+
+<span class="c1"># 2. Check SSL redirect configuration</span>
+<span class="c1"># Multiple SSL redirects can cause loops</span>
+
+<span class="c1"># 3. Look for conflicting rules</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>ingress<span class="w"> </span>--all-namespaces
+
+<span class="c1"># 4. Test with curl to see redirect chain</span>
+curl<span class="w"> </span>-L<span class="w"> </span>-v<span class="w"> </span>http://ingress-ip/problem-path
+</code></pre></div></p>
+<p><strong>Common causes:</strong>
+- Redirect target matches source path
+- Multiple Ingresses with same host/path
+- SSL redirect + path redirect conflict
+- External redirect without protocol (http://)</p>
+<h3 id="4-priority-problems">4. Priority Problems</h3>
+<p><strong>Symptoms:</strong>
+- Wrong service handles request
+- Specific endpoint not working
+- Unexpected routing behavior</p>
+<p><strong>Debug steps:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. List all Ingress rules sorted by priority</span>
+<span class="c1"># Exact &gt; Longer Prefix &gt; Shorter Prefix</span>
+
+<span class="c1"># 2. Check all Ingresses for the host</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>ingress<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A5<span class="w"> </span>-B5<span class="w"> </span><span class="s2">&quot;example.com&quot;</span>
+
+<span class="c1"># 3. Test specific paths</span>
+curl<span class="w"> </span>http://ingress-ip/specific
+curl<span class="w"> </span>http://ingress-ip/specific/child
+
+<span class="c1"># 4. Check nginx.conf for rule order</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>ingress-nginx<span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>grep<span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;example.com&quot;</span><span class="w"> </span>/etc/nginx/nginx.conf
+</code></pre></div></p>
+<p><strong>Priority rules to remember:</strong>
+1. Exact path beats prefix path
+2. Longer prefix beats shorter prefix
+3. Within same Ingress, order in YAML matters
+4. Across Ingresses, controller merges by specificity</p>
+<h3 id="5-tlsssl-issues">5. TLS/SSL Issues</h3>
+<p><strong>Symptoms:</strong>
+- Certificate warnings
+- No HTTPS redirect
+- Mixed content errors</p>
+<p><strong>Debug steps:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Check TLS secret exists</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>&lt;tls-secret-name&gt;
+
+<span class="c1"># 2. Verify secret contains cert and key</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>secret<span class="w"> </span>&lt;tls-secret-name&gt;
+
+<span class="c1"># 3. Check SSL redirect annotation</span>
+<span class="c1"># Should be: ssl-redirect: &quot;true&quot;</span>
+
+<span class="c1"># 4. Test HTTP and HTTPS separately</span>
+curl<span class="w"> </span>http://example.com
+curl<span class="w"> </span>https://example.com<span class="w"> </span>-k<span class="w">  </span><span class="c1"># -k ignores cert errors for testing</span>
+</code></pre></div></p>
+<p><strong>Common issues:</strong>
+- Secret not in same namespace as Ingress
+- Wrong secret name in TLS spec
+- Certificate expired or not valid for domain
+- Missing SSL redirect annotation</p>
+<hr />
+<h2 id="part-5-performance-optimization-tips">Part 5: Performance Optimization Tips</h2>
+<h3 id="1-path-matching-optimization">1. Path Matching Optimization</h3>
+<p><strong>Order paths by frequency:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Put most frequently accessed paths first</span>
+<span class="nt">paths</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/v1/users</span><span class="w">  </span><span class="c1"># Most common</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/v1/orders</span><span class="w"> </span><span class="c1"># Less common  </span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/v1/admin</span><span class="w">  </span><span class="c1"># Rare</span>
+</code></pre></div></p>
+<p><strong>Use appropriate pathType:</strong>
+- <strong>Exact</strong>: When you know exact path
+- <strong>Prefix</strong>: For hierarchical structures
+- <strong>Regex</strong>: Only when necessary (has performance cost)</p>
+<h3 id="2-rewrite-performance">2. Rewrite Performance</h3>
+<p><strong>Simple rewrites are faster:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># FAST: Simple prefix strip</span>
+<span class="nt">rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/$2</span>
+
+<span class="c1"># SLOWER: Complex regex with multiple groups</span>
+<span class="nt">rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/$3/$1/$2</span>
+</code></pre></div></p>
+<p><strong>Cache considerations:</strong>
+- Rewrites may affect cache keys
+- Consider adding cache-control headers
+- Test cache behavior after rewrites</p>
+<h3 id="3-scale-considerations">3. Scale Considerations</h3>
+<p><strong>Multiple small Ingresses vs one large:</strong>
+- <strong>Small Ingresses</strong>: Easier to manage, independent updates
+- <strong>Large Ingress</strong>: Single point of control, but complex</p>
+<p><strong>Recommendation:</strong>
+- Group by domain or team
+- Keep related paths together
+- Use labels for organization</p>
+<hr />
+<h2 id="part-6-migration-and-versioning-strategies">Part 6: Migration and Versioning Strategies</h2>
+<h3 id="1-api-version-migration">1. API Version Migration</h3>
+<p><strong>Blue-green deployment:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># v1 Ingress (current)</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-v1</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/v1</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-v1</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+
+<span class="c1"># v2 Ingress (new)</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-v2</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/canary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/canary-weight</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;10&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/v2</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-v2</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div></p>
+<h3 id="2-path-migration-pattern">2. Path Migration Pattern</h3>
+<p><strong>Gradual migration with redirects:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Phase 1: Both paths active</span>
+<span class="nt">paths</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/old-path</span>
+<span class="w">  </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">  </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">new-service</span><span class="w">  </span><span class="c1"># Same as new-path</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/new-path</span>
+<span class="w">  </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">  </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">new-service</span>
+
+<span class="c1"># Phase 2: Redirect old to new</span>
+<span class="nt">paths</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/old-path</span>
+<span class="w">  </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">  </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">placeholder</span>
+<span class="nt">annotations</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nginx.ingress.kubernetes.io/permanent-redirect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/new-path</span>
+</code></pre></div></p>
+<hr />
+<h2 id="final-summary-mental-model-diagram">Final Summary: Mental Model Diagram</h2>
+<div class="highlight"><pre><span></span><code>                    ┌─────────────────────────────────────────┐
+                    │           Ingress Controller            │
+                    └─────────────────────────────────────────┘
+                                    │
+                    ┌───────────────▼────────────────┐
+   Request ────────►│          HOST MATCH?           │
+                    │  api.example.com  │  NO       │
+                    │       YES         │           │
+                    └──────────┬─────────────────────┘
+                               │
+                    ┌──────────▼────────────────┐
+                    │         PATH MATCH?       │
+                    │  /api/*  │  /admin  │ NO │
+                    │   YES    │    YES   │    │
+                    └─────┬─────────┬───────────┘
+                          │         │
+                ┌─────────▼─┐   ┌───▼─────────┐
+                │   ACTION  │   │   ACTION    │
+                │  Rewrite  │   │  Redirect   │
+                │  to /$2   │   │  to /login  │
+                └─────┬─────┘   └─────┬───────┘
+                      │               │
+                ┌─────▼───────────────▼─────┐
+                │       Backend Service     │
+                └───────────────────────────┘
+</code></pre></div>
+<p><strong>Key Takeaways:</strong></p>
+<ol>
+<li><strong>Always MATCH + ACTION</strong>: Every rule has these two parts</li>
+<li><strong>Three match types</strong>: Exact, Prefix, Regex</li>
+<li><strong>Three action types</strong>: Forward, Rewrite, Redirect  </li>
+<li><strong>Priority matters</strong>: Exact &gt; Longer Prefix &gt; Shorter Prefix</li>
+<li><strong>Rewrite ≠ Redirect</strong>: Know the difference</li>
+<li><strong>Test thoroughly</strong>: Especially priority and edge cases</li>
+</ol>
+<p><strong>Remember:</strong> Complexity comes from combination, not from new concepts. Master the basics, and you can build any routing configuration.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "content.code.copy", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

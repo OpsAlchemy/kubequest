@@ -1,0 +1,3722 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/docs/workload-%26-scheduling/all-possible-way-to-create-secret/">
+      
+      
+        <link rel="prev" href="../../storage/usage-of-manual-sc/">
+      
+      
+        <link rel="next" href="../configmap-env-and-volume/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Kubernetes Secrets - Complete Reference Guide - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#kubernetes-secrets-complete-reference-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Kubernetes Secrets - Complete Reference Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KillerCoda Notes – CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Configs that Mimic Kubernetes Ingress Behavior
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Mystery of (/|$): NGINX Ingress Controller's Secret Sauce
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-vs-ingress-compare/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nginx vs ingress compare
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Location Block Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/north-south-traffic-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes NGINX Ingress — Complete Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regex From Absolute Scratch - You WILL Understand This 🎯
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster architecture, installation & configuration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster architecture, installation & configuration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/apiserver-misconfigured-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kube-apiserver Crash (Static Pod)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/apiserver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Control Plane (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/cka-kubernetes-upgrade-complete-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Kubernetes Cluster Upgrade Guide for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/etcd-backup-and-restore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    etcd Snapshot Backup and Restore (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubeadm-certificate-commands-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete kubeadm Certificate Management Command Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubeadm-cluster-init-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Cluster Initialization and Node Join Process Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubelet-misconfigured/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubelet Misconfigured
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/probing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Probes &amp; Health Endpoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/rbac-namespace-scope-with-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespacing ClusterRoles Using RoleBindings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/rbac-pipeline-serviceaccount-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes RBAC: Pipeline ServiceAccount with Cluster-Wide Read and Namespaced Deployment Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/vimsetpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal Vim Configuration for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API: Complete Master Guide 🚀
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API vs Ingress Controller: Deep Dive into Complex Logic 🧠
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/load-of-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services & networking
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services & networking
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/ingress-cli-pathType-and-class/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Ingress via kubectl CLI with Prefix Paths and IngressClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-cross-namespace-egress-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restricting Cross-Namespace Traffic Using NetworkPolicies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-egress-cross-namespace-label-based/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Egress NetworkPolicy for Label-Based Cross-Namespace Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Storage
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/affinity-with-hostPath-and-selector-on-pvc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    affinity with hostPath and selector on pvc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/cheatshett/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cheatshett
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/consumption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Consumption
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/minimal-pv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal pv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/standard-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standard sc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/usage-of-manual-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual StorageClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workload & scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workload & scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Secrets - Complete Reference Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Secrets - Complete Reference Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-secret-types-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Secret Types Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Secret Types Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#built-in-secret-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in Secret Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-creating-generic-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Creating Generic Secrets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Creating Generic Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Syntax
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#21-from-literal-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 From Literal Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-from-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 From Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-from-environment-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 From Environment Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-mixed-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Mixed Sources
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-creating-docker-registry-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Creating Docker Registry Secrets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Creating Docker Registry Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-docker-registry-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Docker Registry Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-existing-docker-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Existing Docker Config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#short-form" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Short Form
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-creating-tls-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Creating TLS Secrets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Creating TLS Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-tls-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic TLS Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-custom-cn-and-sans" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        With Custom CN and SANs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-advanced-creation-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Advanced Creation Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Advanced Creation Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-with-hash-appended-immutable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 With Hash Appended (Immutable)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-dry-run-for-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Dry Run for Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-output-format-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Output Format Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-manual-yaml-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Manual YAML Creation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Manual YAML Creation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-generic-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Generic Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-registry-secret-yaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker Registry Secret YAML
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tls-secret-yaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLS Secret YAML
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-account-token-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service Account Token Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-encoding-and-decoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Encoding and Decoding
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Encoding and Decoding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base64-encoding-for-manual-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Base64 Encoding for Manual Creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-with-encoded-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating with Encoded Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-special-secret-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Special Secret Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Special Secret Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-auth-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Auth Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ssh-auth-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSH Auth Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bootstrap-token-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bootstrap Token Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-working-with-existing-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Working with Existing Secrets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Working with Existing Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#edit-existing-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Edit Existing Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-secret-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update Secret Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copy-secrets-between-namespaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Copy Secrets Between Namespaces
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-practical-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Practical Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Practical Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-database-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: Database Credentials
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-api-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2: API Keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-application-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 3: Application Config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-4-wordpress-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 4: WordPress Deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-validation-and-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Validation and Verification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. Validation and Verification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verify-secret-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify Secret Creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-secret-in-pod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test Secret in Pod
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-security-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Security Best Practices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Security Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-use-appropriate-secret-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Use Appropriate Secret Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-enable-encryption-at-rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Enable Encryption at Rest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-use-external-secret-managers-csi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Use External Secret Managers (CSI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-rotate-secrets-regularly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Rotate Secrets Regularly
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-common-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Common Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Common Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#secret-not-mounting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secret Not Mounting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permission-denied" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permission Denied
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encoding-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Encoding Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-quick-reference-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Quick Reference Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Quick Reference Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creation-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creation Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inspection-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspection Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#management-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Management Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configmap-env-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using ConfigMaps as Environment Variables and Volumes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configmap-selective/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configmap selective
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../daemonset-troubleshooting-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DaemonSet YAML Troubleshooting Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment-nodeName-scheduling-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment Scheduling Failure Due to Hard-Coded nodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment.strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment.strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multi-container-port-conflict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CrashLoopBackOff Due to Port Conflict in Multi-Container Pod
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pod-affinity-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Pod Affinity: Advanced Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pod-priority-and-priorityclass-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pod Priority Using PriorityClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-secret-types-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Secret Types Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Secret Types Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#built-in-secret-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in Secret Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-creating-generic-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Creating Generic Secrets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Creating Generic Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Syntax
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#21-from-literal-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 From Literal Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-from-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 From Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-from-environment-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 From Environment Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-mixed-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Mixed Sources
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-creating-docker-registry-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Creating Docker Registry Secrets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Creating Docker Registry Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-docker-registry-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Docker Registry Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-existing-docker-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Existing Docker Config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#short-form" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Short Form
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-creating-tls-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Creating TLS Secrets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Creating TLS Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-tls-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic TLS Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-custom-cn-and-sans" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        With Custom CN and SANs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-advanced-creation-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Advanced Creation Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Advanced Creation Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-with-hash-appended-immutable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 With Hash Appended (Immutable)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-dry-run-for-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Dry Run for Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-output-format-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Output Format Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-manual-yaml-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Manual YAML Creation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Manual YAML Creation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-generic-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Generic Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-registry-secret-yaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker Registry Secret YAML
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tls-secret-yaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLS Secret YAML
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-account-token-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service Account Token Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-encoding-and-decoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Encoding and Decoding
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Encoding and Decoding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base64-encoding-for-manual-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Base64 Encoding for Manual Creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-with-encoded-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating with Encoded Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-special-secret-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Special Secret Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Special Secret Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-auth-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Auth Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ssh-auth-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSH Auth Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bootstrap-token-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bootstrap Token Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-working-with-existing-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Working with Existing Secrets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Working with Existing Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#edit-existing-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Edit Existing Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-secret-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update Secret Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copy-secrets-between-namespaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Copy Secrets Between Namespaces
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-practical-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Practical Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Practical Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-database-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: Database Credentials
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-api-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2: API Keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-application-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 3: Application Config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-4-wordpress-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 4: WordPress Deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-validation-and-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Validation and Verification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. Validation and Verification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verify-secret-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify Secret Creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-secret-in-pod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test Secret in Pod
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-security-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Security Best Practices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Security Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-use-appropriate-secret-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Use Appropriate Secret Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-enable-encryption-at-rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Enable Encryption at Rest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-use-external-secret-managers-csi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Use External Secret Managers (CSI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-rotate-secrets-regularly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Rotate Secrets Regularly
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-common-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Common Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Common Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#secret-not-mounting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secret Not Mounting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permission-denied" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permission Denied
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encoding-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Encoding Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-quick-reference-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Quick Reference Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Quick Reference Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creation-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creation Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inspection-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspection Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#management-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Management Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="kubernetes-secrets-complete-reference-guide">Kubernetes Secrets - Complete Reference Guide</h1>
+<h2 id="1-secret-types-overview">1. Secret Types Overview</h2>
+<h3 id="built-in-secret-types">Built-in Secret Types</h3>
+<p><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>--help
+</code></pre></div>
+Shows three main types:
+1. <strong>docker-registry</strong> - For accessing Docker registries
+2. <strong>generic</strong> - For arbitrary key-value pairs (most common)
+3. <strong>tls</strong> - For SSL/TLS certificates</p>
+<h2 id="2-creating-generic-secrets">2. Creating Generic Secrets</h2>
+<h3 id="basic-syntax">Basic Syntax</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>NAME<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</code></pre></div>
+<h3 id="21-from-literal-values">2.1 From Literal Values</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Single literal</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">username</span><span class="o">=</span>admin
+
+<span class="c1"># Multiple literals</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">username</span><span class="o">=</span>admin<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span>supersecret123<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span>api-key<span class="o">=</span>abcd1234efgh5678
+
+<span class="c1"># With type specification</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--type<span class="o">=</span>kubernetes.io/basic-auth<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">username</span><span class="o">=</span>admin<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span>secret
+</code></pre></div>
+<h3 id="22-from-files">2.2 From Files</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Single file (key defaults to filename)</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>config.properties
+
+<span class="c1"># Single file with custom key name</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>app-config<span class="o">=</span>config.properties
+
+<span class="c1"># Multiple files</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>ssl-cert<span class="o">=</span>server.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>ssl-key<span class="o">=</span>server.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span><span class="nv">config</span><span class="o">=</span>app.conf
+
+<span class="c1"># From directory (each file becomes a key)</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>./secrets/
+</code></pre></div>
+<h3 id="23-from-environment-files">2.3 From Environment Files</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># From .env file (key=value format)</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-env-file<span class="o">=</span>config.env
+
+<span class="c1"># Multiple environment files</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-env-file<span class="o">=</span>database.env<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-env-file<span class="o">=</span>api.env
+</code></pre></div>
+<h3 id="24-mixed-sources">2.4 Mixed Sources</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>config.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">debug</span><span class="o">=</span><span class="nb">true</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">max_connections</span><span class="o">=</span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-env-file<span class="o">=</span>environment.env
+</code></pre></div>
+<h2 id="3-creating-docker-registry-secrets">3. Creating Docker Registry Secrets</h2>
+<h3 id="basic-docker-registry-secret">Basic Docker Registry Secret</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>docker-registry<span class="w"> </span>regcred<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--docker-server<span class="o">=</span>https://index.docker.io/v1/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--docker-username<span class="o">=</span>myuser<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--docker-password<span class="o">=</span>mypassword<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--docker-email<span class="o">=</span>myemail@example.com
+</code></pre></div>
+<h3 id="using-existing-docker-config">Using Existing Docker Config</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>docker-registry<span class="w"> </span>regcred<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>.dockerconfigjson<span class="o">=</span>/root/.docker/config.json
+</code></pre></div>
+<h3 id="short-form">Short Form</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>docker-registry<span class="w"> </span>regcred<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--docker-username<span class="o">=</span>myuser<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--docker-password<span class="o">=</span>mypassword
+</code></pre></div>
+<h2 id="4-creating-tls-secrets">4. Creating TLS Secrets</h2>
+<h3 id="basic-tls-secret">Basic TLS Secret</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>tls<span class="w"> </span>app-tls<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cert<span class="o">=</span>server.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--key<span class="o">=</span>server.key
+</code></pre></div>
+<h3 id="with-custom-cn-and-sans">With Custom CN and SANs</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># First generate certs</span>
+openssl<span class="w"> </span>req<span class="w"> </span>-x509<span class="w"> </span>-nodes<span class="w"> </span>-days<span class="w"> </span><span class="m">365</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-newkey<span class="w"> </span>rsa:2048<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-keyout<span class="w"> </span>tls.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-out<span class="w"> </span>tls.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-subj<span class="w"> </span><span class="s2">&quot;/CN=myapp.example.com&quot;</span>
+
+<span class="c1"># Then create secret</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>tls<span class="w"> </span>app-tls<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cert<span class="o">=</span>tls.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--key<span class="o">=</span>tls.key
+</code></pre></div>
+<h2 id="5-advanced-creation-methods">5. Advanced Creation Methods</h2>
+<h3 id="51-with-hash-appended-immutable">5.1 With Hash Appended (Immutable)</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">token</span><span class="o">=</span>xyz123<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--append-hash
+<span class="c1"># Creates: app-secret-57g7hfg8</span>
+</code></pre></div>
+<h3 id="52-dry-run-for-validation">5.2 Dry Run for Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Client-side dry run</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">key</span><span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dry-run<span class="o">=</span>client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>yaml
+
+<span class="c1"># Server-side dry run</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">key</span><span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dry-run<span class="o">=</span>server
+</code></pre></div>
+<h3 id="53-output-format-options">5.3 Output Format Options</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># YAML output</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">key</span><span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>yaml
+
+<span class="c1"># JSON output</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">key</span><span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>json
+
+<span class="c1"># Name only</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">key</span><span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>name
+</code></pre></div>
+<h2 id="6-manual-yaml-creation">6. Manual YAML Creation</h2>
+<h3 id="basic-generic-secret">Basic Generic Secret</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-secret</span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Opaque</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">YWRtaW4=</span><span class="w">        </span><span class="c1"># admin</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c3VwZXJzZWNyZXQ=</span><span class="w"> </span><span class="c1"># supersecret</span>
+</code></pre></div>
+<h3 id="docker-registry-secret-yaml">Docker Registry Secret YAML</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">regcred</span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/dockerconfigjson</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">.dockerconfigjson</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eyJhdXRocyI6eyJodHRwczovL2luZGV4LmRvY2tlci5pby92MSI6eyJ1c2VybmFtZSI6Im15dXNlciIsInBhc3N3b3JkIjoibXlwYXNzd29yZCIsImVtYWlsIjoibXllbWFpbEBleGFtcGxlLmNvbSJ9fX0=</span>
+</code></pre></div>
+<h3 id="tls-secret-yaml">TLS Secret YAML</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-tls</span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/tls</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">tls.crt</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUVmekNDQTYrZ0F3SUJBZ0l...</span>
+<span class="w">  </span><span class="nt">tls.key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVB...</span>
+</code></pre></div>
+<h3 id="service-account-token-secret">Service Account Token Secret</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sa-token</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kubernetes.io/service-account.name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/service-account-token</span>
+</code></pre></div>
+<h2 id="7-encoding-and-decoding">7. Encoding and Decoding</h2>
+<h3 id="base64-encoding-for-manual-creation">Base64 Encoding for Manual Creation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Encode values</span>
+<span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;admin&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64
+<span class="c1"># YWRtaW4=</span>
+
+<span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;supersecret&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64
+<span class="c1"># c3VwZXJzZWNyZXQ=</span>
+
+<span class="c1"># Decode from secret</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>app-secret<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.username}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>--decode
+</code></pre></div>
+<h3 id="creating-with-encoded-values">Creating with Encoded Values</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create with pre-encoded values</span>
+<span class="nv">USERNAME</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;admin&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="k">)</span>
+<span class="nv">PASSWORD</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;secret&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="k">)</span>
+
+cat<span class="w"> </span><span class="s">&lt;&lt;EOF | kubectl apply -f -</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: Secret</span>
+<span class="s">metadata:</span>
+<span class="s">  name: encoded-secret</span>
+<span class="s">type: Opaque</span>
+<span class="s">data:</span>
+<span class="s">  username: $USERNAME</span>
+<span class="s">  password: $PASSWORD</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<h2 id="8-special-secret-types">8. Special Secret Types</h2>
+<h3 id="basic-auth-secret">Basic Auth Secret</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>basic-auth<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--type<span class="o">=</span>kubernetes.io/basic-auth<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">username</span><span class="o">=</span>admin<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span>secret
+</code></pre></div>
+<h3 id="ssh-auth-secret">SSH Auth Secret</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>ssh-key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--type<span class="o">=</span>kubernetes.io/ssh-auth<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>ssh-privatekey<span class="o">=</span>~/.ssh/id_rsa
+</code></pre></div>
+<h3 id="bootstrap-token-secret">Bootstrap Token Secret</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bootstrap-token-abc123</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bootstrap.kubernetes.io/token</span>
+<span class="nt">stringData</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Bootstrap</span><span class="nv"> </span><span class="s">token</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">node</span><span class="nv"> </span><span class="s">joining&quot;</span>
+<span class="w">  </span><span class="nt">token-id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">abc123</span>
+<span class="w">  </span><span class="nt">token-secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xyz789</span>
+<span class="w">  </span><span class="nt">usage-bootstrap-authentication</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="w">  </span><span class="nt">usage-bootstrap-signing</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="w">  </span><span class="nt">auth-extra-groups</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system:bootstrappers:kubeadm:default-node-token</span>
+</code></pre></div>
+<h2 id="9-working-with-existing-secrets">9. Working with Existing Secrets</h2>
+<h3 id="edit-existing-secret">Edit Existing Secret</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>edit<span class="w"> </span>secret<span class="w"> </span>app-secret
+</code></pre></div>
+<h3 id="update-secret-values">Update Secret Values</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Add/update key</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">newkey</span><span class="o">=</span>newvalue<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dry-run<span class="o">=</span>client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
+
+<span class="c1"># Patch secret</span>
+kubectl<span class="w"> </span>patch<span class="w"> </span>secret<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="s1">&#39;{&quot;data&quot;:{&quot;newkey&quot;:&quot;&#39;</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;newvalue&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="k">)</span><span class="s1">&#39;&quot;}}&#39;</span>
+</code></pre></div>
+<h3 id="copy-secrets-between-namespaces">Copy Secrets Between Namespaces</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>app-secret<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/namespace: default/namespace: production/&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
+</code></pre></div>
+<h2 id="10-practical-examples">10. Practical Examples</h2>
+<h3 id="example-1-database-credentials">Example 1: Database Credentials</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>database-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">DB_HOST</span><span class="o">=</span>postgresql.default.svc.cluster.local<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">DB_PORT</span><span class="o">=</span><span class="m">5432</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">DB_NAME</span><span class="o">=</span>mydb<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">DB_USER</span><span class="o">=</span>appuser<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">DB_PASSWORD</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>rand<span class="w"> </span>-base64<span class="w"> </span><span class="m">32</span><span class="k">)</span>
+</code></pre></div>
+<h3 id="example-2-api-keys">Example 2: API Keys</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>api-secrets<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>stripe-key<span class="o">=</span>stripe-api.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>aws-credentials<span class="o">=</span>aws-keys.env<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span>google-api-key<span class="o">=</span>AIzaSyABCDEF123456789
+</code></pre></div>
+<h3 id="example-3-application-config">Example 3: Application Config</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create config file</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>app-config.properties<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">server.port=8080</span>
+<span class="s">spring.datasource.url=jdbc:postgresql://localhost/mydb</span>
+<span class="s">logging.level.root=INFO</span>
+<span class="s">EOF</span>
+
+<span class="c1"># Create secret</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-config<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>application.properties<span class="o">=</span>app-config.properties
+</code></pre></div>
+<h3 id="example-4-wordpress-deployment">Example 4: WordPress Deployment</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate random passwords</span>
+<span class="nv">WORDPRESS_DB_PASSWORD</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>rand<span class="w"> </span>-base64<span class="w"> </span><span class="m">32</span><span class="k">)</span>
+<span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>rand<span class="w"> </span>-base64<span class="w"> </span><span class="m">32</span><span class="k">)</span>
+
+<span class="c1"># Create secrets</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>mysql-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span>mysql-root-password<span class="o">=</span><span class="nv">$MYSQL_ROOT_PASSWORD</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span>mysql-password<span class="o">=</span><span class="nv">$WORDPRESS_DB_PASSWORD</span>
+
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>wordpress-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span>wordpress-db-password<span class="o">=</span><span class="nv">$WORDPRESS_DB_PASSWORD</span>
+</code></pre></div>
+<h2 id="11-validation-and-verification">11. Validation and Verification</h2>
+<h3 id="verify-secret-creation">Verify Secret Creation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># List secrets</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secrets
+
+<span class="c1"># Describe secret</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>secret<span class="w"> </span>app-secret
+
+<span class="c1"># Get secret details</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>app-secret<span class="w"> </span>-o<span class="w"> </span>yaml
+
+<span class="c1"># Check specific key</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.username}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>--decode
+</code></pre></div>
+<h3 id="test-secret-in-pod">Test Secret in Pod</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-secret</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;sh&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;sleep</span><span class="nv"> </span><span class="s">3600&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SECRET_USERNAME</span>
+<span class="w">      </span><span class="nt">valueFrom</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">secretKeyRef</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-secret</span>
+<span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">username</span>
+<span class="w">  </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Never</span>
+</code></pre></div>
+<h2 id="12-security-best-practices">12. Security Best Practices</h2>
+<h3 id="1-use-appropriate-secret-types">1. Use Appropriate Secret Types</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Instead of generic for auth</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>basic-auth<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--type<span class="o">=</span>kubernetes.io/basic-auth<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">username</span><span class="o">=</span>admin<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span>secret
+</code></pre></div>
+<h3 id="2-enable-encryption-at-rest">2. Enable Encryption at Rest</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apiserver.config.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EncryptionConfiguration</span>
+<span class="nt">resources</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secrets</span>
+<span class="w">    </span><span class="nt">providers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">aescbc</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">keys</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">key1</span>
+<span class="w">          </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;base64-encoded-secret&gt;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identity</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</code></pre></div>
+<h3 id="3-use-external-secret-managers-csi">3. Use External Secret Managers (CSI)</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secrets-store.csi.x-k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SecretProviderClass</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-secrets</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure</span>
+<span class="w">  </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">keyvaultName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-keyvault</span>
+<span class="w">    </span><span class="nt">objects</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">array:</span>
+<span class="w">        </span><span class="no">- |</span>
+<span class="w">          </span><span class="no">objectName: db-password</span>
+<span class="w">          </span><span class="no">objectType: secret</span>
+</code></pre></div>
+<h3 id="4-rotate-secrets-regularly">4. Rotate Secrets Regularly</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate new password</span>
+<span class="nv">NEW_PASSWORD</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>rand<span class="w"> </span>-base64<span class="w"> </span><span class="m">32</span><span class="k">)</span>
+
+<span class="c1"># Update secret</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>app-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span><span class="nv">$NEW_PASSWORD</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dry-run<span class="o">=</span>client<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
+
+<span class="c1"># Restart pods to pick up new secret</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment/myapp
+</code></pre></div>
+<h2 id="13-common-troubleshooting">13. Common Troubleshooting</h2>
+<h3 id="secret-not-mounting">Secret Not Mounting</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check if secret exists</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>my-secret
+
+<span class="c1"># Check pod events</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>my-pod
+
+<span class="c1"># Check volume mounts</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>my-pod<span class="w"> </span>--<span class="w"> </span>ls<span class="w"> </span>/etc/secrets
+</code></pre></div>
+<h3 id="permission-denied">Permission Denied</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check RBAC</span>
+kubectl<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>my-secret
+
+<span class="c1"># Check ServiceAccount</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>my-pod<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ServiceAccount
+</code></pre></div>
+<h3 id="encoding-issues">Encoding Issues</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Verify base64 encoding</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>my-secret<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
+
+<span class="c1"># Test decoding</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;YWRtaW4=&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>--decode
+</code></pre></div>
+<h2 id="14-quick-reference-commands">14. Quick Reference Commands</h2>
+<h3 id="creation-commands">Creation Commands</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Quick literal secret</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>quick-secret<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">key</span><span class="o">=</span>value
+
+<span class="c1"># From file</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>file-secret<span class="w"> </span>--from-file<span class="o">=</span>myfile.txt
+
+<span class="c1"># Docker registry</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>docker-registry<span class="w"> </span>regcred<span class="w"> </span>--docker-username<span class="o">=</span>user<span class="w"> </span>--docker-password<span class="o">=</span>pass
+
+<span class="c1"># TLS</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>tls<span class="w"> </span>tls-secret<span class="w"> </span>--cert<span class="o">=</span>cert.crt<span class="w"> </span>--key<span class="o">=</span>key.key
+</code></pre></div>
+<h3 id="inspection-commands">Inspection Commands</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># List all secrets</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secrets<span class="w"> </span>--all-namespaces
+
+<span class="c1"># Decode secret value</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>my-secret<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.password}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d
+
+<span class="c1"># Export secret</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>my-secret<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span>&gt;<span class="w"> </span>secret-backup.yaml
+</code></pre></div>
+<h3 id="management-commands">Management Commands</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Update secret</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>updated-secret<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">new</span><span class="o">=</span>value<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span>--dry-run<span class="o">=</span>client<span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
+
+<span class="c1"># Delete secret</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>secret<span class="w"> </span>old-secret
+
+<span class="c1"># Label secret</span>
+kubectl<span class="w"> </span>label<span class="w"> </span>secret<span class="w"> </span>my-secret<span class="w"> </span><span class="nv">environment</span><span class="o">=</span>production
+</code></pre></div>
+<h2 id="summary">Summary</h2>
+<ol>
+<li><strong>Generic secrets</strong> are the most flexible for arbitrary data</li>
+<li><strong>Docker registry secrets</strong> are specialized for image pull authentication</li>
+<li><strong>TLS secrets</strong> are for SSL certificates</li>
+<li>Always use <code>--from-literal</code> for small values and <code>--from-file</code> for files</li>
+<li>Secrets are base64-encoded but not encrypted by default</li>
+<li>Use appropriate secret types for better integration</li>
+<li>Enable encryption at rest for production security</li>
+<li>Consider external secret managers for enterprise deployments</li>
+</ol>
+<p>Remember: Secrets are not encrypted by default in etcd. For production, always enable encryption at rest and consider using external secret management solutions.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "content.code.copy", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

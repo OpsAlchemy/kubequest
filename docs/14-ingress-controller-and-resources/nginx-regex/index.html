@@ -1,0 +1,2723 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/docs/14-ingress-controller-and-resources/nginx-regex/">
+      
+      
+        <link rel="prev" href="../nginx-ingress/">
+      
+      
+        <link rel="next" href="../nginx-vs-ingress-compare/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>The Mystery of (/|$): NGINX Ingress Controller's Secret Sauce - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-mystery-of-nginx-ingress-controllers-secret-sauce" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              The Mystery of (/|$): NGINX Ingress Controller's Secret Sauce
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KillerCoda Notes – CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nginx-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Configs that Mimic Kubernetes Ingress Behavior
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Mystery of (/|$): NGINX Ingress Controller's Secret Sauce
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Mystery of (/|$): NGINX Ingress Controller's Secret Sauce
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🤔 What IS (/|$)?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🤔 What IS (/|$)?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#breakdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breakdown:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-matches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it matches:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#real-example-with" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 REAL EXAMPLE with (/|$)(.*)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 REAL EXAMPLE with (/|$)(.*)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-full-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Full Pattern:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lets-test-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Let's test it:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-real-trick-how-nginx-ingress-controller-actually-uses-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 THE REAL TRICK: How NGINX Ingress Controller Actually Uses It
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 THE REAL TRICK: How NGINX Ingress Controller Actually Uses It">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-magic-is-in-the-capture-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The magic is in the CAPTURE GROUPS:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-instead-of-just" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💡 Why (/|$) instead of just /?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compare-with-vs-without" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔄 COMPARE: With vs Without (/|$)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 COMPARE: With vs Without (/|$)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pattern-a-wrong-just" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern A: WRONG - Just /
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-b-wrong-optional-slash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern B: WRONG - Optional slash /?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-c-right-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern C: RIGHT - (/|$)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-it-in-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 SEE IT IN ACTION
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧪 SEE IT IN ACTION">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-with-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test with Python:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-nginx-ingress-controller-uses-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ How NGINX Ingress Controller Uses It
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ How NGINX Ingress Controller Uses It">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ingress-yaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ingress YAML:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-realization-is-a-hack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🤯 THE REALIZATION: (/|$) is a HACK!
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alternative-cleaner-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 ALTERNATIVE (Cleaner) Solutions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📚 ALTERNATIVE (Cleaner) Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-two-separate-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Two separate patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-better-regex-if-supported" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Better regex (if supported)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-3-traditional-nginx-way" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 3: Traditional NGINX way
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 WHEN TO USE (/|$):
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-not-to-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚫 WHEN NOT TO USE (/|$):
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💎 THE BOTTOM LINE:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#remember-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧠 Remember This:
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nginx-vs-ingress-compare/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nginx vs ingress compare
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nginx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Location Block Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../north-south-traffic-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes NGINX Ingress — Complete Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regex From Absolute Scratch - You WILL Understand This 🎯
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster architecture, installation & configuration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster architecture, installation & configuration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/apiserver-misconfigured-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kube-apiserver Crash (Static Pod)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/apiserver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Control Plane (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/cka-kubernetes-upgrade-complete-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Kubernetes Cluster Upgrade Guide for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/etcd-backup-and-restore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    etcd Snapshot Backup and Restore (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubeadm-certificate-commands-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete kubeadm Certificate Management Command Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubeadm-cluster-init-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Cluster Initialization and Node Join Process Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubelet-misconfigured/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubelet Misconfigured
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/probing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Probes &amp; Health Endpoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/rbac-namespace-scope-with-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespacing ClusterRoles Using RoleBindings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/rbac-pipeline-serviceaccount-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes RBAC: Pipeline ServiceAccount with Cluster-Wide Read and Namespaced Deployment Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/vimsetpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal Vim Configuration for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API: Complete Master Guide 🚀
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API vs Ingress Controller: Deep Dive into Complex Logic 🧠
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/load-of-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services & networking
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services & networking
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/ingress-cli-pathType-and-class/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Ingress via kubectl CLI with Prefix Paths and IngressClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-cross-namespace-egress-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restricting Cross-Namespace Traffic Using NetworkPolicies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-egress-cross-namespace-label-based/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Egress NetworkPolicy for Label-Based Cross-Namespace Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Storage
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/affinity-with-hostPath-and-selector-on-pvc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    affinity with hostPath and selector on pvc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/cheatshett/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cheatshett
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/consumption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Consumption
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/minimal-pv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal pv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/standard-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standard sc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/usage-of-manual-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual StorageClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workload & scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workload & scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/all-possible-way-to-create-secret/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Secrets - Complete Reference Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-env-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using ConfigMaps as Environment Variables and Volumes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-selective/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configmap selective
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/daemonset-troubleshooting-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DaemonSet YAML Troubleshooting Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment-nodeName-scheduling-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment Scheduling Failure Due to Hard-Coded nodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment.strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment.strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/multi-container-port-conflict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CrashLoopBackOff Due to Port Conflict in Multi-Container Pod
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-affinity-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Pod Affinity: Advanced Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-priority-and-priorityclass-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pod Priority Using PriorityClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🤔 What IS (/|$)?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🤔 What IS (/|$)?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#breakdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breakdown:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-matches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it matches:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#real-example-with" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 REAL EXAMPLE with (/|$)(.*)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 REAL EXAMPLE with (/|$)(.*)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-full-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Full Pattern:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lets-test-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Let's test it:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-real-trick-how-nginx-ingress-controller-actually-uses-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 THE REAL TRICK: How NGINX Ingress Controller Actually Uses It
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 THE REAL TRICK: How NGINX Ingress Controller Actually Uses It">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-magic-is-in-the-capture-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The magic is in the CAPTURE GROUPS:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-instead-of-just" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💡 Why (/|$) instead of just /?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compare-with-vs-without" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔄 COMPARE: With vs Without (/|$)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 COMPARE: With vs Without (/|$)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pattern-a-wrong-just" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern A: WRONG - Just /
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-b-wrong-optional-slash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern B: WRONG - Optional slash /?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-c-right-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern C: RIGHT - (/|$)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-it-in-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 SEE IT IN ACTION
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧪 SEE IT IN ACTION">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-with-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test with Python:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-nginx-ingress-controller-uses-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ How NGINX Ingress Controller Uses It
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ How NGINX Ingress Controller Uses It">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ingress-yaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ingress YAML:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-realization-is-a-hack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🤯 THE REALIZATION: (/|$) is a HACK!
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alternative-cleaner-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 ALTERNATIVE (Cleaner) Solutions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📚 ALTERNATIVE (Cleaner) Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-two-separate-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Two separate patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-better-regex-if-supported" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Better regex (if supported)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-3-traditional-nginx-way" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 3: Traditional NGINX way
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 WHEN TO USE (/|$):
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-not-to-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚫 WHEN NOT TO USE (/|$):
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💎 THE BOTTOM LINE:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#remember-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧠 Remember This:
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="the-mystery-of-nginx-ingress-controllers-secret-sauce"><strong>The Mystery of <code>(/|$)</code>: NGINX Ingress Controller's Secret Sauce</strong></h1>
+<h2 id="what-is"><strong>🤔 What IS <code>(/|$)</code>?</strong></h2>
+<p>It's a <strong>regex pattern</strong> that means: <strong>"Either a forward slash OR end of string"</strong></p>
+<h3 id="breakdown"><strong>Breakdown:</strong></h3>
+<div class="highlight"><pre><span></span><code>(/|$)  =  ( EITHER / )  OR  ( end-of-string )
+</code></pre></div>
+<h3 id="what-it-matches"><strong>What it matches:</strong></h3>
+<ol>
+<li><code>/api</code> → matches the <code>$</code> (end) part</li>
+<li><code>/api/</code> → matches the <code>/</code> part  </li>
+<li><code>/api/users</code> → doesn't match this pattern (goes to the <code>(.*)</code> after it)</li>
+</ol>
+<hr />
+<h2 id="real-example-with"><strong>🔍 REAL EXAMPLE with <code>(/|$)(.*)</code></strong></h2>
+<h3 id="the-full-pattern"><strong>The Full Pattern:</strong></h3>
+<div class="highlight"><pre><span></span><code>^/api(/|$)(.*)
+</code></pre></div>
+<h3 id="lets-test-it"><strong>Let's test it:</strong></h3>
+<p><strong>Test 1: <code>/api</code></strong>
+<div class="highlight"><pre><span></span><code>^/api(/|$)(.*)
+│   │  │   │
+│   │  │   └─ (.*) captures: &quot;&quot; (empty)
+│   │  └─ matches: $ (end of string)
+│   └─ literal: /api
+└─ start of string
+</code></pre></div>
+<strong>Result:</strong> <code>$1 = ""</code> (empty slash), <code>$2 = ""</code> (nothing after)</p>
+<hr />
+<p><strong>Test 2: <code>/api/</code></strong>
+<div class="highlight"><pre><span></span><code>^/api(/|$)(.*)
+│   │  │   │
+│   │  │   └─ (.*) captures: &quot;&quot; (empty)
+│   │  └─ matches: / (slash)
+│   └─ literal: /api
+└─ start of string
+</code></pre></div>
+<strong>Result:</strong> <code>$1 = "/"</code>, <code>$2 = ""</code></p>
+<hr />
+<p><strong>Test 3: <code>/api/users</code></strong>
+<div class="highlight"><pre><span></span><code>^/api(/|$)(.*)
+│   │     │
+│   │     └─ (.*) captures: &quot;/users&quot;
+│   │  └─ doesn&#39;t match (/|$) because we have /users
+│   └─ literal: /api
+└─ start of string
+</code></pre></div></p>
+<p><strong>Wait!</strong> Actually in this case, the <code>(/|$)</code> <strong>DOESN'T MATCH</strong> because we have <code>/users</code> after <code>/api</code>.<br />
+So how does it work? Let me explain the <strong>ACTUAL TRICK</strong>...</p>
+<hr />
+<h2 id="the-real-trick-how-nginx-ingress-controller-actually-uses-it"><strong>🎯 THE REAL TRICK: How NGINX Ingress Controller Actually Uses It</strong></h2>
+<h3 id="the-magic-is-in-the-capture-groups"><strong>The magic is in the CAPTURE GROUPS:</strong></h3>
+<div class="highlight"><pre><span></span><code>^/api(/|$)(.*)
+</code></pre></div>
+<p><strong>What REALLY happens:</strong></p>
+<ol>
+<li><code>/api</code> → <code>$1 = ""</code> (no slash), <code>$2 = ""</code> (nothing after)</li>
+<li><code>/api/</code> → <code>$1 = "/"</code>, <code>$2 = ""</code> (nothing after slash)  </li>
+<li><code>/api/users</code> → <code>$1 = "/"</code>, <code>$2 = "users"</code></li>
+<li><code>/api/users/</code> → <code>$1 = "/"</code>, <code>$2 = "users/"</code></li>
+</ol>
+<hr />
+<h3 id="why-instead-of-just"><strong>💡 Why <code>(/|$)</code> instead of just <code>/</code>?</strong></h3>
+<p>Because we need to handle <strong>BOTH cases</strong>:
+- <code>/api</code> (no trailing slash) → should rewrite to <code>/</code>
+- <code>/api/</code> (with trailing slash) → should rewrite to <code>/</code>
+- <code>/api/users</code> → should rewrite to <code>/users</code></p>
+<p><strong>Without <code>(/|$)</code> it would fail for <code>/api</code>!</strong></p>
+<hr />
+<h2 id="compare-with-vs-without"><strong>🔄 COMPARE: With vs Without <code>(/|$)</code></strong></h2>
+<h3 id="pattern-a-wrong-just"><strong>Pattern A: WRONG - Just <code>/</code></strong></h3>
+<p><div class="highlight"><pre><span></span><code>^/api/(.*)
+</code></pre></div>
+- <code>/api</code> → ❌ NO MATCH (missing required slash)
+- <code>/api/</code> → ✅ matches, <code>$1 = ""</code>
+- <code>/api/users</code> → ✅ matches, <code>$1 = "users"</code></p>
+<p><strong>Problem:</strong> <code>/api</code> doesn't work!</p>
+<hr />
+<h3 id="pattern-b-wrong-optional-slash"><strong>Pattern B: WRONG - Optional slash <code>/?</code></strong></h3>
+<p><div class="highlight"><pre><span></span><code>^/api/?(.*)
+</code></pre></div>
+- <code>/api</code> → ✅ matches, <code>$1 = ""</code>
+- <code>/api/</code> → ✅ matches, <code>$1 = ""</code><br />
+- <code>/api/users</code> → ✅ matches, <code>$1 = "users"</code></p>
+<p><strong>Problem:</strong> <code>/api</code> and <code>/api/</code> both give <code>$1 = ""</code>, but what if we want to know if there WAS a slash?</p>
+<hr />
+<h3 id="pattern-c-right-"><strong>Pattern C: RIGHT - <code>(/|$)</code></strong></h3>
+<p><div class="highlight"><pre><span></span><code>^/api(/|$)(.*)
+</code></pre></div>
+- <code>/api</code> → ✅ matches, <code>$1 = ""</code>, <code>$2 = ""</code>
+- <code>/api/</code> → ✅ matches, <code>$1 = "/"</code>, <code>$2 = ""</code>
+- <code>/api/users</code> → ✅ matches, <code>$1 = "/"</code>, <code>$2 = "users"</code></p>
+<p><strong>Perfect!</strong> We can:
+1. Detect if there was a slash (<code>$1</code>)
+2. Get everything after (<code>$2</code>)
+3. Handle both with and without trailing slash</p>
+<hr />
+<h2 id="see-it-in-action"><strong>🧪 SEE IT IN ACTION</strong></h2>
+<h3 id="test-with-python"><strong>Test with Python:</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^/api(/|$)(.*)&#39;</span>
+<span class="n">test_cases</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;/api&#39;</span><span class="p">,</span> <span class="s1">&#39;/api/&#39;</span><span class="p">,</span> <span class="s1">&#39;/api/users&#39;</span><span class="p">,</span> <span class="s1">&#39;/api/users/&#39;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">test_cases</span><span class="p">:</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">test</span><span class="si">}</span><span class="s2">&#39; → group1=&#39;</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;, group2=&#39;</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">test</span><span class="si">}</span><span class="s2">&#39; → NO MATCH&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Output:</strong>
+<div class="highlight"><pre><span></span><code>&#39;/api&#39; → group1=&#39;&#39;, group2=&#39;&#39;
+&#39;/api/&#39; → group1=&#39;/&#39;, group2=&#39;&#39;
+&#39;/api/users&#39; → group1=&#39;/&#39;, group2=&#39;users&#39;
+&#39;/api/users/&#39; → group1=&#39;/&#39;, group2=&#39;users/&#39;
+</code></pre></div></p>
+<hr />
+<h2 id="how-nginx-ingress-controller-uses-it"><strong>🛠️ How NGINX Ingress Controller Uses It</strong></h2>
+<h3 id="ingress-yaml"><strong>Ingress YAML:</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nginx.ingress.kubernetes.io/rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/$2</span>
+<span class="nt">paths</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api(/|$)(.*)</span>
+<span class="w">  </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+</code></pre></div>
+<h3 id="what-happens"><strong>What happens:</strong></h3>
+<ul>
+<li><code>/api</code> → <code>$2 = ""</code> → rewrite to <code>/</code></li>
+<li><code>/api/</code> → <code>$2 = ""</code> → rewrite to <code>/</code></li>
+<li><code>/api/users</code> → <code>$2 = "users"</code> → rewrite to <code>/users</code></li>
+<li><code>/api/users/</code> → <code>$2 = "users/"</code> → rewrite to <code>/users/</code></li>
+</ul>
+<p><strong>Notice:</strong> <code>$2</code> is used, NOT <code>$1</code>!<br />
+<code>$1</code> (the slash) is just there to make the pattern work, but we throw it away!</p>
+<hr />
+<h2 id="the-realization-is-a-hack"><strong>🤯 THE REALIZATION: <code>(/|$)</code> is a HACK!</strong></h2>
+<p>It's <strong>not elegant regex</strong> - it's a <strong>practical hack</strong> to solve a specific problem:</p>
+<p><strong>Problem:</strong> Need to match <code>/api</code> AND <code>/api/</code> AND <code>/api/*</code> with one pattern</p>
+<p><strong>Solution:</strong> Use <code>(/|$)(.*)</code> where:
+- <code>(/|$)</code> handles the optional slash
+- <code>(.*)</code> captures everything after
+- We ignore <code>$1</code> and use <code>$2</code> for the rewrite</p>
+<hr />
+<h2 id="alternative-cleaner-solutions"><strong>📚 ALTERNATIVE (Cleaner) Solutions</strong></h2>
+<h3 id="option-1-two-separate-patterns"><strong>Option 1: Two separate patterns</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">paths</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api</span>
+<span class="w">  </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Exact</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/</span>
+<span class="w">  </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+</code></pre></div>
+<h3 id="option-2-better-regex-if-supported"><strong>Option 2: Better regex (if supported)</strong></h3>
+<p><div class="highlight"><pre><span></span><code>^/api(?:/(.*))?$
+</code></pre></div>
+- <code>/api</code> → matches, captures nothing
+- <code>/api/</code> → matches, captures empty string
+- <code>/api/users</code> → matches, captures "users"</p>
+<h3 id="option-3-traditional-nginx-way"><strong>Option 3: Traditional NGINX way</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="k">location</span><span class="w"> </span><span class="s">/api</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1"># In pure NGINX, just use:</span>
+<span class="w">    </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://backend/</span><span class="p">;</span><span class="w">  </span><span class="c1"># Trailing slash strips /api</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="when-to-use"><strong>🎯 WHEN TO USE <code>(/|$)</code>:</strong></h2>
+<ol>
+<li><strong>In NGINX Ingress Controller</strong> - When you need <code>rewrite-target</code></li>
+<li><strong>When you must use ONE path pattern</strong> for all cases</li>
+<li><strong>When you don't control the regex engine</strong> (Ingress controller's limitations)</li>
+</ol>
+<hr />
+<h2 id="when-not-to-use"><strong>🚫 WHEN NOT TO USE <code>(/|$)</code>:</strong></h2>
+<ol>
+<li><strong>In pure NGINX</strong> - Use <code>proxy_pass http://backend/;</code> instead</li>
+<li><strong>In general programming</strong> - Use cleaner regex</li>
+<li><strong>When you can use multiple path rules</strong> - Simpler is better</li>
+</ol>
+<hr />
+<h2 id="the-bottom-line"><strong>💎 THE BOTTOM LINE:</strong></h2>
+<p><code>(/|$)(.*)</code> is <strong>NGINX Ingress Controller's way</strong> of saying:</p>
+<p><strong>"Match <code>/api</code> with or without trailing slash, and capture everything after it (if anything), so I can strip <code>/api</code> and keep the rest."</strong></p>
+<p>It's <strong>not beautiful regex</strong>, but it's <strong>practical</strong> for their use case. In the real world, we often need these kinds of pragmatic solutions!</p>
+<hr />
+<h2 id="remember-this"><strong>🧠 Remember This:</strong></h2>
+<div class="highlight"><pre><span></span><code>(/|$) = &quot;I&#39;ll take a slash if you have one, 
+         or I&#39;ll just match the end of string if you don&#39;t.
+         Either way, we&#39;re good!&quot;
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "content.code.copy", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

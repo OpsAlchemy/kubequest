@@ -1,0 +1,4495 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/compose/04-admission-webhook/notes/">
+      
+      
+        <link rel="prev" href="../commands/">
+      
+      
+        <link rel="next" href="../../05-kubeconfig/how-to-setup/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Notes - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#admission-webhooks-kubernetes-practical-notes" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Notes
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concise Notes for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01 autoscaling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    01 autoscaling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/hpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Horizontal Pod Autoscaler (HPA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/keywords/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search Keywords+
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HPA &amp; VPA Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/vpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vertical Pod Autoscaler (VPA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02 helm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    02 helm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm Comprehensive Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/create/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Helm Charts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/practice-questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm Practice Questions - Progressive Learning Path
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/question1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/question2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/question3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/question4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03 kustomize
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    03 kustomize
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-kustomize/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kustomize Master Guide: Advanced Patterns &amp; Modern Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-kustomize/question1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04 admission webhook
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    04 admission webhook
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-where-admission-webhooks-execute-critical-mental-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Where Admission Webhooks Execute (Critical Mental Model)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-mutating-vs-validating-operational-difference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Mutating vs Validating (Operational Difference)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Mutating vs Validating (Operational Difference)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mutatingadmissionwebhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MutatingAdmissionWebhook
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validatingadmissionwebhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ValidatingAdmissionWebhook
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-what-actually-triggers-a-webhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. What Actually Triggers a Webhook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-real-world-use-cases-practical-not-theoretical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Real-World Use Cases (Practical, Not Theoretical)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Real-World Use Cases (Practical, Not Theoretical)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-enforce-no-latest-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Enforce “No :latest Image”
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-auto-inject-sidecar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Auto-Inject Sidecar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-enforce-required-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Enforce Required Labels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-block-privileged-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Block Privileged Containers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-failure-modes-you-must-understand" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Failure Modes You Must Understand
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Failure Modes You Must Understand">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#failurepolicy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        failurePolicy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timeoutseconds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        timeoutSeconds
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-operational-risks-exam-real-world" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Operational Risks (Exam + Real World)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Operational Risks (Exam + Real World)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-self-inflicted-cluster-outage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Self-Inflicted Cluster Outage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-infinite-mutation-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Infinite Mutation Loops
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-how-admission-webhooks-are-deployed-practically" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. How Admission Webhooks Are Deployed (Practically)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. How Admission Webhooks Are Deployed (Practically)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-admissionreview-request-response-conceptual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. AdmissionReview Request / Response (Conceptual)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-admission-webhooks-vs-other-controls-exam-relevant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Admission Webhooks vs Other Controls (Exam-Relevant)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-key-takeaways-to-remember" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Key Takeaways to Remember
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-one-line-exam-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. One-Line Exam Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-minimal-practical-code-examples-incremental-add-on" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Minimal, Practical Code Examples (Incremental Add-on)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#121-validating-webhook-block-latest-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.1 Validating Webhook — Block :latest Images
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.1 Validating Webhook — Block :latest Images">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#webhook-configuration-validating" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Webhook Configuration (Validating)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admission-logic-pseudo-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admission Logic (Pseudo-code)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#122-mutating-webhook-sidecar-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2 Mutating Webhook — Sidecar Injection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.2 Mutating Webhook — Sidecar Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#webhook-configuration-mutating" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Webhook Configuration (Mutating)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json-patch-returned-by-webhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Patch Returned by Webhook
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#123-validating-webhook-required-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.3 Validating Webhook — Required Labels
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.3 Validating Webhook — Required Labels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#webhook-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Webhook Rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Logic
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#124-validating-webhook-block-privileged-pods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.4 Validating Webhook — Block Privileged Pods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.4 Validating Webhook — Block Privileged Pods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validation-logic_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Logic
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#125-webhook-server-skeleton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5 Webhook Server (Skeleton)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.5 Webhook Server (Skeleton)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#https-server-conceptual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTPS Server (Conceptual)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#126-bootstrap-safe-selector-example-outage-prevention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.6 Bootstrap-Safe Selector Example (Outage Prevention)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#127-debugging-a-failing-webhook-operational" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.7 Debugging a Failing Webhook (Operational)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#128-exam-focused-code-recognition-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.8 Exam-Focused Code Recognition Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#129-one-line-extension-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.9 One-Line Extension Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    05 kubeconfig
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    05 kubeconfig
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-kubeconfig/how-to-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-kubeconfig/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    06 cluster certificates and kube system [important]
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    06 cluster certificates and kube system [important]
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-cluster-certificates-and-kube-system%20%5Bimportant%5D/kubeadm-certs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kubeadm Certificate Checks &amp; Renewal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    07 crd's
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    07 crd's
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/crd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Resource Definitions (CRDs) and Custom Resources (CRs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/solutions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Solutions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    08 gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    08 gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-gateway-api/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10 scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/nodename/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/nodeselector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NodeSelector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_3" id="__nav_10_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    podAffinity nodeAffinity deployments
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    podAffinity nodeAffinity deployments
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/podAffinity-nodeAffinity-deployments/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Scheduling: Pod &amp; Node Affinity - Theory &amp; Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../11-coredns/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 coredns
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    11 coredns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 deployments
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    12 deployments
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_12_1" id="__nav_12_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Probing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_12_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Probing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-deployments/probing/probing-psotgres/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Probing psotgres
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 manage cluster via kubeadm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    13 manage cluster via kubeadm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/cluster-create/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kubeadm Cluster Create &amp; Upgrade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/etcd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Etcd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/high-availablity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    High availablity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/north-south-traffic-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Ingress
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Ingress Controller Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_15" >
+        
+          
+          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 troubleshoot controlplane
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_15">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    15 troubleshoot controlplane
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15-troubleshoot-controlplane/prerequisite-and-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Approach Control Plane Issues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17 authorization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    17 authorization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/cani/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cani
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/gotchas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RBAC Gotchas and Common Mistakes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/role-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RBAC Core Objects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/system-based-authorization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System based authorization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18 basic bash
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    18 basic bash
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../18-basic-bash/bash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19 secrets and configmap
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    19 secrets and configmap
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../19-secrets-and-configmap/environment-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment and volume
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20 services
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    20 services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../20-services/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cli
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_20" >
+        
+          
+          <label class="md-nav__link" for="__nav_20" id="__nav_20_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    21 storage class pv pvc
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_20_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    21 storage class pv pvc
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../21-storage-class-pv-pvc/example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../21-storage-class-pv-pvc/selector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Selector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-where-admission-webhooks-execute-critical-mental-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Where Admission Webhooks Execute (Critical Mental Model)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-mutating-vs-validating-operational-difference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Mutating vs Validating (Operational Difference)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Mutating vs Validating (Operational Difference)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mutatingadmissionwebhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MutatingAdmissionWebhook
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validatingadmissionwebhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ValidatingAdmissionWebhook
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-what-actually-triggers-a-webhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. What Actually Triggers a Webhook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-real-world-use-cases-practical-not-theoretical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Real-World Use Cases (Practical, Not Theoretical)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Real-World Use Cases (Practical, Not Theoretical)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-enforce-no-latest-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Enforce “No :latest Image”
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-auto-inject-sidecar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Auto-Inject Sidecar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-enforce-required-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Enforce Required Labels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-block-privileged-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Block Privileged Containers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-failure-modes-you-must-understand" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Failure Modes You Must Understand
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Failure Modes You Must Understand">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#failurepolicy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        failurePolicy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timeoutseconds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        timeoutSeconds
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-operational-risks-exam-real-world" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Operational Risks (Exam + Real World)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Operational Risks (Exam + Real World)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-self-inflicted-cluster-outage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Self-Inflicted Cluster Outage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-infinite-mutation-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Infinite Mutation Loops
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-how-admission-webhooks-are-deployed-practically" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. How Admission Webhooks Are Deployed (Practically)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. How Admission Webhooks Are Deployed (Practically)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-admissionreview-request-response-conceptual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. AdmissionReview Request / Response (Conceptual)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-admission-webhooks-vs-other-controls-exam-relevant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Admission Webhooks vs Other Controls (Exam-Relevant)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-key-takeaways-to-remember" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Key Takeaways to Remember
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-one-line-exam-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. One-Line Exam Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-minimal-practical-code-examples-incremental-add-on" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Minimal, Practical Code Examples (Incremental Add-on)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#121-validating-webhook-block-latest-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.1 Validating Webhook — Block :latest Images
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.1 Validating Webhook — Block :latest Images">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#webhook-configuration-validating" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Webhook Configuration (Validating)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admission-logic-pseudo-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admission Logic (Pseudo-code)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#122-mutating-webhook-sidecar-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2 Mutating Webhook — Sidecar Injection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.2 Mutating Webhook — Sidecar Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#webhook-configuration-mutating" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Webhook Configuration (Mutating)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json-patch-returned-by-webhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Patch Returned by Webhook
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#123-validating-webhook-required-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.3 Validating Webhook — Required Labels
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.3 Validating Webhook — Required Labels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#webhook-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Webhook Rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Logic
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#124-validating-webhook-block-privileged-pods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.4 Validating Webhook — Block Privileged Pods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.4 Validating Webhook — Block Privileged Pods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validation-logic_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Logic
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#125-webhook-server-skeleton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5 Webhook Server (Skeleton)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.5 Webhook Server (Skeleton)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#https-server-conceptual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTPS Server (Conceptual)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#126-bootstrap-safe-selector-example-outage-prevention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.6 Bootstrap-Safe Selector Example (Outage Prevention)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#127-debugging-a-failing-webhook-operational" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.7 Debugging a Failing Webhook (Operational)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#128-exam-focused-code-recognition-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.8 Exam-Focused Code Recognition Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#129-one-line-extension-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.9 One-Line Extension Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<p>*<img alt="Image" src="https://kubernetes.io/images/blog/2019-03-21-a-guide-to-kubernetes-admission-controllers/admission-controller-phases.png" /></p>
+<p><img alt="Image" src="https://miro.medium.com/v2/resize%3Afit%3A1400/0%2AVE3P8Kf4d7gwK3AU" /></p>
+<p><img alt="Image" src="https://slack.engineering/wp-content/uploads/sites/7/2021/12/sequence-diagram.jpg?w=688" /></p>
+<h1 id="admission-webhooks-kubernetes-practical-notes">Admission Webhooks (Kubernetes) — Practical Notes</h1>
+<p>Admission webhooks sit <strong>between authentication/authorization and object persistence</strong>. They are <strong>API-server extensions</strong>, not runtime components, and they execute <strong>on every matching API request</strong> (create, update, delete, connect).</p>
+<hr />
+<h2 id="1-where-admission-webhooks-execute-critical-mental-model">1. Where Admission Webhooks Execute (Critical Mental Model)</h2>
+<div class="highlight"><pre><span></span><code>kubectl / client
+   ↓
+Authentication
+   ↓
+Authorization (RBAC)
+   ↓
+Admission Controllers
+   ├─ MutatingAdmissionWebhook
+   └─ ValidatingAdmissionWebhook
+   ↓
+etcd (object persisted)
+</code></pre></div>
+<p><strong>Key implication</strong>
+If an admission webhook fails or times out (depending on failurePolicy), <strong>the API request may be rejected even if RBAC allows it</strong>.</p>
+<hr />
+<h2 id="2-mutating-vs-validating-operational-difference">2. Mutating vs Validating (Operational Difference)</h2>
+<h3 id="mutatingadmissionwebhook">MutatingAdmissionWebhook</h3>
+<ul>
+<li><strong>Can modify</strong> the incoming object</li>
+<li>Runs <strong>first</strong></li>
+<li>
+<p>Typical use:</p>
+</li>
+<li>
+<p>Inject sidecars</p>
+</li>
+<li>Add labels/annotations</li>
+<li>Set defaults not handled by API schema</li>
+</ul>
+<h3 id="validatingadmissionwebhook">ValidatingAdmissionWebhook</h3>
+<ul>
+<li><strong>Cannot modify</strong> the object</li>
+<li>Runs <strong>after mutation</strong></li>
+<li>
+<p>Typical use:</p>
+</li>
+<li>
+<p>Enforce policies</p>
+</li>
+<li>Block non-compliant resources</li>
+</ul>
+<p><strong>Golden rule</strong>
+Mutation makes objects <em>convenient</em>. Validation makes clusters <em>safe</em>.</p>
+<hr />
+<h2 id="3-what-actually-triggers-a-webhook">3. What Actually Triggers a Webhook</h2>
+<p>A webhook triggers when <strong>ALL</strong> of these match:</p>
+<ul>
+<li>API group (e.g., <code>apps</code>, <code>""</code> for core)</li>
+<li>API version (e.g., <code>v1</code>)</li>
+<li>Resource (e.g., <code>pods</code>, <code>deployments</code>)</li>
+<li>Operation (<code>CREATE</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>CONNECT</code>)</li>
+<li>Namespace selector (optional)</li>
+<li>Object selector (optional)</li>
+</ul>
+<p>This is why webhooks can be <strong>surgically precise</strong> or <strong>dangerously broad</strong>.</p>
+<hr />
+<h2 id="4-real-world-use-cases-practical-not-theoretical">4. Real-World Use Cases (Practical, Not Theoretical)</h2>
+<h3 id="41-enforce-no-latest-image">4.1 Enforce “No :latest Image”</h3>
+<p><strong>Type</strong>: Validating
+<strong>Why</strong>: Prevents non-reproducible deployments</p>
+<ul>
+<li>Trigger: <code>CREATE</code>, <code>UPDATE</code> on <code>pods</code></li>
+<li>Logic: Reject if any container image ends with <code>:latest</code></li>
+</ul>
+<p>Outcome:
+<code>kubectl apply</code> fails immediately with a validation error.</p>
+<hr />
+<h3 id="42-auto-inject-sidecar">4.2 Auto-Inject Sidecar</h3>
+<p><strong>Type</strong>: Mutating
+<strong>Why</strong>: Avoid developers manually adding boilerplate</p>
+<ul>
+<li>Trigger: <code>CREATE</code> on <code>pods</code></li>
+<li>Condition: Namespace has label <code>mesh=enabled</code></li>
+<li>Mutation: Append sidecar container spec</li>
+</ul>
+<p>Outcome:
+Pod spec stored in etcd already includes the sidecar.</p>
+<hr />
+<h3 id="43-enforce-required-labels">4.3 Enforce Required Labels</h3>
+<p><strong>Type</strong>: Validating
+<strong>Why</strong>: Governance, cost allocation, ownership</p>
+<ul>
+<li>
+<p>Require labels like:</p>
+</li>
+<li>
+<p><code>app</code></p>
+</li>
+<li><code>owner</code></li>
+<li><code>environment</code></li>
+</ul>
+<p>Outcome:
+Objects without labels never reach the cluster state.</p>
+<hr />
+<h3 id="44-block-privileged-containers">4.4 Block Privileged Containers</h3>
+<p><strong>Type</strong>: Validating
+<strong>Why</strong>: Security hardening</p>
+<ul>
+<li>
+<p>Reject if:</p>
+</li>
+<li>
+<p><code>securityContext.privileged: true</code></p>
+</li>
+<li><code>hostPath</code> volumes used</li>
+</ul>
+<p>Outcome:
+Security enforced <strong>before</strong> workload starts.</p>
+<hr />
+<h2 id="5-failure-modes-you-must-understand">5. Failure Modes You Must Understand</h2>
+<h3 id="failurepolicy">failurePolicy</h3>
+<ul>
+<li><code>Fail</code>
+  API request fails if webhook is unreachable
+  Use for <strong>security-critical</strong> controls</li>
+<li><code>Ignore</code>
+  API request continues if webhook fails
+  Use for <strong>non-critical mutation</strong></li>
+</ul>
+<p><strong>Production guidance</strong>
+Validating webhooks enforcing security should almost always be <code>Fail</code>.</p>
+<hr />
+<h3 id="timeoutseconds">timeoutSeconds</h3>
+<ul>
+<li>Default: 10 seconds</li>
+<li>API server blocks waiting for response</li>
+</ul>
+<p><strong>Anti-pattern</strong>
+Slow webhook = cluster-wide deployment slowdown.</p>
+<hr />
+<h2 id="6-operational-risks-exam-real-world">6. Operational Risks (Exam + Real World)</h2>
+<h3 id="61-self-inflicted-cluster-outage">6.1 Self-Inflicted Cluster Outage</h3>
+<ul>
+<li>
+<p>Webhook applies to:</p>
+</li>
+<li>
+<p><code>pods</code></p>
+</li>
+<li><code>deployments</code></li>
+<li>Webhook service is <strong>down</strong></li>
+<li>failurePolicy = <code>Fail</code></li>
+</ul>
+<p>Result:
+No pods can be created, including webhook itself.</p>
+<p><strong>Mitigation</strong></p>
+<ul>
+<li>Narrow selectors</li>
+<li>Use namespace exclusion</li>
+<li>Careful bootstrapping order</li>
+</ul>
+<hr />
+<h3 id="62-infinite-mutation-loops">6.2 Infinite Mutation Loops</h3>
+<ul>
+<li>Webhook mutates object</li>
+<li>Mutation changes something webhook re-triggers on</li>
+</ul>
+<p><strong>Mitigation</strong></p>
+<ul>
+<li>Add idempotent markers (e.g., annotation <code>mutated=true</code>)</li>
+<li>Exit early if already processed</li>
+</ul>
+<hr />
+<h2 id="7-how-admission-webhooks-are-deployed-practically">7. How Admission Webhooks Are Deployed (Practically)</h2>
+<h3 id="components">Components</h3>
+<ol>
+<li>
+<p><strong>Webhook server</strong></p>
+</li>
+<li>
+<p>Runs as a Pod</p>
+</li>
+<li>Exposes HTTPS endpoint</li>
+<li>
+<p><strong>Service</strong></p>
+</li>
+<li>
+<p>Stable DNS for API server</p>
+</li>
+<li>
+<p><strong>TLS</strong></p>
+</li>
+<li>
+<p>Mandatory (API server only talks HTTPS)</p>
+</li>
+<li>
+<p><strong>WebhookConfiguration</strong></p>
+</li>
+<li>
+<p>MutatingWebhookConfiguration or ValidatingWebhookConfiguration</p>
+</li>
+</ol>
+<hr />
+<h2 id="8-admissionreview-request-response-conceptual">8. AdmissionReview Request / Response (Conceptual)</h2>
+<p>Webhook receives:</p>
+<ul>
+<li>Full object (<code>oldObject</code> for updates)</li>
+<li>User info</li>
+<li>Namespace</li>
+<li>Operation</li>
+</ul>
+<p>Webhook returns:</p>
+<ul>
+<li><code>allowed: true | false</code></li>
+<li>Optional status message</li>
+<li>Optional JSON patch (mutation only)</li>
+</ul>
+<p>This is <strong>synchronous</strong> and <strong>blocking</strong>.</p>
+<hr />
+<h2 id="9-admission-webhooks-vs-other-controls-exam-relevant">9. Admission Webhooks vs Other Controls (Exam-Relevant)</h2>
+<table>
+<thead>
+<tr>
+<th>Mechanism</th>
+<th>When it Acts</th>
+<th>Can Modify</th>
+<th>Can Block</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RBAC</td>
+<td>Before admission</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Admission Webhook</td>
+<td>Before persistence</td>
+<td>Mutating: Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Pod Security Admission</td>
+<td>Admission</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>OPA / Gatekeeper</td>
+<td>Admission (via webhook)</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Runtime security</td>
+<td>After pod runs</td>
+<td>N/A</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="10-key-takeaways-to-remember">10. Key Takeaways to Remember</h2>
+<ul>
+<li>Admission webhooks operate <strong>before objects exist</strong></li>
+<li>They are <strong>synchronous and blocking</strong></li>
+<li>Mutating runs <strong>before</strong> validating</li>
+<li>A broken webhook can <strong>break the cluster</strong></li>
+<li>Always scope selectors tightly</li>
+<li>Prefer validation for safety, mutation for convenience</li>
+</ul>
+<hr />
+<h2 id="11-one-line-exam-summary">11. One-Line Exam Summary</h2>
+<p><strong>Admission webhooks intercept API requests after RBAC but before persistence, allowing mutation or rejection of Kubernetes objects based on custom logic.</strong></p>
+<p>If you want, the next extension can cover:</p>
+<ul>
+<li>Step-by-step webhook deployment</li>
+<li>Common CKA traps</li>
+<li>Admission vs Pod Security Admission</li>
+<li>Debugging webhook failures in production</li>
+</ul>
+<h2 id="12-minimal-practical-code-examples-incremental-add-on">12. Minimal, Practical Code Examples (Incremental Add-on)</h2>
+<p>The sections below <strong>extend</strong> the existing notes by adding <strong>working YAML and logic fragments</strong> that correspond directly to the use cases already described. Nothing earlier is replaced.</p>
+<hr />
+<h2 id="121-validating-webhook-block-latest-images">12.1 Validating Webhook — Block <code>:latest</code> Images</h2>
+<h3 id="webhook-configuration-validating">Webhook Configuration (Validating)</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admissionregistration.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ValidatingWebhookConfiguration</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny-latest-tag</span>
+<span class="nt">webhooks</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny-latest.images.example.com</span>
+<span class="w">    </span><span class="nt">admissionReviewVersions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;v1&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">sideEffects</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">None</span>
+<span class="w">    </span><span class="nt">failurePolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Fail</span>
+<span class="w">    </span><span class="nt">timeoutSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">    </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">apiVersions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;v1&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">operations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CREATE&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;UPDATE&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;pods&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">clientConfig</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">image-policy-webhook</span>
+<span class="w">        </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admission</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/validate-images</span>
+<span class="w">      </span><span class="nt">caBundle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;BASE64_CA_CERT&gt;</span>
+</code></pre></div>
+<h3 id="admission-logic-pseudo-code">Admission Logic (Pseudo-code)</h3>
+<div class="highlight"><pre><span></span><code>for each container in pod.spec.containers:
+  if image ends with &quot;:latest&quot;:
+    deny(&quot;image tag &#39;:latest&#39; is not allowed&quot;)
+allow()
+</code></pre></div>
+<p><strong>Practical effect</strong>
+<code>kubectl apply</code> fails immediately if any container uses <code>:latest</code>.</p>
+<hr />
+<h2 id="122-mutating-webhook-sidecar-injection">12.2 Mutating Webhook — Sidecar Injection</h2>
+<h3 id="webhook-configuration-mutating">Webhook Configuration (Mutating)</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admissionregistration.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MutatingWebhookConfiguration</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">inject-sidecar</span>
+<span class="nt">webhooks</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sidecar.inject.example.com</span>
+<span class="w">    </span><span class="nt">admissionReviewVersions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;v1&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">sideEffects</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">None</span>
+<span class="w">    </span><span class="nt">failurePolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ignore</span>
+<span class="w">    </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">apiVersions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;v1&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">operations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CREATE&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;pods&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">namespaceSelector</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">mesh</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enabled</span>
+<span class="w">    </span><span class="nt">clientConfig</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sidecar-webhook</span>
+<span class="w">        </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admission</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mutate-pod</span>
+<span class="w">      </span><span class="nt">caBundle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;BASE64_CA_CERT&gt;</span>
+</code></pre></div>
+<h3 id="json-patch-returned-by-webhook">JSON Patch Returned by Webhook</h3>
+<div class="highlight"><pre><span></span><code><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;op&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;add&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/spec/containers/-&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mesh-proxy&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;image&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;envoyproxy/envoy:v1.30.0&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<p><strong>Practical effect</strong>
+Developers deploy normal pods; sidecars appear automatically in stored objects.</p>
+<hr />
+<h2 id="123-validating-webhook-required-labels">12.3 Validating Webhook — Required Labels</h2>
+<h3 id="webhook-rule">Webhook Rule</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;apps&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">apiVersions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;v1&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">operations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CREATE&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;UPDATE&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;deployments&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<h3 id="validation-logic">Validation Logic</h3>
+<div class="highlight"><pre><span></span><code>required = [&quot;app&quot;, &quot;owner&quot;, &quot;environment&quot;]
+
+for key in required:
+  if key not in metadata.labels:
+    deny(&quot;missing required label: &quot; + key)
+allow()
+</code></pre></div>
+<p><strong>Practical effect</strong>
+Governance enforced before workloads exist.</p>
+<hr />
+<h2 id="124-validating-webhook-block-privileged-pods">12.4 Validating Webhook — Block Privileged Pods</h2>
+<h3 id="validation-logic_1">Validation Logic</h3>
+<div class="highlight"><pre><span></span><code>for container in pod.spec.containers:
+  if container.securityContext.privileged == true:
+    deny(&quot;privileged containers are not allowed&quot;)
+
+for volume in pod.spec.volumes:
+  if volume.hostPath exists:
+    deny(&quot;hostPath volumes are not allowed&quot;)
+allow()
+</code></pre></div>
+<p><strong>Practical effect</strong>
+Security policy enforced independently of RBAC.</p>
+<hr />
+<h2 id="125-webhook-server-skeleton">12.5 Webhook Server (Skeleton)</h2>
+<h3 id="https-server-conceptual">HTTPS Server (Conceptual)</h3>
+<div class="highlight"><pre><span></span><code>POST /validate
+  decode AdmissionReview
+  inspect request.object
+  build AdmissionReview response:
+    allowed: true | false
+    status.message (if denied)
+  return response
+</code></pre></div>
+<p><strong>Key requirement</strong></p>
+<ul>
+<li>HTTPS only</li>
+<li>Valid certificate trusted by API server</li>
+</ul>
+<hr />
+<h2 id="126-bootstrap-safe-selector-example-outage-prevention">12.6 Bootstrap-Safe Selector Example (Outage Prevention)</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">namespaceSelector</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">matchExpressions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/metadata.name</span>
+<span class="w">      </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NotIn</span>
+<span class="w">      </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admission</span>
+</code></pre></div>
+<p><strong>Why this matters</strong>
+Prevents the webhook from blocking its own Pods or system components.</p>
+<hr />
+<h2 id="127-debugging-a-failing-webhook-operational">12.7 Debugging a Failing Webhook (Operational)</h2>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>validatingwebhookconfigurations
+kubectl<span class="w"> </span>describe<span class="w"> </span>validatingwebhookconfiguration<span class="w"> </span>deny-latest-tag
+
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>admission<span class="w"> </span>deploy/image-policy-webhook
+</code></pre></div>
+<p>Typical symptoms:</p>
+<ul>
+<li><code>context deadline exceeded</code></li>
+<li><code>no endpoints available for service</code></li>
+<li>TLS trust errors</li>
+</ul>
+<hr />
+<h2 id="128-exam-focused-code-recognition-checklist">12.8 Exam-Focused Code Recognition Checklist</h2>
+<ul>
+<li><code>MutatingWebhookConfiguration</code> → JSON Patch present</li>
+<li><code>ValidatingWebhookConfiguration</code> → allow/deny only</li>
+<li><code>failurePolicy: Fail</code> → cluster safety risk if misused</li>
+<li><code>namespaceSelector</code> → blast-radius control</li>
+<li>HTTPS + CA bundle mandatory</li>
+</ul>
+<hr />
+<h2 id="129-one-line-extension-summary">12.9 One-Line Extension Summary</h2>
+<p>Admission webhooks are implemented as HTTPS services registered via webhook configurations that synchronously mutate or reject Kubernetes API objects before persistence, with selectors and failure policies determining their operational safety.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "navigation.indexes", "toc.follow", "content.code.copy", "content.tabs.link", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

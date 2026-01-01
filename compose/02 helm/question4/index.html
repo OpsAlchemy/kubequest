@@ -1,0 +1,7035 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/compose/02%20helm/question4/">
+      
+      
+        <link rel="prev" href="../question3/">
+      
+      
+        <link rel="next" href="../../03-kustomize/notes/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Question4 - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#meaningful-question-4-build-an-enterprise-helm-chart-library-real-helm-complexity" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Question4
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concise Notes for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01 autoscaling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    01 autoscaling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/hpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Horizontal Pod Autoscaler (HPA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/keywords/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search Keywords+
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HPA &amp; VPA Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-autoscaling/vpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vertical Pod Autoscaler (VPA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02 helm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    02 helm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm Comprehensive Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Helm Charts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../practice-questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm Practice Questions - Progressive Learning Path
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../question1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../question2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../question3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question4
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#meaningful-question-4-build-an-enterprise-helm-chart-library-real-helm-complexity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Meaningful Question 4: Build an Enterprise Helm Chart Library - Real Helm Complexity
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-business-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Business Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-challenge-extreme-helm-flexibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Challenge: Extreme Helm Flexibility
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-1-chart-architecture-flexibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 1: Chart Architecture &amp; Flexibility
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 1: Chart Architecture &amp; Flexibility">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-design-challenge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Design Challenge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-values-schema-auto-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 2: Values Schema &amp; Auto-Documentation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 2: Values Schema &amp; Auto-Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-reusable-template-blocks-dry-principle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 3: Reusable Template Blocks &amp; DRY Principle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 3: Reusable Template Blocks &amp; DRY Principle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-conditional-rendering-feature-toggles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 4: Conditional Rendering &amp; Feature Toggles
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 4: Conditional Rendering &amp; Feature Toggles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-5-multi-environment-values-inheritance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 5: Multi-Environment &amp; Values Inheritance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 5: Multi-Environment &amp; Values Inheritance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-6-parent-charts-multi-service-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 6: Parent Charts &amp; Multi-Service Deployments
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 6: Parent Charts &amp; Multi-Service Deployments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-7-helm-hooks-lifecycle-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 7: Helm Hooks &amp; Lifecycle Events
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 7: Helm Hooks &amp; Lifecycle Events">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-8-values-validation-error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 8: Values Validation &amp; Error Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 8: Values Validation &amp; Error Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-9-testing-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 9: Testing &amp; Validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 9: Testing &amp; Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-10-documentation-user-experience" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 10: Documentation &amp; User Experience
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 10: Documentation &amp; User Experience">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-youre-building-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You're Building Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-real-world-helm-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Real-World Helm Concepts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#progression-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Progression Approach
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes-for-success" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes for Success
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Notes for Success">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-youll-manage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You'll Manage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-youll-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture You'll Design
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-challenges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your Challenges
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#success-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimated-complexity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimated Complexity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-3-cicd-pipeline-as-helm-chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project 3: CI/CD Pipeline as Helm Chart
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project 3: CI/CD Pipeline as Helm Chart">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-scenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Scenario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-youll-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You'll Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-challenges_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your Challenges
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-youll-design_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture You'll Design
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#success-criteria_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimated-complexity_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimated Complexity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-4-machine-learning-operations-mlops-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project 4: Machine Learning Operations (MLOps) Platform
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project 4: Machine Learning Operations (MLOps) Platform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-scenario_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Scenario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-youll-build_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You'll Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-challenges_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your Challenges
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-youll-design_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture You'll Design
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#success-criteria_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimated-complexity_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimated Complexity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-5-complete-observability-aiops-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project 5: Complete Observability &amp; AIOps Platform
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project 5: Complete Observability &amp; AIOps Platform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-scenario_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Scenario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-youll-build_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You'll Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-challenges_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your Challenges
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-youll-design_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture You'll Design
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#success-criteria_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimated-complexity_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimated Complexity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-6-data-platform-lakehouse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project 6: Data Platform (Lakehouse)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project 6: Data Platform (Lakehouse)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-scenario_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Scenario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-youll-build_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You'll Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-challenges_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your Challenges
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#success-criteria_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimated-complexity_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimated Complexity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#which-project-should-you-start-with" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which Project Should You Start With?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-complexity-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project Complexity Comparison
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learning-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Learning Path
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-youll-learn-across-all-projects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You'll Learn Across All Projects
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#success-criteria-for-any-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Criteria for Any Project
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03 kustomize
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    03 kustomize
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-kustomize/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kustomize Master Guide: Advanced Patterns &amp; Modern Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-kustomize/question1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04 admission webhook
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    04 admission webhook
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-admission-webhook/commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-admission-webhook/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    05 kubeconfig
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    05 kubeconfig
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-kubeconfig/how-to-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-kubeconfig/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    06 cluster certificates and kube system [important]
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    06 cluster certificates and kube system [important]
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-cluster-certificates-and-kube-system%20%5Bimportant%5D/kubeadm-certs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kubeadm Certificate Checks &amp; Renewal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    07 crd's
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    07 crd's
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/crd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Resource Definitions (CRDs) and Custom Resources (CRs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/solutions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Solutions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    08 gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    08 gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-gateway-api/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10 scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/nodename/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/nodeselector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NodeSelector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_3" id="__nav_10_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    podAffinity nodeAffinity deployments
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    podAffinity nodeAffinity deployments
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/podAffinity-nodeAffinity-deployments/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Scheduling: Pod &amp; Node Affinity - Theory &amp; Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../11-coredns/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 coredns
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    11 coredns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 deployments
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    12 deployments
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_12_1" id="__nav_12_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Probing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_12_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Probing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-deployments/probing/probing-psotgres/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Probing psotgres
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 manage cluster via kubeadm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    13 manage cluster via kubeadm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/cluster-create/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kubeadm Cluster Create &amp; Upgrade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/etcd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Etcd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/high-availablity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    High availablity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/north-south-traffic-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Ingress
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Ingress Controller Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_15" >
+        
+          
+          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 troubleshoot controlplane
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_15">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    15 troubleshoot controlplane
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15-troubleshoot-controlplane/prerequisite-and-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Approach Control Plane Issues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17 authorization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    17 authorization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/cani/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cani
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/gotchas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RBAC Gotchas and Common Mistakes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/role-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RBAC Core Objects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/system-based-authorization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System based authorization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18 basic bash
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    18 basic bash
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../18-basic-bash/bash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19 secrets and configmap
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    19 secrets and configmap
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../19-secrets-and-configmap/environment-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment and volume
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20 services
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    20 services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../20-services/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cli
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_20" >
+        
+          
+          <label class="md-nav__link" for="__nav_20" id="__nav_20_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    21 storage class pv pvc
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_20_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    21 storage class pv pvc
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../21-storage-class-pv-pvc/example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../21-storage-class-pv-pvc/selector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Selector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#meaningful-question-4-build-an-enterprise-helm-chart-library-real-helm-complexity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Meaningful Question 4: Build an Enterprise Helm Chart Library - Real Helm Complexity
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-business-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Business Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-challenge-extreme-helm-flexibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Challenge: Extreme Helm Flexibility
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-1-chart-architecture-flexibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 1: Chart Architecture &amp; Flexibility
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 1: Chart Architecture &amp; Flexibility">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-design-challenge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Design Challenge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-values-schema-auto-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 2: Values Schema &amp; Auto-Documentation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 2: Values Schema &amp; Auto-Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-reusable-template-blocks-dry-principle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 3: Reusable Template Blocks &amp; DRY Principle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 3: Reusable Template Blocks &amp; DRY Principle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-conditional-rendering-feature-toggles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 4: Conditional Rendering &amp; Feature Toggles
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 4: Conditional Rendering &amp; Feature Toggles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-5-multi-environment-values-inheritance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 5: Multi-Environment &amp; Values Inheritance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 5: Multi-Environment &amp; Values Inheritance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-6-parent-charts-multi-service-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 6: Parent Charts &amp; Multi-Service Deployments
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 6: Parent Charts &amp; Multi-Service Deployments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-7-helm-hooks-lifecycle-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 7: Helm Hooks &amp; Lifecycle Events
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 7: Helm Hooks &amp; Lifecycle Events">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-8-values-validation-error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 8: Values Validation &amp; Error Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 8: Values Validation &amp; Error Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-9-testing-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 9: Testing &amp; Validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 9: Testing &amp; Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-10-documentation-user-experience" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 10: Documentation &amp; User Experience
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 10: Documentation &amp; User Experience">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-criteria_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-youre-building-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You're Building Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-real-world-helm-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Real-World Helm Concepts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#progression-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Progression Approach
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes-for-success" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes for Success
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Notes for Success">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-youll-manage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You'll Manage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-youll-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture You'll Design
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-challenges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your Challenges
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#success-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimated-complexity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimated Complexity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-3-cicd-pipeline-as-helm-chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project 3: CI/CD Pipeline as Helm Chart
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project 3: CI/CD Pipeline as Helm Chart">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-scenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Scenario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-youll-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You'll Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-challenges_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your Challenges
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-youll-design_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture You'll Design
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#success-criteria_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimated-complexity_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimated Complexity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-4-machine-learning-operations-mlops-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project 4: Machine Learning Operations (MLOps) Platform
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project 4: Machine Learning Operations (MLOps) Platform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-scenario_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Scenario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-youll-build_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You'll Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-challenges_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your Challenges
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-youll-design_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture You'll Design
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#success-criteria_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimated-complexity_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimated Complexity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-5-complete-observability-aiops-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project 5: Complete Observability &amp; AIOps Platform
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project 5: Complete Observability &amp; AIOps Platform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-scenario_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Scenario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-youll-build_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You'll Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-challenges_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your Challenges
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-youll-design_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture You'll Design
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#success-criteria_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimated-complexity_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimated Complexity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-6-data-platform-lakehouse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project 6: Data Platform (Lakehouse)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project 6: Data Platform (Lakehouse)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-scenario_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Scenario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-youll-build_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You'll Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-challenges_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your Challenges
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#success-criteria_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimated-complexity_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimated Complexity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#which-project-should-you-start-with" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which Project Should You Start With?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-complexity-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project Complexity Comparison
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learning-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Learning Path
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-youll-learn-across-all-projects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You'll Learn Across All Projects
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#success-criteria-for-any-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Criteria for Any Project
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Question4</h1>
+
+<h2 id="meaningful-question-4-build-an-enterprise-helm-chart-library-real-helm-complexity">Meaningful Question 4: Build an Enterprise Helm Chart Library - Real Helm Complexity</h2>
+<p><strong>What You'll Build:</strong> A reusable Helm chart library that powers your entire organization. 50+ teams use it to deploy their applications without touching Kubernetes manifests.</p>
+<p><strong>Chart Name:</strong> <code>app-platform</code> (base chart library)</p>
+<p><strong>Philosophy:</strong> This is about Helm, not Kubernetes. You're solving real templating, composition, and reusability challenges.</p>
+<hr />
+<h2 id="the-business-context">The Business Context</h2>
+<p>Your organization has 50+ teams deploying applications to Kubernetes:</p>
+<p><strong>Current State (The Problem):</strong>
+- Each team writes their own manifests (Deployment, Service, Ingress, etc.)
+- Inconsistent patterns across teams (no standards)
+- Security varies wildly (some pods run as root, some don't)
+- Upgrades are manual and error-prone
+- Different teams solve the same problem 50 different ways
+- Onboarding new teams takes weeks</p>
+<p><strong>Your Goal:</strong>
+- Build ONE Helm chart that 50+ teams can use
+- Teams only write <code>values.yaml</code>, no template changes
+- Standardized patterns (security, monitoring, networking)
+- Self-service deployments
+- Automatic compliance checking</p>
+<hr />
+<h2 id="the-challenge-extreme-helm-flexibility">The Challenge: Extreme Helm Flexibility</h2>
+<p>Your chart must support:</p>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Example</th>
+<th>Helm Challenge</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stateless Web App</td>
+<td>Node.js API</td>
+<td>Basic Deployment</td>
+</tr>
+<tr>
+<td>Stateful Database</td>
+<td>PostgreSQL</td>
+<td>StatefulSet with PVC</td>
+</tr>
+<tr>
+<td>Batch Job</td>
+<td>Data processor</td>
+<td>CronJob, Job cleanup</td>
+</tr>
+<tr>
+<td>Worker Queue</td>
+<td>RabbitMQ consumer</td>
+<td>Deployment + custom config</td>
+</tr>
+<tr>
+<td>External Service</td>
+<td>Third-party API</td>
+<td>Service without pods</td>
+</tr>
+<tr>
+<td>Microservices</td>
+<td>10 services in 1 chart</td>
+<td>Dependencies, shared values</td>
+</tr>
+<tr>
+<td>API Gateway</td>
+<td>Kong, Traefik</td>
+<td>Multiple replicas, plugins</td>
+</tr>
+<tr>
+<td>Lambda-like</td>
+<td>Function runner</td>
+<td>Pod per invocation</td>
+</tr>
+<tr>
+<td>Cache Layer</td>
+<td>Redis</td>
+<td>Optional, conditional</td>
+</tr>
+<tr>
+<td>Message Queue</td>
+<td>Kafka, RabbitMQ</td>
+<td>Optional, conditional</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Problem:</strong> How do you make ONE chart flexible enough for all these, but simple enough that teams only specify values?</p>
+<hr />
+<h2 id="part-1-chart-architecture-flexibility">Part 1: Chart Architecture &amp; Flexibility</h2>
+<h3 id="the-design-challenge">The Design Challenge</h3>
+<p>You need to support different workload types with minimal configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Team 1: Simple web app</span>
+<span class="nt">workloadType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deployment</span>
+<span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapp:1.0</span>
+
+<span class="c1"># Team 2: Stateful database</span>
+<span class="nt">workloadType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statefulset</span>
+<span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="nt">persistence</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100Gi</span>
+
+<span class="c1"># Team 3: Scheduled job</span>
+<span class="nt">workloadType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cronjob</span>
+<span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0</span><span class="nv"> </span><span class="s">2</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*&quot;</span>
+
+<span class="c1"># Team 4: Multiple services in one chart</span>
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">workloadType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deployment</span>
+<span class="w">    </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">worker</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">workloadType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deployment</span>
+<span class="w">    </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">cache</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">workloadType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deployment</span>
+<span class="w">    </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</code></pre></div>
+<h3 id="requirements">Requirements</h3>
+<ol>
+<li><strong>Template Structure</strong></li>
+<li>Use conditional logic to include only needed manifests</li>
+<li>DRY principle: reuse pod specs across workload types</li>
+<li>Support 5+ workload types (Deployment, StatefulSet, DaemonSet, Job, CronJob)</li>
+<li>
+<p>Shared template helpers for common patterns</p>
+</li>
+<li>
+<p><strong>Workload Types</strong></p>
+</li>
+<li><code>deployment</code>: Stateless app (replicas, rolling update)</li>
+<li><code>statefulset</code>: Stateful app (stable identity, persistent storage)</li>
+<li><code>daemonset</code>: Node-local app (one per node)</li>
+<li><code>job</code>: Run once, complete</li>
+<li><code>cronjob</code>: Run on schedule</li>
+<li>
+<p><code>external</code>: No pods (external service proxy)</p>
+</li>
+<li>
+<p><strong>Flexible Configuration</strong></p>
+</li>
+<li>One values.yaml controls everything</li>
+<li>Support single service or multiple services</li>
+<li>Optional components (cache, database, monitoring)</li>
+<li>
+<p>Different security levels per component</p>
+</li>
+<li>
+<p><strong>Validation</strong></p>
+</li>
+<li>Invalid workloadType combinations fail validation</li>
+<li>Missing required values fail early</li>
+<li>StatefulSet must have persistence enabled</li>
+<li>CronJob must have valid cron schedule</li>
+</ol>
+<h3 id="validation-criteria">Validation Criteria</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Deploy web app (deployment)</span>
+helm<span class="w"> </span>install<span class="w"> </span>web-app<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-web.yaml
+kubectl<span class="w"> </span>get<span class="w"> </span>deployment
+
+<span class="c1"># Deploy database (statefulset)</span>
+helm<span class="w"> </span>install<span class="w"> </span>database<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-statefulset.yaml
+kubectl<span class="w"> </span>get<span class="w"> </span>statefulset
+
+<span class="c1"># Deploy cronjob</span>
+helm<span class="w"> </span>install<span class="w"> </span>scheduler<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-cronjob.yaml
+kubectl<span class="w"> </span>get<span class="w"> </span>cronjob
+
+<span class="c1"># Deploy multi-service</span>
+helm<span class="w"> </span>install<span class="w"> </span>platform<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-multi.yaml
+kubectl<span class="w"> </span>get<span class="w"> </span>deployment,statefulset
+<span class="c1"># Should show api deployment, worker deployment, cache deployment</span>
+
+<span class="c1"># Validation test: invalid workloadType</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-invalid.yaml<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>error
+<span class="c1"># Should fail with clear error message</span>
+</code></pre></div>
+<hr />
+<h2 id="part-2-values-schema-auto-documentation">Part 2: Values Schema &amp; Auto-Documentation</h2>
+<h3 id="the-problem">The Problem</h3>
+<p>Teams ask:
+- "What values can I set?"
+- "What are the defaults?"
+- "Which values are required?"
+- "Can I use image tags or only repo URLs?"</p>
+<p>You need to answer without manually documenting 200+ values.</p>
+<h3 id="requirements_1">Requirements</h3>
+<ol>
+<li><strong>JSON Schema (values.schema.json)</strong></li>
+<li>Complete schema for all valid values</li>
+<li>Type checking (string, number, boolean, array, object)</li>
+<li>Required vs optional fields</li>
+<li>Enum validation (e.g., workloadType must be one of: deployment, statefulset, ...)</li>
+<li>Min/max validation (replicas: min 1, max 1000)</li>
+<li>Pattern validation (image: must match regex)</li>
+<li>
+<p>Descriptions for each value</p>
+</li>
+<li>
+<p><strong>Auto-Generated Documentation</strong></p>
+</li>
+<li>README generated from schema</li>
+<li>Example values.yaml files for common use cases</li>
+<li>
+<p>Inline comments in schema explaining each field</p>
+</li>
+<li>
+<p><strong>Validation</strong></p>
+</li>
+<li><code>helm template</code> fails if invalid values provided</li>
+<li>Clear error messages: "replicas must be &gt;= 1, got -5"</li>
+<li>Suggest fixes: "workloadType must be one of: [deployment, statefulset, job, cronjob, daemonset]"</li>
+</ol>
+<h3 id="validation-criteria_1">Validation Criteria</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Valid values should work</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>valid-values.yaml<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$?</span><span class="w">  </span><span class="c1"># Should be 0</span>
+
+<span class="c1"># Invalid values should fail with clear error</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>invalid-values.yaml<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+<span class="c1"># Should show: &quot;Error: replicas must be &gt;= 1, got 0&quot;</span>
+<span class="c1"># Should show: &quot;Error: workloadType must be one of: [deployment, statefulset, ...]&quot;</span>
+
+<span class="c1"># Schema should be complete</span>
+cat<span class="w"> </span>values.schema.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.properties | keys | length&#39;</span>
+<span class="c1"># Should be 30+ properties</span>
+
+<span class="c1"># Documentation should be auto-generated</span>
+cat<span class="w"> </span>README.md<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;##&quot;</span>
+<span class="c1"># Should have multiple sections auto-generated</span>
+</code></pre></div>
+<hr />
+<h2 id="part-3-reusable-template-blocks-dry-principle">Part 3: Reusable Template Blocks &amp; DRY Principle</h2>
+<h3 id="the-problem_1">The Problem</h3>
+<p>You have 20+ manifest templates. Many are similar:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># deployment.yaml</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.name</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.name</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.version</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.replicas</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.name</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.name</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.image</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.port</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+
+<span class="c1"># statefulset.yaml</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StatefulSet</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.name</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.name</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.version</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.replicas</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.name</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.name</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.image</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.port</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+</code></pre></div>
+<p><strong>Problem:</strong> Labels, selectors, container specs are duplicated. Change one place, forgot 5 others.</p>
+<h3 id="requirements_2">Requirements</h3>
+<ol>
+<li><strong>Template Helpers (_helpers.tpl)</strong></li>
+<li>Reusable blocks for common patterns</li>
+<li>Labels helper: generate consistent labels</li>
+<li>Selectors helper: generate consistent selectors</li>
+<li>Container spec helper: generate container template</li>
+<li>Health checks helper: generate probes</li>
+<li>Security context helper: generate security settings</li>
+<li>
+<p>Environment variables helper: handle secrets vs configmaps</p>
+</li>
+<li>
+<p><strong>DRY Principle</strong></p>
+</li>
+<li>Pod spec defined once, reused in Deployment, StatefulSet, Job</li>
+<li>Labels defined once, used everywhere</li>
+<li>Probes defined once, applied to all workloads</li>
+<li>
+<p>Security context defined once, applied everywhere</p>
+</li>
+<li>
+<p><strong>Consistency</strong></p>
+</li>
+<li>All pods get same security standards</li>
+<li>All pods have same labels</li>
+<li>All pods have same monitoring sidecars</li>
+<li>Changing one helper updates everywhere</li>
+</ol>
+<h3 id="validation-criteria_2">Validation Criteria</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate manifests</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values.yaml<span class="w"> </span>&gt;<span class="w"> </span>manifests.yaml
+
+<span class="c1"># Check: All labels are consistent</span>
+grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;app: myapp&quot;</span><span class="w"> </span>manifests.yaml
+<span class="c1"># Should be 10+ (pod spec, deployment, service, etc.)</span>
+
+<span class="c1"># Check: Selector matches labels</span>
+grep<span class="w"> </span>-A<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="s2">&quot;matchLabels:&quot;</span><span class="w"> </span>manifests.yaml
+<span class="c1"># Should show &quot;app: myapp&quot; matching pod labels</span>
+
+<span class="c1"># Check: Security context applied</span>
+grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;runAsNonRoot&quot;</span><span class="w"> </span>manifests.yaml
+<span class="c1"># Should be 4+ (one per pod)</span>
+
+<span class="c1"># Verify DRY: Change label in helper</span>
+<span class="c1"># Rerun template, all manifests should update</span>
+
+<span class="c1"># Count lines of code</span>
+wc<span class="w"> </span>-l<span class="w"> </span>templates/*.yaml<span class="w"> </span>templates/_helpers.tpl
+<span class="c1"># _helpers.tpl should be significant (200+), reused across 5+ templates</span>
+</code></pre></div>
+<hr />
+<h2 id="part-4-conditional-rendering-feature-toggles">Part 4: Conditional Rendering &amp; Feature Toggles</h2>
+<h3 id="the-problem_2">The Problem</h3>
+<p>Teams ask:
+- "Can I disable monitoring for dev environment?"
+- "Can I skip database backups for testing?"
+- "Can I disable security policies for local development?"</p>
+<p>You need sophisticated conditional logic.</p>
+<h3 id="requirements_3">Requirements</h3>
+<ol>
+<li><strong>Feature Toggles</strong></li>
+<li><code>monitoring.enabled</code>: Include ServiceMonitor, PrometheusRule</li>
+<li><code>ingress.enabled</code>: Include Ingress, adjust Service type</li>
+<li><code>persistence.enabled</code>: Include PVC, use emptyDir if not</li>
+<li><code>rbac.enabled</code>: Include ServiceAccount, Role, RoleBinding</li>
+<li><code>networkPolicy.enabled</code>: Include NetworkPolicy</li>
+<li>
+<p><code>backup.enabled</code>: Include backup CronJob</p>
+</li>
+<li>
+<p><strong>Conditional Dependencies</strong></p>
+</li>
+<li>If <code>persistence.enabled</code>, must have <code>persistence.storageClass</code></li>
+<li>If <code>monitoring.enabled</code>, must have <code>monitoring.scrapeInterval</code></li>
+<li>If <code>ingress.enabled</code>, must have <code>ingress.host</code></li>
+<li>
+<p>If <code>rbac.enabled</code>, can't use <code>runAsUser: 0</code></p>
+</li>
+<li>
+<p><strong>Environment-Specific Configs</strong></p>
+</li>
+<li>Development: monitoring disabled, no ingress, local storage</li>
+<li>Staging: monitoring enabled, ingress + TLS, persistent storage</li>
+<li>Production: monitoring required, security hardened, HA</li>
+</ol>
+<h3 id="validation-criteria_3">Validation Criteria</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Deploy with minimal features (dev)</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-dev.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span>--dry-run<span class="o">=</span>client
+<span class="c1"># Should work, only pod+service</span>
+
+<span class="c1"># Deploy with all features (prod)</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-prod.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span>--dry-run<span class="o">=</span>client
+<span class="c1"># Should include monitoring, ingress, security, persistence</span>
+
+<span class="c1"># Verify conditional logic</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-monitoring-disabled.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>servicemonitor
+<span class="c1"># Should return nothing</span>
+
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-monitoring-enabled.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>servicemonitor
+<span class="c1"># Should show ServiceMonitor resource</span>
+
+<span class="c1"># Verify dependency validation</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-persistence-enabled-but-no-storageclass.yaml<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+<span class="c1"># Should fail with clear error</span>
+</code></pre></div>
+<hr />
+<h2 id="part-5-multi-environment-values-inheritance">Part 5: Multi-Environment &amp; Values Inheritance</h2>
+<h3 id="the-problem_3">The Problem</h3>
+<p>Teams deploy same app to dev, staging, production with different configs:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># All similar structure, different values</span>
+<span class="nt">replicas</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">dev</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">staging</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">prod</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+
+<span class="nt">resources</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">dev</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="nv">100m</span><span class="p p-Indicator">,</span><span class="nt"> memory</span><span class="p">:</span><span class="w"> </span><span class="nv">128Mi</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">staging</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="nv">500m</span><span class="p p-Indicator">,</span><span class="nt"> memory</span><span class="p">:</span><span class="w"> </span><span class="nv">512Mi</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">prod</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="nv">1000m</span><span class="p p-Indicator">,</span><span class="nt"> memory</span><span class="p">:</span><span class="w"> </span><span class="nv">2Gi</span><span class="p p-Indicator">}</span>
+
+<span class="nt">ingress</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">dev</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">tls</span><span class="p">:</span><span class="w"> </span><span class="nv">false</span><span class="p p-Indicator">,</span><span class="nt"> domain</span><span class="p">:</span><span class="w"> </span><span class="nv">dev.example.com</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">staging</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">tls</span><span class="p">:</span><span class="w"> </span><span class="nv">true</span><span class="p p-Indicator">,</span><span class="nt"> domain</span><span class="p">:</span><span class="w"> </span><span class="nv">staging.example.com</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">prod</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">tls</span><span class="p">:</span><span class="w"> </span><span class="nv">true</span><span class="p p-Indicator">,</span><span class="nt"> domain</span><span class="p">:</span><span class="w"> </span><span class="nv">app.example.com</span><span class="p p-Indicator">}</span>
+</code></pre></div>
+<p><strong>Problem:</strong> How do you manage all this without duplicating values 3 times?</p>
+<h3 id="requirements_4">Requirements</h3>
+<ol>
+<li><strong>Values Hierarchy</strong></li>
+<li><code>values.yaml</code>: defaults (works for most cases)</li>
+<li><code>values-dev.yaml</code>: override for dev (small replicas, low resources)</li>
+<li><code>values-staging.yaml</code>: override for staging (medium replicas, medium resources)</li>
+<li>
+<p><code>values-prod.yaml</code>: override for prod (high replicas, high resources, security hardened)</p>
+</li>
+<li>
+<p><strong>Smart Defaults</strong></p>
+</li>
+<li>Default values.yaml is functional for dev</li>
+<li>Staging only needs to override replicas and resources</li>
+<li>Prod only needs to override security and monitoring settings</li>
+<li>
+<p>No value specified in 3 places unnecessarily</p>
+</li>
+<li>
+<p><strong>Values Composition</strong></p>
+</li>
+<li>Parent chart passes values to child charts correctly</li>
+<li>Global values accessible to all children</li>
+<li>Component-specific values only affect that component</li>
+</ol>
+<h3 id="validation-criteria_4">Validation Criteria</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Dev deployment (minimal)</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-dev.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>replicas:
+<span class="c1"># Should show replicas: 1</span>
+
+<span class="c1"># Staging deployment</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-staging.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>replicas:
+<span class="c1"># Should show replicas: 2</span>
+
+<span class="c1"># Prod deployment</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-prod.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>replicas:
+<span class="c1"># Should show replicas: 3</span>
+
+<span class="c1"># Values files should be small (no duplication)</span>
+wc<span class="w"> </span>-l<span class="w"> </span>values.yaml<span class="w"> </span>values-*.yaml
+<span class="c1"># values.yaml should be 100+ lines, each override should be 20-30 lines only</span>
+</code></pre></div>
+<hr />
+<h2 id="part-6-parent-charts-multi-service-deployments">Part 6: Parent Charts &amp; Multi-Service Deployments</h2>
+<h3 id="the-problem_4">The Problem</h3>
+<p>One team wants to deploy:
+- API server
+- Worker 
+- Cache
+- Database</p>
+<p>All as one unit, with shared configuration.</p>
+<h3 id="requirements_5">Requirements</h3>
+<ol>
+<li><strong>Parent Chart (Umbrella)</strong></li>
+<li>Includes child charts as dependencies</li>
+<li>Each child is a service (api, worker, cache, database)</li>
+<li>Shared values passed to relevant children</li>
+<li>
+<p>Version constraints on child charts</p>
+</li>
+<li>
+<p><strong>Child Charts</strong></p>
+</li>
+<li>Each service is a reusable chart</li>
+<li>Can be deployed standalone or as part of parent</li>
+<li>Accepts shared values (labels, monitoring config, security)</li>
+<li>
+<p>Can override specific settings</p>
+</li>
+<li>
+<p><strong>Dependency Management</strong></p>
+</li>
+<li><code>api</code> depends on <code>database</code> (waits for startup)</li>
+<li><code>worker</code> depends on <code>cache</code></li>
+<li>Ordering in templates ensures dependencies start first</li>
+<li>Health checks verify dependencies are ready</li>
+</ol>
+<h3 id="validation-criteria_5">Validation Criteria</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Deploy parent chart</span>
+helm<span class="w"> </span>install<span class="w"> </span>platform<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-multi.yaml
+
+<span class="c1"># Verify all services deployed</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>deployment
+<span class="c1"># Should show: api, worker</span>
+
+kubectl<span class="w"> </span>get<span class="w"> </span>statefulset
+<span class="c1"># Should show: cache, database</span>
+
+<span class="c1"># Verify dependency ordering</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>events<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Created
+<span class="c1"># Database created first, then api</span>
+
+<span class="c1"># Verify shared values applied</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>deployment<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>monitoring
+<span class="c1"># All deployments should have monitoring enabled</span>
+</code></pre></div>
+<hr />
+<h2 id="part-7-helm-hooks-lifecycle-events">Part 7: Helm Hooks &amp; Lifecycle Events</h2>
+<h3 id="the-problem_5">The Problem</h3>
+<p>Teams need to run tasks at specific lifecycle points:</p>
+<ul>
+<li>Pre-install: Create namespace, apply CRDs</li>
+<li>Post-install: Run migrations, seed data</li>
+<li>Pre-upgrade: Backup database</li>
+<li>Post-upgrade: Verify app is healthy</li>
+<li>Pre-delete: Export data, cleanup</li>
+<li>Post-delete: Remove PVCs, cleanup resources</li>
+</ul>
+<h3 id="requirements_6">Requirements</h3>
+<ol>
+<li><strong>Pre-Install Hooks</strong></li>
+<li>Install CRDs (must run before any resources reference them)</li>
+<li>Create namespaces with labels</li>
+<li>Apply RBAC cluster-wide (if needed)</li>
+<li>
+<p>Validate cluster prerequisites</p>
+</li>
+<li>
+<p><strong>Post-Install Hooks</strong></p>
+</li>
+<li>Run database migrations</li>
+<li>Seed initial data</li>
+<li>Run smoke tests</li>
+<li>
+<p>Generate initial config</p>
+</li>
+<li>
+<p><strong>Pre-Upgrade Hooks</strong></p>
+</li>
+<li>Backup database to S3</li>
+<li>Run pre-upgrade validation</li>
+<li>Check for breaking changes</li>
+<li>
+<p>Warn if downtime required</p>
+</li>
+<li>
+<p><strong>Post-Upgrade Hooks</strong></p>
+</li>
+<li>Run schema migrations</li>
+<li>Validate data integrity</li>
+<li>Run smoke tests</li>
+<li>
+<p>Notify team of upgrade completion</p>
+</li>
+<li>
+<p><strong>Pre-Delete Hooks</strong></p>
+</li>
+<li>Export data to S3</li>
+<li>Run cleanup tasks</li>
+<li>Collect logs for archival</li>
+</ol>
+<h3 id="validation-criteria_6">Validation Criteria</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Install and watch hooks run</span>
+helm<span class="w"> </span>install<span class="w"> </span>app<span class="w"> </span>.<span class="w"> </span>--debug
+<span class="c1"># Should see: pre-install hook running, post-install hook running</span>
+
+<span class="c1"># Upgrade and watch hooks</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>app<span class="w"> </span>.<span class="w"> </span>--set<span class="w"> </span><span class="nv">version</span><span class="o">=</span><span class="m">2</span><span class="w"> </span>--debug
+<span class="c1"># Should see: pre-upgrade hook (backup), post-upgrade hook (migrate)</span>
+
+<span class="c1"># Verify hook ordering</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>events<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>hook
+<span class="c1"># Should show: pre-install, post-install, pre-upgrade, post-upgrade in order</span>
+
+<span class="c1"># Verify hooks only run once</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>app<span class="w"> </span>.<span class="w"> </span>--debug
+<span class="c1"># Should not re-run post-install hook</span>
+<span class="c1"># Should run pre-upgrade and post-upgrade hooks</span>
+</code></pre></div>
+<hr />
+<h2 id="part-8-values-validation-error-handling">Part 8: Values Validation &amp; Error Handling</h2>
+<h3 id="the-problem_6">The Problem</h3>
+<p>Teams sometimes provide invalid values:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-5</span><span class="w">  </span><span class="c1"># negative!</span>
+<span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w">  </span><span class="c1"># empty!</span>
+<span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">99999</span><span class="w">  </span><span class="c1"># invalid!</span>
+<span class="nt">workloadType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lambda</span><span class="w">  </span><span class="c1"># not supported!</span>
+</code></pre></div>
+<p><strong>Result:</strong> Chart installs but deployment fails mysteriously.</p>
+<h3 id="requirements_7">Requirements</h3>
+<ol>
+<li><strong>Schema Validation</strong></li>
+<li><code>replicas</code>: integer, &gt;= 1, &lt;= 100</li>
+<li><code>image</code>: string, required, matches regex <code>^[a-z0-9:/.]+$</code></li>
+<li><code>port</code>: integer, &gt;= 1, &lt;= 65535</li>
+<li><code>workloadType</code>: enum [deployment, statefulset, job, cronjob, daemonset]</li>
+<li>
+<p><code>resources.requests.cpu</code>: string, matches Kubernetes CPU regex</p>
+</li>
+<li>
+<p><strong>Smart Error Messages</strong></p>
+</li>
+<li>Show what went wrong</li>
+<li>Show what should be fixed</li>
+<li>
+<p>Suggest valid options</p>
+</li>
+<li>
+<p><strong>Optional Pre-Deployment Validation</strong></p>
+</li>
+<li>Custom template validation logic</li>
+<li>Check interdependencies</li>
+<li>Fail early with clear errors</li>
+</ol>
+<h3 id="validation-criteria_7">Validation Criteria</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Invalid values fail immediately</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-invalid.yaml<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+<span class="c1"># Should show: &quot;Error: replicas must be &gt;= 1 and &lt;= 100, got -5&quot;</span>
+<span class="c1"># Should show: &quot;Did you mean: replicas: 1?&quot;</span>
+
+<span class="c1"># Missing required values fail</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values-incomplete.yaml<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+<span class="c1"># Should show: &quot;Error: image is required, got empty string&quot;</span>
+
+<span class="c1"># Invalid workloadType fails</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>--set<span class="w"> </span><span class="nv">workloadType</span><span class="o">=</span>lambda<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+<span class="c1"># Should show: &quot;Error: workloadType must be one of: [deployment, statefulset, job, ...]&quot;</span>
+<span class="c1">#             &quot;Got: lambda&quot;</span>
+
+<span class="c1"># Invalid port fails</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>--set<span class="w"> </span><span class="nv">port</span><span class="o">=</span><span class="m">99999</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+<span class="c1"># Should show: &quot;Error: port must be between 1 and 65535, got 99999&quot;</span>
+
+<span class="c1"># Schema validation</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span>--dry-run<span class="o">=</span>client
+<span class="c1"># Should succeed</span>
+</code></pre></div>
+<hr />
+<h2 id="part-9-testing-validation">Part 9: Testing &amp; Validation</h2>
+<h3 id="the-problem_7">The Problem</h3>
+<p>How do you verify 50+ teams' deployments are correct?</p>
+<p>Teams might deploy:
+- Without required probes
+- Without resource limits
+- With security vulnerabilities
+- With incorrect monitoring</p>
+<h3 id="requirements_8">Requirements</h3>
+<ol>
+<li><strong>Helm Chart Tests</strong></li>
+<li>Test: Pod is running</li>
+<li>Test: Service is accessible</li>
+<li>Test: Health checks respond</li>
+<li>Test: Metrics are exported</li>
+<li>Test: Security policies enforced</li>
+<li>
+<p>Test: Ingress routing works</p>
+</li>
+<li>
+<p><strong>Policy as Code</strong></p>
+</li>
+<li>No root containers</li>
+<li>No privileged mode</li>
+<li>Resources limits required</li>
+<li>Health checks required</li>
+<li>Labels present on all resources</li>
+<li>
+<p>ServiceAccount bound to restricted role</p>
+</li>
+<li>
+<p><strong>Pre-Install Validation</strong></p>
+</li>
+<li>Check cluster prerequisites</li>
+<li>Check available storage classes</li>
+<li>Check RBAC permissions</li>
+<li>Check API server version compatibility</li>
+</ol>
+<h3 id="validation-criteria_8">Validation Criteria</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Run helm tests</span>
+helm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>app
+
+<span class="c1"># Tests should verify:</span>
+✓<span class="w"> </span>Pod<span class="w"> </span>is<span class="w"> </span>running
+✓<span class="w"> </span>Service<span class="w"> </span>is<span class="w"> </span>accessible
+✓<span class="w"> </span>Health<span class="w"> </span>checks<span class="w"> </span>respond
+✓<span class="w"> </span>Metrics<span class="w"> </span>endpoint<span class="w"> </span>works
+✓<span class="w"> </span>Security<span class="w"> </span>context<span class="w"> </span>applied
+✓<span class="w"> </span>Resource<span class="w"> </span>limits<span class="w"> </span><span class="nb">set</span>
+
+<span class="c1"># Policy validation</span>
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span><span class="p">|</span><span class="w"> </span>kubesec<span class="w"> </span>scan<span class="w"> </span>-
+<span class="c1"># Should pass security checks</span>
+
+helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span><span class="p">|</span><span class="w"> </span>kubeval<span class="w"> </span>-
+<span class="c1"># Should produce valid Kubernetes manifests</span>
+
+helm<span class="w"> </span>lint<span class="w"> </span>.
+<span class="c1"># Should pass without errors</span>
+</code></pre></div>
+<hr />
+<h2 id="part-10-documentation-user-experience">Part 10: Documentation &amp; User Experience</h2>
+<h3 id="the-problem_8">The Problem</h3>
+<p>50+ teams using your chart need to understand:
+- How to use it
+- What values are available
+- Examples for common scenarios
+- Troubleshooting help
+- Best practices</p>
+<h3 id="requirements_9">Requirements</h3>
+<ol>
+<li><strong>README.md</strong></li>
+<li>Quick start (3-step deployment)</li>
+<li>Values reference (all 100+ values documented)</li>
+<li>Examples (5+ common use cases)</li>
+<li>Troubleshooting (10+ common issues)</li>
+<li>Architecture diagram</li>
+<li>
+<p>Performance tuning guide</p>
+</li>
+<li>
+<p><strong>Example Values Files</strong></p>
+</li>
+<li><code>values-web-app.yaml</code>: Simple web app</li>
+<li><code>values-stateful-app.yaml</code>: App with database</li>
+<li><code>values-microservices.yaml</code>: Multiple services</li>
+<li><code>values-dev.yaml</code>: Development environment</li>
+<li>
+<p><code>values-prod.yaml</code>: Production environment</p>
+</li>
+<li>
+<p><strong>Inline Documentation</strong></p>
+</li>
+<li>Comments in values.yaml explaining each field</li>
+<li>Comments in templates explaining complex logic</li>
+<li>
+<p>Comments in _helpers.tpl explaining each function</p>
+</li>
+<li>
+<p><strong>Generated Documentation</strong></p>
+</li>
+<li>Values schema auto-generates reference docs</li>
+<li>Examples auto-generated from schema</li>
+<li>Architecture rendered from code</li>
+</ol>
+<h3 id="validation-criteria_9">Validation Criteria</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># README quality checks</span>
+wc<span class="w"> </span>-l<span class="w"> </span>README.md<span class="w">  </span><span class="c1"># Should be 500+ lines</span>
+grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;##&quot;</span><span class="w"> </span>README.md<span class="w">  </span><span class="c1"># Should have 10+ sections</span>
+grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;example&quot;</span><span class="w"> </span>README.md<span class="w">  </span><span class="c1"># Should have examples</span>
+
+<span class="c1"># Values are documented</span>
+grep<span class="w"> </span><span class="s2">&quot;^# &quot;</span><span class="w"> </span>values.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="w">  </span><span class="c1"># Should have 50+ comment lines</span>
+
+<span class="c1"># Examples are valid</span>
+<span class="k">for</span><span class="w"> </span>f<span class="w"> </span><span class="k">in</span><span class="w"> </span>values-*.yaml<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>helm<span class="w"> </span>template<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span><span class="nv">$f</span><span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Invalid: </span><span class="nv">$f</span><span class="s2">&quot;</span>
+<span class="k">done</span>
+<span class="c1"># All should succeed</span>
+
+<span class="c1"># Schema is complete</span>
+cat<span class="w"> </span>values.schema.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.properties | keys | length&#39;</span>
+<span class="c1"># Should be 30+ documented fields</span>
+</code></pre></div>
+<hr />
+<h2 id="what-youre-building-summary">What You're Building Summary</h2>
+<p>By completing all 10 parts, you have:</p>
+<ul>
+<li>✅ Flexible chart supporting 5+ workload types</li>
+<li>✅ Complete schema validation with auto-generated docs</li>
+<li>✅ DRY templates with maximum reusability</li>
+<li>✅ Feature toggles for optional components</li>
+<li>✅ Multi-environment support with value inheritance</li>
+<li>✅ Parent/child charts for multi-service deployments</li>
+<li>✅ Lifecycle hooks for pre/post install/upgrade/delete</li>
+<li>✅ Comprehensive validation and error handling</li>
+<li>✅ Testing and policy enforcement</li>
+<li>✅ Complete user documentation</li>
+</ul>
+<p><strong>This is a library.</strong> 50+ teams depend on it. Teams deploy new services in 5 minutes using just values.yaml.</p>
+<p><strong>Total Implementation Time:</strong> 35-50 hours</p>
+<hr />
+<h2 id="key-real-world-helm-concepts">Key Real-World Helm Concepts</h2>
+<ol>
+<li><strong>Extreme Flexibility</strong> - Supporting diverse use cases with one template</li>
+<li><strong>Helm Best Practices</strong> - Schema, hooks, testing, documentation</li>
+<li><strong>Template Reusability</strong> - Helpers, DRY principle, avoiding duplication</li>
+<li><strong>Composition Patterns</strong> - Parent charts, child charts, dependency management</li>
+<li><strong>Conditional Rendering</strong> - Feature toggles, environment-specific configs</li>
+<li><strong>Validation &amp; Safety</strong> - Schema, pre-install checks, policy enforcement</li>
+<li><strong>User Experience</strong> - Documentation, error messages, examples</li>
+<li><strong>Testing &amp; Verification</strong> - Helm tests, policy as code, integration tests</li>
+<li><strong>Lifecycle Management</strong> - Hooks for install, upgrade, delete</li>
+<li><strong>Enterprise Scale</strong> - Supporting 50+ teams with standardized patterns</li>
+</ol>
+<hr />
+<h2 id="progression-approach">Progression Approach</h2>
+<p><strong>Start with:</strong> Part 1 (basic flexibility with workload types)
+- <strong>Then add:</strong> Part 2 (schema and documentation)
+- <strong>Then add:</strong> Part 3 (DRY templates with helpers)
+- <strong>Then add:</strong> Part 4 (feature toggles and conditionals)
+- <strong>Then add:</strong> Part 5 (multi-environment support)
+- <strong>Then add:</strong> Part 6 (parent/child charts)
+- <strong>Then add:</strong> Part 7 (lifecycle hooks)
+- <strong>Then add:</strong> Part 8 (validation)
+- <strong>Then add:</strong> Part 9 (testing)
+- <strong>Finally:</strong> Part 10 (documentation)</p>
+<p>Each part builds on previous ones. Don't skip steps.</p>
+<hr />
+<h2 id="notes-for-success">Notes for Success</h2>
+<ul>
+<li>This is <strong>Helm</strong>, not Kubernetes architecture</li>
+<li>Focus on templating, composition, and reusability</li>
+<li>Real organizations have this exact problem</li>
+<li>Real constraints: 50+ teams, diverse use cases, zero documentation errors</li>
+<li>Real testing: comprehensive validation, no surprises</li>
+<li>Real documentation: teams should understand without asking</li>
+</ul>
+<p>This chart will be used by hundreds of deployments. Quality matters.</p>
+<p>Good luck. Build something that empowers your organization. 🚀</p>
+<h3 id="what-youll-manage">What You'll Manage</h3>
+<ol>
+<li><strong>Cluster Provisioning</strong></li>
+<li>Define cluster spec (size, region, version, node types)</li>
+<li>Automatically provision infrastructure (IaC)</li>
+<li>Install CNI, CSI, ingress controller</li>
+<li>
+<p>Bootstrap cluster with base applications</p>
+</li>
+<li>
+<p><strong>Multi-Cloud Support</strong></p>
+</li>
+<li>AWS (EKS) templates</li>
+<li>Azure (AKS) templates</li>
+<li>GCP (GKE) templates</li>
+<li>
+<p>Same chart, different cloud backend</p>
+</li>
+<li>
+<p><strong>Add-Ons Management</strong></p>
+</li>
+<li>Networking (Cilium, Calico, Flannel)</li>
+<li>Storage (Local, EBS, Azure Disk, GCP Disk)</li>
+<li>Ingress (NGINX, Traefik, AWS ALB)</li>
+<li>Monitoring (Prometheus, Datadog, New Relic)</li>
+<li>Logging (Loki, ELK, Splunk)</li>
+<li>
+<p>Service Mesh (Istio, Linkerd, optional)</p>
+</li>
+<li>
+<p><strong>Cluster Lifecycle</strong></p>
+</li>
+<li>Provision new cluster</li>
+<li>Upgrade cluster version</li>
+<li>Scale cluster up/down</li>
+<li>Decommission cluster</li>
+<li>Backup cluster state</li>
+<li>
+<p>Restore from backup</p>
+</li>
+<li>
+<p><strong>Multi-Tenancy</strong></p>
+</li>
+<li>Multiple teams on one cluster</li>
+<li>Resource quotas and isolation</li>
+<li>Network policies between teams</li>
+<li>
+<p>RBAC scoped by team</p>
+</li>
+<li>
+<p><strong>Compliance &amp; Governance</strong></p>
+</li>
+<li>Enforce security policies</li>
+<li>Audit all changes</li>
+<li>Policy validation (no unencrypted storage, no privileged pods, etc.)</li>
+<li>
+<p>Cost tracking per team</p>
+</li>
+<li>
+<p><strong>GitOps Workflow</strong></p>
+</li>
+<li>All changes described in Git</li>
+<li>Automatic sync via Flux/ArgoCD</li>
+<li>PR-based approval workflow</li>
+<li>
+<p>Audit trail of who changed what</p>
+</li>
+<li>
+<p><strong>Self-Healing</strong></p>
+</li>
+<li>Automatic recovery from node failures</li>
+<li>Replace failed nodes</li>
+<li>Rebalance pods when needed</li>
+<li>Alert on degradation</li>
+</ol>
+<h3 id="architecture-youll-design">Architecture You'll Design</h3>
+<div class="highlight"><pre><span></span><code>Helm Charts Repo (Git)
+├── clusters/
+│   ├── values-aws-prod-us-east-1.yaml
+│   ├── values-aws-staging-us-west-2.yaml
+│   ├── values-azure-prod-eastus.yaml
+│   └── values-gcp-dev-us-central1.yaml
+├── base-chart/
+│   ├── Chart.yaml
+│   ├── values.yaml
+│   └── templates/
+│       ├── infrastructure/
+│       ├── cluster-addons/
+│       ├── networking/
+│       ├── storage/
+│       ├── monitoring/
+│       └── governance/
+└── README.md
+</code></pre></div>
+<h3 id="your-challenges">Your Challenges</h3>
+<ol>
+<li><strong>Multi-Cloud Abstraction</strong></li>
+<li>Write once, deploy to AWS/Azure/GCP</li>
+<li>Handle cloud-specific resources</li>
+<li>
+<p>Manage secret injection per cloud</p>
+</li>
+<li>
+<p><strong>Complex Dependencies</strong></p>
+</li>
+<li>CNI must be installed before workloads</li>
+<li>Storage CSI before PVCs</li>
+<li>Ingress after API server healthy</li>
+<li>Monitoring after clusters ready</li>
+<li>
+<p>How do you order this?</p>
+</li>
+<li>
+<p><strong>Cluster Size Variations</strong></p>
+</li>
+<li>Dev: 1 control plane, 2 workers</li>
+<li>Staging: 2 control planes, 5 workers</li>
+<li>Prod: 3 control planes, 20+ workers</li>
+<li>
+<p>Different resource classes</p>
+</li>
+<li>
+<p><strong>Regional Considerations</strong></p>
+</li>
+<li>Multi-region failover</li>
+<li>Data locality compliance</li>
+<li>Network latency optimization</li>
+<li>
+<p>Different pricing per region</p>
+</li>
+<li>
+<p><strong>Upgrade Strategy</strong></p>
+</li>
+<li>Upgrade Kubernetes version without downtime</li>
+<li>Upgrade add-ons without disruption</li>
+<li>Handle breaking changes in dependencies</li>
+<li>
+<p>Rollback capability</p>
+</li>
+<li>
+<p><strong>Cost Management</strong></p>
+</li>
+<li>Right-size clusters by workload</li>
+<li>Use spot instances where possible</li>
+<li>Shutdown dev clusters after hours</li>
+<li>
+<p>Track spending per team</p>
+</li>
+<li>
+<p><strong>Observability Across Clusters</strong></p>
+</li>
+<li>Centralized monitoring (see all clusters)</li>
+<li>Logs aggregated from all clusters</li>
+<li>Alerts fired from central monitoring</li>
+<li>
+<p>But don't expose one cluster's data to another team</p>
+</li>
+<li>
+<p><strong>Security at Scale</strong></p>
+</li>
+<li>Enforce Pod Security Standards</li>
+<li>Network policies prevent cluster escape</li>
+<li>RBAC prevents privilege escalation</li>
+<li>Audit logging immutable</li>
+<li>Secret management across regions</li>
+</ol>
+<h3 id="success-criteria">Success Criteria</h3>
+<ul>
+<li>New cluster provisioned from values.yaml without manual steps</li>
+<li>Cluster supports 3+ sizes (dev, staging, prod)</li>
+<li>Works across AWS, Azure, GCP</li>
+<li>Multi-tenancy with strong isolation</li>
+<li>Upgrades work without downtime</li>
+<li>Cost dashboard shows spending by team</li>
+<li>All changes tracked in Git</li>
+<li>Can provision/destroy cluster in &lt;1 hour</li>
+<li>Monitoring shows health across all clusters</li>
+<li>Security policies enforced automatically</li>
+</ul>
+<h3 id="estimated-complexity">Estimated Complexity</h3>
+<ul>
+<li>20+ resource types to manage</li>
+<li>3 cloud providers</li>
+<li>Multiple add-on combinations</li>
+<li>Complex dependency ordering</li>
+<li>Multi-tenancy isolation</li>
+<li>Observability across clusters</li>
+<li><strong>Time:</strong> 25-35 hours</li>
+</ul>
+<hr />
+<h2 id="project-3-cicd-pipeline-as-helm-chart">Project 3: CI/CD Pipeline as Helm Chart</h2>
+<p><strong>What You'll Build:</strong> A complete CI/CD platform (equivalent to Jenkins + GitLab CI + Argo Workflows) as a Helm chart.</p>
+<h3 id="the-scenario">The Scenario</h3>
+<p>Your organization's CI/CD setup is complex:
+- Multiple teams use different tools (Jenkins, GitLab CI, GitHub Actions)
+- Pipeline configs are scattered across repos
+- No standard way to define pipelines
+- Security is ad-hoc (secrets leaked in logs)
+- Integration between tools is manual</p>
+<p>You're building a unified CI/CD platform where:
+- Pipelines are defined in Git (PipelineResource CRDs)
+- Execution is automatic (Tekton Pipelines)
+- Security is built-in (secrets, RBAC, audit)
+- Observability is complete (logs, metrics, traces)
+- Teams can self-service without DevOps</p>
+<h3 id="what-youll-build">What You'll Build</h3>
+<ol>
+<li><strong>Pipeline Execution Engine</strong></li>
+<li>Tekton Pipelines (or similar)</li>
+<li>Define pipelines as code (YAML)</li>
+<li>Run multiple pipeline versions simultaneously</li>
+<li>Support for parallel stages</li>
+<li>
+<p>Conditional stage execution</p>
+</li>
+<li>
+<p><strong>Code Repository Integration</strong></p>
+</li>
+<li>GitHub webhooks trigger pipelines</li>
+<li>GitLab push → pipeline runs</li>
+<li>GitOps: changes in Git automatically apply to cluster</li>
+<li>
+<p>Pull request checks (CI gates)</p>
+</li>
+<li>
+<p><strong>Build Orchestration</strong></p>
+</li>
+<li>Docker image builds</li>
+<li>Artifact storage (Nexus, Artifactory)</li>
+<li>Container scanning (Trivy, Snyk)</li>
+<li>Image signing and verification</li>
+<li>
+<p>Multi-platform builds (ARM, x86)</p>
+</li>
+<li>
+<p><strong>Testing Automation</strong></p>
+</li>
+<li>Unit tests in CI</li>
+<li>Integration tests</li>
+<li>Smoke tests on staged version</li>
+<li>Performance tests</li>
+<li>
+<p>Security scanning (SAST, DAST)</p>
+</li>
+<li>
+<p><strong>Deployment Pipeline</strong></p>
+</li>
+<li>Deploy to dev after merge</li>
+<li>Deploy to staging after tag</li>
+<li>Canary to prod (5% traffic)</li>
+<li>Full rollout after validation</li>
+<li>
+<p>Automated rollback on failure</p>
+</li>
+<li>
+<p><strong>Artifact Management</strong></p>
+</li>
+<li>Build artifacts versioned</li>
+<li>Container images with tags</li>
+<li>Helm charts pushed to repo</li>
+<li>SBOM (software bill of materials)</li>
+<li>
+<p>Provenance tracking</p>
+</li>
+<li>
+<p><strong>Security &amp; Compliance</strong></p>
+</li>
+<li>No secrets in logs</li>
+<li>RBAC on pipeline execution</li>
+<li>Audit trail of all deployments</li>
+<li>Signed artifacts</li>
+<li>
+<p>Compliance checks</p>
+</li>
+<li>
+<p><strong>Notifications &amp; Feedback</strong></p>
+</li>
+<li>Slack on pipeline success/failure</li>
+<li>Email to team leads</li>
+<li>Dashboard showing pipeline status</li>
+<li>Metrics on success rate, speed</li>
+<li>
+<p>Alerts on broken builds</p>
+</li>
+<li>
+<p><strong>Pipeline Templates</strong></p>
+</li>
+<li>Standard Node.js pipeline</li>
+<li>Standard Java/Maven pipeline</li>
+<li>Standard Python pipeline</li>
+<li>Standard Go pipeline</li>
+<li>
+<p>Custom pipeline for special cases</p>
+</li>
+<li>
+<p><strong>Resource Management</strong></p>
+<ul>
+<li>Pipeline pods don't consume resources</li>
+<li>Auto-scaling for heavy pipelines</li>
+<li>Spot instances for build nodes</li>
+<li>Cache builds to speed up</li>
+</ul>
+</li>
+</ol>
+<h3 id="your-challenges_1">Your Challenges</h3>
+<ol>
+<li><strong>Pipeline as Code</strong></li>
+<li>How do you define pipelines declaratively?</li>
+<li>How do you support 10+ languages?</li>
+<li>How do you allow customization?</li>
+<li>
+<p>How do you validate pipeline configs?</p>
+</li>
+<li>
+<p><strong>Secure Secrets</strong></p>
+</li>
+<li>Secrets for GitHub, Docker, databases</li>
+<li>Secrets rotated automatically</li>
+<li>Secrets never logged</li>
+<li>Different secrets per environment</li>
+<li>
+<p>How do you inject them safely?</p>
+</li>
+<li>
+<p><strong>Parallelization</strong></p>
+</li>
+<li>Multiple tests run in parallel</li>
+<li>Multiple image builds in parallel</li>
+<li>Coordinate between stages</li>
+<li>
+<p>Manage resource contention</p>
+</li>
+<li>
+<p><strong>Artifact Traceability</strong></p>
+</li>
+<li>Track what code produced which artifact</li>
+<li>Track which artifact deployed where</li>
+<li>Rollback by artifact version</li>
+<li>
+<p>Reproducible builds</p>
+</li>
+<li>
+<p><strong>Performance Optimization</strong></p>
+</li>
+<li>Cache dependencies (maven, npm, pip)</li>
+<li>Cache Docker layers</li>
+<li>Parallel test execution</li>
+<li>Reuse build output</li>
+<li>
+<p>Target only affected services</p>
+</li>
+<li>
+<p><strong>Multi-Version Testing</strong></p>
+</li>
+<li>Test against multiple Node versions</li>
+<li>Test against multiple Python versions</li>
+<li>Test against multiple Java versions</li>
+<li>
+<p>Test on multiple OS (Linux, Windows)</p>
+</li>
+<li>
+<p><strong>Deployment Strategies</strong></p>
+</li>
+<li>Blue-green for zero-downtime</li>
+<li>Canary with automatic rollback</li>
+<li>Rolling update with health checks</li>
+<li>Shadow traffic testing</li>
+<li>
+<p>Dark launch capability</p>
+</li>
+<li>
+<p><strong>Monitoring Deployments</strong></p>
+</li>
+<li>Is new version healthy?</li>
+<li>Are error rates increasing?</li>
+<li>Are latencies acceptable?</li>
+<li>Is resource usage normal?</li>
+<li>Automatic rollback if degradation</li>
+</ol>
+<h3 id="architecture-youll-design_1">Architecture You'll Design</h3>
+<div class="highlight"><pre><span></span><code>Git Repo Structure:
+├── .pipelines/
+│   ├── nodejs.yaml      # Reusable pipeline template
+│   ├── python.yaml
+│   ├── java.yaml
+│   └── deploy.yaml      # Deployment pipeline
+├── src/
+└── helm-chart/          # Application Helm chart
+
+Pipeline Execution:
+Code Push → GitHub Webhook → Tekton EventListener
+  ↓
+Create PipelineRun → Execute Tasks in Parallel
+  ├── Build Docker Image
+  ├── Run Unit Tests
+  ├── Run Integration Tests
+  └── Security Scan
+  ↓
+Push Image to Registry (if tests pass)
+  ↓
+Trigger Deployment Pipeline
+  ├── Deploy to Dev
+  ├── Deploy to Staging
+  └── Deploy to Prod (canary)
+  ↓
+Monitor for Issues → Rollback if Needed
+</code></pre></div>
+<h3 id="success-criteria_1">Success Criteria</h3>
+<ul>
+<li>Define pipeline in Git, runs automatically on push</li>
+<li>Multiple stages execute in parallel</li>
+<li>Secure secret handling (never logged)</li>
+<li>Build artifacts traced to code</li>
+<li>Deploy with zero downtime</li>
+<li>Automatic rollback on failure</li>
+<li>All actions audited and logged</li>
+<li>Performance metrics tracked</li>
+<li>Scaling works for heavy builds</li>
+<li>Team can define custom pipelines</li>
+</ul>
+<h3 id="estimated-complexity_1">Estimated Complexity</h3>
+<ul>
+<li>Tekton + EventListeners</li>
+<li>Multiple task types</li>
+<li>Conditional execution</li>
+<li>Artifact management</li>
+<li>Secret handling</li>
+<li>Deployment orchestration</li>
+<li>Monitoring and observability</li>
+<li><strong>Time:</strong> 20-25 hours</li>
+</ul>
+<hr />
+<h2 id="project-4-machine-learning-operations-mlops-platform">Project 4: Machine Learning Operations (MLOps) Platform</h2>
+<p><strong>What You'll Build:</strong> A Helm-based platform for training, deploying, and monitoring ML models.</p>
+<h3 id="the-scenario_1">The Scenario</h3>
+<p>Your company has data scientists building ML models but:
+- Model training is manual (scripts on laptops)
+- Deployment to production is ad-hoc
+- No A/B testing framework
+- No retraining pipeline
+- No model monitoring
+- Different versions conflict</p>
+<p>You're building MLOps: a platform where scientists describe experiments in code, and Helm manages training jobs, model deployment, and monitoring.</p>
+<h3 id="what-youll-build_1">What You'll Build</h3>
+<ol>
+<li><strong>Experiment Management</strong></li>
+<li>Define training job parameters</li>
+<li>Track hyperparameters used</li>
+<li>Compare results across runs</li>
+<li>
+<p>Reproducible experiments</p>
+</li>
+<li>
+<p><strong>Training Infrastructure</strong></p>
+</li>
+<li>GPU/TPU provisioning</li>
+<li>Distributed training (multiple GPUs)</li>
+<li>Fault tolerance (resume from checkpoint)</li>
+<li>Notebook environments for exploration</li>
+<li>
+<p>Job scheduling and queuing</p>
+</li>
+<li>
+<p><strong>Model Registry</strong></p>
+</li>
+<li>Store trained models</li>
+<li>Version all models</li>
+<li>Track model lineage (which data, code)</li>
+<li>Quality metrics (accuracy, precision, recall)</li>
+<li>
+<p>Approval workflow for production</p>
+</li>
+<li>
+<p><strong>Model Serving</strong></p>
+</li>
+<li>Deploy models as HTTP endpoints</li>
+<li>Multiple model versions simultaneously</li>
+<li>A/B testing between versions</li>
+<li>Traffic shifting (canary deployments)</li>
+<li>Model scaling based on load</li>
+<li>
+<p>Model monitoring and alerts</p>
+</li>
+<li>
+<p><strong>Feature Engineering</strong></p>
+</li>
+<li>Shared feature store</li>
+<li>Consistent features in training and serving</li>
+<li>Feature versioning</li>
+<li>Feature pipeline (compute features)</li>
+<li>
+<p>Cache for performance</p>
+</li>
+<li>
+<p><strong>Data Pipeline</strong></p>
+</li>
+<li>Fetch data for training</li>
+<li>Data validation (detect drift)</li>
+<li>Data labeling workflow</li>
+<li>Data versioning</li>
+<li>
+<p>Privacy-preserving (redaction, anonymization)</p>
+</li>
+<li>
+<p><strong>Monitoring &amp; Governance</strong></p>
+</li>
+<li>Track model performance over time</li>
+<li>Detect data drift (input distribution changed)</li>
+<li>Detect model drift (predictions changing)</li>
+<li>Alert when retraining needed</li>
+<li>Explainability and model interpretability</li>
+<li>
+<p>Audit predictions for bias</p>
+</li>
+<li>
+<p><strong>AutoML &amp; Tuning</strong></p>
+</li>
+<li>Hyperparameter optimization</li>
+<li>Neural Architecture Search (optional)</li>
+<li>Model selection automation</li>
+<li>Ensemble methods</li>
+</ol>
+<h3 id="your-challenges_2">Your Challenges</h3>
+<ol>
+<li><strong>Resource Management</strong></li>
+<li>GPUs are expensive and shared</li>
+<li>How do you schedule training jobs fairly?</li>
+<li>How do you prevent one team from monopolizing resources?</li>
+<li>
+<p>How do you autoscale GPU nodes?</p>
+</li>
+<li>
+<p><strong>Experiment Reproducibility</strong></p>
+</li>
+<li>Same seed, same code → same results</li>
+<li>Track all dependencies (library versions)</li>
+<li>Containerize everything</li>
+<li>
+<p>Tag images immutably</p>
+</li>
+<li>
+<p><strong>Model Versioning</strong></p>
+</li>
+<li>Multiple models in production simultaneously</li>
+<li>Different model versions for different requests</li>
+<li>Gradual traffic shift from old to new</li>
+<li>
+<p>Quick rollback if new model fails</p>
+</li>
+<li>
+<p><strong>Data Handling</strong></p>
+</li>
+<li>Large datasets (TB scale)</li>
+<li>Efficient storage and access</li>
+<li>Privacy compliance (GDPR, HIPAA)</li>
+<li>
+<p>Data retention policies</p>
+</li>
+<li>
+<p><strong>Model Serving Performance</strong></p>
+</li>
+<li>Sub-100ms inference latency</li>
+<li>Handle traffic spikes</li>
+<li>GPU sharing between models</li>
+<li>
+<p>CPU inference when GPU not needed</p>
+</li>
+<li>
+<p><strong>Monitoring Model Quality</strong></p>
+</li>
+<li>Accuracy stays above threshold</li>
+<li>Latency stays below SLO</li>
+<li>Data drift detection</li>
+<li>Fairness/bias monitoring</li>
+<li>
+<p>Automatic retraining</p>
+</li>
+<li>
+<p><strong>Collaboration</strong></p>
+</li>
+<li>Scientists define experiments in notebooks</li>
+<li>Experiments become production pipelines</li>
+<li>Track who changed what</li>
+<li>Reproducible results</li>
+</ol>
+<h3 id="architecture-youll-design_2">Architecture You'll Design</h3>
+<div class="highlight"><pre><span></span><code>Training Phase:
+Git Push (new model code)
+  ↓
+Trigger Training Job
+  ├── Pull training data
+  ├── Run hyperparameter tuning (parallel)
+  ├── Select best model
+  ├── Validate on test set
+  └── Push to model registry
+
+Serving Phase:
+Model Registry Push
+  ↓
+Approval Gate (data scientist reviews)
+  ↓
+Deploy to Staging
+  ├── Serve model
+  ├── Run smoke tests
+  └── Collect metrics
+  ↓
+Deploy to Production (canary, 5% traffic)
+  ├── Monitor error rates
+  ├── Monitor latency
+  ├── Monitor fairness metrics
+  └── After 24h, shift to 100% (or rollback)
+
+Monitoring Phase:
+Continuous Monitoring
+  ├── Data drift detection
+  ├── Model drift detection
+  ├── Performance degradation
+  └── Alert if retraining needed
+  ↓
+Trigger Retraining Pipeline
+</code></pre></div>
+<h3 id="success-criteria_2">Success Criteria</h3>
+<ul>
+<li>Scientist defines experiment, training runs automatically</li>
+<li>Multiple models in production simultaneously</li>
+<li>Canary deployment for new models</li>
+<li>Automatic rollback if model performance drops</li>
+<li>Data drift detection triggers retraining</li>
+<li>All experiments reproducible</li>
+<li>Model lineage tracked (code, data, hyperparameters)</li>
+<li>Serving latency &lt; 100ms</li>
+<li>GPU resources scheduled fairly</li>
+<li>Full audit trail</li>
+</ul>
+<h3 id="estimated-complexity_2">Estimated Complexity</h3>
+<ul>
+<li>Model training orchestration</li>
+<li>Model serving (KServe or Seldon)</li>
+<li>Feature store integration</li>
+<li>Data pipeline management</li>
+<li>Monitoring and governance</li>
+<li>Resource management (GPUs)</li>
+<li><strong>Time:</strong> 25-30 hours</li>
+</ul>
+<hr />
+<h2 id="project-5-complete-observability-aiops-platform">Project 5: Complete Observability &amp; AIOps Platform</h2>
+<p><strong>What You'll Build:</strong> An end-to-end observability platform with intelligent alerting and automatic remediation.</p>
+<h3 id="the-scenario_2">The Scenario</h3>
+<p>Your organization has:
+- Metrics from Prometheus (500+ servers)
+- Logs from ELK (petabytes/day)
+- Traces from Jaeger (millions/minute)
+- Hundreds of alert rules</p>
+<p>But:
+- Alert noise (70% false positives)
+- Slow incident response (manual investigation)
+- No correlation between metrics/logs/traces
+- Difficult root cause analysis
+- Manual remediation steps</p>
+<p>You're building AIOps: AI-powered observability with:
+- Intelligent alerting (correlation, deduplication)
+- Automatic root cause analysis
+- Self-healing (auto-remediation)
+- Predictive alerts (issue before it happens)</p>
+<h3 id="what-youll-build_2">What You'll Build</h3>
+<ol>
+<li><strong>Metrics Collection</strong></li>
+<li>Prometheus for infrastructure</li>
+<li>Application metrics (custom)</li>
+<li>Business metrics (revenue, usage)</li>
+<li>Metric aggregation and long-term storage</li>
+<li>
+<p>Cardinality management</p>
+</li>
+<li>
+<p><strong>Logging</strong></p>
+</li>
+<li>Centralized log collection (Filebeat, Fluentd)</li>
+<li>Structured JSON logging</li>
+<li>Log parsing and enrichment</li>
+<li>Log-based alerting</li>
+<li>
+<p>Long-term log archival</p>
+</li>
+<li>
+<p><strong>Distributed Tracing</strong></p>
+</li>
+<li>Request tracing across services</li>
+<li>Latency analysis</li>
+<li>Dependency mapping</li>
+<li>Error tracing</li>
+<li>
+<p>Trace sampling (intelligent)</p>
+</li>
+<li>
+<p><strong>Alerting</strong></p>
+</li>
+<li>Rule engine (Prometheus rules, custom rules)</li>
+<li>Multi-condition alerts (AND, OR)</li>
+<li>Alert grouping (reduce noise)</li>
+<li>Alert deduplication</li>
+<li>
+<p>Alert escalation</p>
+</li>
+<li>
+<p><strong>Incident Management</strong></p>
+</li>
+<li>Create incidents from alerts</li>
+<li>Incident timeline (what happened when)</li>
+<li>Call incident commander</li>
+<li>Coordinate team response</li>
+<li>
+<p>Post-mortem automation</p>
+</li>
+<li>
+<p><strong>AIOps Features</strong></p>
+</li>
+<li>Anomaly detection (ML models)</li>
+<li>Correlation engine (alert A + alert B = root cause C)</li>
+<li>Root cause analysis (automatic)</li>
+<li>Predictive alerts (issue before it happens)</li>
+<li>
+<p>Auto-remediation (trigger actions)</p>
+</li>
+<li>
+<p><strong>Dashboarding</strong></p>
+</li>
+<li>KPI dashboards (SLI/SLO)</li>
+<li>Service health dashboard</li>
+<li>Dependency map visualization</li>
+<li>Trend analysis</li>
+<li>
+<p>Cost impact of incidents</p>
+</li>
+<li>
+<p><strong>Automation &amp; Remediation</strong></p>
+</li>
+<li>Auto-scale on high load</li>
+<li>Restart failing services</li>
+<li>Drain misbehaving nodes</li>
+<li>Trigger disaster recovery</li>
+<li>Rollback bad deployments</li>
+</ol>
+<h3 id="your-challenges_3">Your Challenges</h3>
+<ol>
+<li><strong>Scaling to Massive Data</strong></li>
+<li>Handle petabytes of logs</li>
+<li>Query billions of metrics</li>
+<li>Trace millions of requests</li>
+<li>
+<p>Keep response time &lt; 1 second</p>
+</li>
+<li>
+<p><strong>Alert Quality</strong></p>
+</li>
+<li>70% of alerts are noise</li>
+<li>How do you deduplicate?</li>
+<li>How do you correlate?</li>
+<li>
+<p>How do you reduce false positives?</p>
+</li>
+<li>
+<p><strong>Root Cause Analysis</strong></p>
+</li>
+<li>Request took 10s (slow)</li>
+<li>Which service is slow?</li>
+<li>Which database query is slow?</li>
+<li>Which code change caused it?</li>
+<li>
+<p>Automatically detect and report</p>
+</li>
+<li>
+<p><strong>Multi-Tenancy</strong></p>
+</li>
+<li>Team A shouldn't see Team B's metrics/logs/traces</li>
+<li>But correlation needs cross-team data</li>
+<li>
+<p>How do you handle this tension?</p>
+</li>
+<li>
+<p><strong>Data Retention</strong></p>
+</li>
+<li>Metrics for 2 years (expensive)</li>
+<li>Logs for 1 year</li>
+<li>Traces for 30 days</li>
+<li>Smart data tiering</li>
+<li>
+<p>Compression strategies</p>
+</li>
+<li>
+<p><strong>Predictive Alerting</strong></p>
+</li>
+<li>Predict failures before they happen</li>
+<li>How do you train models?</li>
+<li>How do you avoid false positives?</li>
+<li>
+<p>How do you explain predictions?</p>
+</li>
+<li>
+<p><strong>Automated Remediation</strong></p>
+</li>
+<li>Auto-restart services on failure</li>
+<li>Auto-scale on high load</li>
+<li>Auto-drain failing nodes</li>
+<li>Know which actions are safe</li>
+<li>Prevent cascading failures</li>
+</ol>
+<h3 id="architecture-youll-design_3">Architecture You'll Design</h3>
+<div class="highlight"><pre><span></span><code>Data Collection:
+├── Metrics (Prometheus) → TSDB
+├── Logs (Fluentd) → Search (Elasticsearch)
+└── Traces (Jaeger) → Trace Storage
+
+Processing Pipeline:
+├── Alert Rules (Prometheus) → Create Alerts
+├── Correlation Engine → Group Related Alerts
+├── Anomaly Detection → Predict Issues
+├── Root Cause Analysis → Identify Culprit
+└── Recommendation Engine → Suggest Fix
+
+Output:
+├── Alert to PagerDuty
+├── Incident Created
+├── Auto-Remediation Triggered
+├── Dashboards Updated
+└── Post-Mortem Data Collected
+</code></pre></div>
+<h3 id="success-criteria_3">Success Criteria</h3>
+<ul>
+<li>Ingest petabytes of data</li>
+<li>Alert latency &lt; 10 seconds</li>
+<li>Alert accuracy &gt; 95% (few false positives)</li>
+<li>Root cause identified in &lt; 5 minutes</li>
+<li>Auto-remediation success &gt; 90%</li>
+<li>Reduce MTTR (mean time to recovery) by 70%</li>
+<li>Predictive alerts work (catch issues early)</li>
+<li>Full audit trail of all changes</li>
+<li>Multi-tenant with strong isolation</li>
+<li>Cost tracking per team</li>
+</ul>
+<h3 id="estimated-complexity_3">Estimated Complexity</h3>
+<ul>
+<li>Multiple data sources (metrics, logs, traces)</li>
+<li>Scaling and performance optimization</li>
+<li>ML models for anomaly detection</li>
+<li>Correlation and root cause logic</li>
+<li>Automated remediation</li>
+<li>Multi-tenancy</li>
+<li><strong>Time:</strong> 30-40 hours</li>
+</ul>
+<hr />
+<h2 id="project-6-data-platform-lakehouse">Project 6: Data Platform (Lakehouse)</h2>
+<p><strong>What You'll Build:</strong> A complete data platform (data lake + warehouse) for analytics and reporting.</p>
+<h3 id="the-scenario_3">The Scenario</h3>
+<p>Your company collects data from:
+- Web application (event data)
+- Mobile app (user behavior)
+- IoT devices (sensor data)
+- Third-party APIs (external data)</p>
+<p>Currently:
+- Data is siloed in different systems
+- No unified schema
+- Difficult to correlate data
+- Slow to answer questions
+- No data governance</p>
+<p>You're building a data lakehouse: unified data platform for analytics.</p>
+<h3 id="what-youll-build_3">What You'll Build</h3>
+<ol>
+<li><strong>Data Ingestion</strong></li>
+<li>Streaming (events in real-time)</li>
+<li>Batch (nightly imports)</li>
+<li>CDC (change data capture)</li>
+<li>API polling</li>
+<li>
+<p>File uploads</p>
+</li>
+<li>
+<p><strong>Data Processing</strong></p>
+</li>
+<li>ETL (extract, transform, load)</li>
+<li>Data validation</li>
+<li>Schema enforcement</li>
+<li>Deduplication</li>
+<li>
+<p>Aggregations</p>
+</li>
+<li>
+<p><strong>Data Storage</strong></p>
+</li>
+<li>Object storage (Parquet, Iceberg)</li>
+<li>Columnar format for analytics</li>
+<li>Time-series optimized</li>
+<li>Partitioning for performance</li>
+<li>
+<p>Data tiering (hot/warm/cold)</p>
+</li>
+<li>
+<p><strong>Data Warehouse</strong></p>
+</li>
+<li>SQL interface (ClickHouse, Snowflake)</li>
+<li>Dimensional modeling (facts, dimensions)</li>
+<li>Slowly changing dimensions</li>
+<li>Materialized views</li>
+<li>
+<p>Incremental updates</p>
+</li>
+<li>
+<p><strong>Metadata &amp; Governance</strong></p>
+</li>
+<li>Data catalog (what data exists)</li>
+<li>Data lineage (where did this come from)</li>
+<li>Data quality checks</li>
+<li>Privacy controls (PII masking)</li>
+<li>
+<p>Retention policies</p>
+</li>
+<li>
+<p><strong>Analytics &amp; BI</strong></p>
+</li>
+<li>Ad-hoc SQL queries</li>
+<li>Pre-built dashboards</li>
+<li>Self-service analytics</li>
+<li>Drill-down capability</li>
+<li>
+<p>Scheduled reports</p>
+</li>
+<li>
+<p><strong>Machine Learning</strong></p>
+</li>
+<li>Export data for training</li>
+<li>Features for models</li>
+<li>Model predictions back to warehouse</li>
+<li>A/B testing framework</li>
+</ol>
+<h3 id="your-challenges_4">Your Challenges</h3>
+<ol>
+<li><strong>Volume at Scale</strong></li>
+<li>Ingest 1TB/day</li>
+<li>Store 100TB total</li>
+<li>Query across years</li>
+<li>
+<p>Keep costs reasonable</p>
+</li>
+<li>
+<p><strong>Schema Evolution</strong></p>
+</li>
+<li>New fields added over time</li>
+<li>Old fields deprecated</li>
+<li>Type changes (string → integer)</li>
+<li>
+<p>How do you handle this?</p>
+</li>
+<li>
+<p><strong>Data Quality</strong></p>
+</li>
+<li>Validate as data arrives</li>
+<li>Detect anomalies</li>
+<li>Alert on schema violations</li>
+<li>
+<p>Quarantine bad data</p>
+</li>
+<li>
+<p><strong>Privacy Compliance</strong></p>
+</li>
+<li>GDPR: right to be forgotten</li>
+<li>HIPAA: audit access</li>
+<li>PII: redact or encrypt</li>
+<li>
+<p>Retention: delete after period</p>
+</li>
+<li>
+<p><strong>Performance</strong></p>
+</li>
+<li>Query 1TB of data in &lt; 5 seconds</li>
+<li>Aggregations very fast</li>
+<li>Joins across large tables</li>
+<li>
+<p>Incremental updates efficient</p>
+</li>
+<li>
+<p><strong>Cost Optimization</strong></p>
+</li>
+<li>S3 storage cheaper than database</li>
+<li>Compression reduces cost</li>
+<li>Tiering saves money</li>
+<li>Prune old data</li>
+</ol>
+<h3 id="success-criteria_4">Success Criteria</h3>
+<ul>
+<li>Ingest 1TB/day without issues</li>
+<li>Queries run in &lt; 5 seconds</li>
+<li>Data quality &gt; 99%</li>
+<li>Privacy controls enforced</li>
+<li>Full audit trail</li>
+<li>Self-service analytics works</li>
+<li>Metadata is complete and accurate</li>
+<li>Cost efficient</li>
+<li>Retention policies followed</li>
+</ul>
+<h3 id="estimated-complexity_4">Estimated Complexity</h3>
+<ul>
+<li>Multiple data sources</li>
+<li>ETL pipeline orchestration</li>
+<li>Schema management</li>
+<li>Query optimization</li>
+<li>Governance and compliance</li>
+<li><strong>Time:</strong> 20-25 hours</li>
+</ul>
+<hr />
+<h2 id="which-project-should-you-start-with">Which Project Should You Start With?</h2>
+<p><strong>If you want end-to-end experience:</strong> Start with <strong>Project 1 (SaaS Platform)</strong>
+- Teaches multi-component charts
+- Covers scaling, security, upgrades
+- Most useful for real-world apps
+- Most satisfying to deploy</p>
+<p><strong>If you want infrastructure focus:</strong> Start with <strong>Project 2 (IaC Platform)</strong>
+- Teaches multi-cloud abstraction
+- Covers infrastructure orchestration
+- Complex dependency management
+- Valuable for DevOps/platform teams</p>
+<p><strong>If you want automation focus:</strong> Start with <strong>Project 3 (CI/CD Platform)</strong>
+- Teaches workflow orchestration
+- Covers secret management
+- Automated deployment pipelines
+- Valuable for DevOps engineers</p>
+<p><strong>If you want ML focus:</strong> Start with <strong>Project 4 (MLOps Platform)</strong>
+- Teaches specialized workload management
+- Covers GPU scheduling, model serving
+- Valuable for ML engineers
+- Unique challenges around experiments</p>
+<p><strong>If you want observability focus:</strong> Start with <strong>Project 5 (Observability Platform)</strong>
+- Teaches time-series data handling
+- Covers monitoring and alerting
+- Valuable for SREs/platform teams
+- Complex aggregation logic</p>
+<p><strong>If you want analytics focus:</strong> Start with <strong>Project 6 (Data Platform)</strong>
+- Teaches data pipeline orchestration
+- Covers large-scale data handling
+- Valuable for data engineers
+- Cost optimization important</p>
+<hr />
+<h2 id="project-complexity-comparison">Project Complexity Comparison</h2>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Components</th>
+<th>Complexity</th>
+<th>Time</th>
+<th>Best For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 (SaaS)</td>
+<td>8+ services</td>
+<td>High</td>
+<td>20-30h</td>
+<td>Full-stack Helm mastery</td>
+</tr>
+<tr>
+<td>2 (IaC)</td>
+<td>Multi-cloud, add-ons</td>
+<td>Very High</td>
+<td>25-35h</td>
+<td>Infrastructure teams</td>
+</tr>
+<tr>
+<td>3 (CI/CD)</td>
+<td>Pipeline orchestration</td>
+<td>Very High</td>
+<td>20-25h</td>
+<td>DevOps automation</td>
+</tr>
+<tr>
+<td>4 (MLOps)</td>
+<td>ML workloads, serving</td>
+<td>High</td>
+<td>25-30h</td>
+<td>ML infrastructure</td>
+</tr>
+<tr>
+<td>5 (Observability)</td>
+<td>Multi-datasource</td>
+<td>Very High</td>
+<td>30-40h</td>
+<td>SRE/Monitoring</td>
+</tr>
+<tr>
+<td>6 (Data)</td>
+<td>Data pipelines</td>
+<td>High</td>
+<td>20-25h</td>
+<td>Data engineers</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="learning-path">Learning Path</h2>
+<ol>
+<li><strong>Start with Project 1 or 3</strong> (most applicable)</li>
+<li><strong>Then pick a second project</strong> based on your domain</li>
+<li><strong>Then tackle hardest project</strong> (usually Project 2 or 5)</li>
+<li><strong>Combine learnings</strong> from all projects into your own system</li>
+</ol>
+<hr />
+<h2 id="what-youll-learn-across-all-projects">What You'll Learn Across All Projects</h2>
+<p>✅ Multi-component chart architecture
+✅ Dependency management and ordering
+✅ Multi-environment support
+✅ Scaling patterns (horizontal, vertical)
+✅ Stateful application management
+✅ Backup and recovery
+✅ Security hardening and RBAC
+✅ Observability integration
+✅ Upgrade strategies
+✅ Cost optimization
+✅ Production-grade operations
+✅ Git-based workflows
+✅ Automated testing and validation
+✅ Real-world complexity handling</p>
+<hr />
+<h2 id="success-criteria-for-any-project">Success Criteria for Any Project</h2>
+<p>When you finish, you should be able to:</p>
+<ol>
+<li>✅ Deploy the complete system with one Helm command</li>
+<li>✅ Scale up/down smoothly without downtime</li>
+<li>✅ Upgrade to new versions safely</li>
+<li>✅ Handle failures gracefully</li>
+<li>✅ Monitor and observe everything</li>
+<li>✅ Maintain all state (backups, recovery)</li>
+<li>✅ Enforce security policies</li>
+<li>✅ Track costs</li>
+<li>✅ Audit all actions</li>
+<li>✅ Explain your design to others</li>
+</ol>
+<p>If you can do all 10, you've mastered Helm at a professional level. 🎯</p>
+<p>Good luck! Pick one project and build something meaningful! 🚀</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "navigation.indexes", "toc.follow", "content.code.copy", "content.tabs.link", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

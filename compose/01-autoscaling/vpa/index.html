@@ -1,0 +1,5817 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/compose/01-autoscaling/vpa/">
+      
+      
+        <link rel="prev" href="../question/">
+      
+      
+        <link rel="next" href="../../02%20helm/commands/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Vertical Pod Autoscaler (VPA) - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vertical-pod-autoscaler-vpa" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Vertical Pod Autoscaler (VPA)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concise Notes for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01 autoscaling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    01 autoscaling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Horizontal Pod Autoscaler (HPA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../keywords/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search Keywords+
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HPA &amp; VPA Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vertical Pod Autoscaler (VPA)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vertical Pod Autoscaler (VPA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-vpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 What is VPA?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 What is VPA?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-analogy-tailoring-clothes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Analogy: Tailoring Clothes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-vs-hpa-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 VPA vs HPA Comparison
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-architecture-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏗️ VPA Architecture &amp; Components
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ VPA Architecture &amp; Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vpa-component-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPA Component Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚀 VPA Installation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 VPA Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-1-official-release-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 1: Official Release (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-2-helm-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 2: Helm Installation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-3-manifest-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 3: Manifest Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-components-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚙️ VPA Components Explained
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ VPA Components Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vpa-recommender" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. VPA Recommender
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-vpa-updater" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. VPA Updater
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-vpa-admission-controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. VPA Admission Controller
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-configuration-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📝 VPA Configuration Modes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📝 VPA Configuration Modes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#four-update-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Four Update Modes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Four Update Modes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-initial-mode-most-common" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Initial Mode (Most Common)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-auto-mode-aggressive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Auto Mode (Aggressive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-recreate-mode-rarely-used" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Recreate Mode (Rarely Used)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-off-mode-monitor-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Off Mode (Monitor Only)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-vpa-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 Basic VPA Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Basic VPA Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minimal-vpa-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Minimal VPA Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-vpa-with-all-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete VPA with All Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resource-policy-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Resource Policy Explained
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Resource Policy Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#container-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Container Policies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wildcard-vs-specific-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wildcard vs Specific Containers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#practical-vpa-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ Practical VPA Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ Practical VPA Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-web-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: Web Application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-database-with-statefulset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2: Database with StatefulSet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-multi-container-microservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 3: Multi-Container Microservice
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vpa-makes-recommendations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 How VPA Makes Recommendations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 How VPA Makes Recommendations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recommendation-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommendation Algorithm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#viewing-recommendations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Viewing Recommendations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sample-vpa-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sample VPA Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-vpa-step-by-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Testing VPA Step by Step
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧪 Testing VPA Step by Step">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-create-test-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Create Test Deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-create-vpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Create VPA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-apply-and-generate-load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Apply and Generate Load
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 VPA Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚨 VPA Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-issues-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Issues &amp; Solutions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Issues &amp; Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-1-vpa-shows-no-recommendations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 1: VPA shows no recommendations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-2-pods-not-being-updated-in-auto-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 2: Pods not being updated in Auto mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-3-admission-controller-not-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 3: Admission controller not working
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diagnostic-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostic Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚡ VPA Best Practices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚡ VPA Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-start-with-initial-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Start with Initial Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-set-conservative-bounds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Set Conservative Bounds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-monitor-before-switching-to-auto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Monitor Before Switching to Auto
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-combine-with-hpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Combine with HPA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-regular-reviews" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Regular Reviews
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-with-hpa-combined-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📈 VPA with HPA: Combined Strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📈 VPA with HPA: Combined Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-combine-both" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Combine Both?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#important-interaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important Interaction
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-limitations-gotchas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ VPA Limitations &amp; Gotchas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚠️ VPA Limitations &amp; Gotchas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-pod-recreation-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pod Recreation Required
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-learning-period-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Learning Period Required
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-container-name-dependency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Container Name Dependency
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-not-for-all-workloads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Not for All Workloads
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-resource-quota-conflicts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Resource Quota Conflicts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-vpa-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 Advanced VPA Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Advanced VPA Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-metrics-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Metrics Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-specific-controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource-Specific Controls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-cpumemory-percentiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Target CPU/Memory Percentiles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-vpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Monitoring VPA
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Monitoring VPA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-metrics-to-track" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Metrics to Track
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-metrics-if-exposed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prometheus Metrics (if exposed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-vpa-decision-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 When to Use VPA - Decision Guide
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 When to Use VPA - Decision Guide">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#use-vpa-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use VPA When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dont-use-vpa-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Don't Use VPA When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommended-vpa-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended VPA Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Quick Reference Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📋 Quick Reference Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vpa-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPA Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing &amp; Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pro-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💡 Pro Tips
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-vpa-in-one-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎓 Summary: VPA in One Page
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02 helm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    02 helm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm Comprehensive Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/create/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Helm Charts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/practice-questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm Practice Questions - Progressive Learning Path
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/question1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/question2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/question3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02%20helm/question4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03 kustomize
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    03 kustomize
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-kustomize/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kustomize Master Guide: Advanced Patterns &amp; Modern Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-kustomize/question1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04 admission webhook
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    04 admission webhook
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-admission-webhook/commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-admission-webhook/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    05 kubeconfig
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    05 kubeconfig
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-kubeconfig/how-to-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-kubeconfig/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    06 cluster certificates and kube system [important]
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    06 cluster certificates and kube system [important]
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-cluster-certificates-and-kube-system%20%5Bimportant%5D/kubeadm-certs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kubeadm Certificate Checks &amp; Renewal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    07 crd's
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    07 crd's
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/crd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Resource Definitions (CRDs) and Custom Resources (CRs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Question
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-crd%27s/solutions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Solutions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    08 gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    08 gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-gateway-api/question/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10 scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/nodename/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/nodeselector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NodeSelector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_3" id="__nav_10_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    podAffinity nodeAffinity deployments
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    podAffinity nodeAffinity deployments
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-scheduling/podAffinity-nodeAffinity-deployments/notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Scheduling: Pod &amp; Node Affinity - Theory &amp; Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../11-coredns/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 coredns
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    11 coredns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 deployments
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    12 deployments
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_12_1" id="__nav_12_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Probing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_12_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Probing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-deployments/probing/probing-psotgres/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Probing psotgres
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 manage cluster via kubeadm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    13 manage cluster via kubeadm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/cluster-create/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kubeadm Cluster Create &amp; Upgrade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/etcd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Etcd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-manage-cluster-via-kubeadm/high-availablity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    High availablity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/north-south-traffic-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Ingress
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Ingress Controller Practice Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_15" >
+        
+          
+          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 troubleshoot controlplane
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_15">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    15 troubleshoot controlplane
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15-troubleshoot-controlplane/prerequisite-and-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Approach Control Plane Issues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17 authorization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    17 authorization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/cani/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cani
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/gotchas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RBAC Gotchas and Common Mistakes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/role-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RBAC Core Objects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-authorization/system-based-authorization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System based authorization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18 basic bash
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    18 basic bash
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../18-basic-bash/bash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19 secrets and configmap
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    19 secrets and configmap
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../19-secrets-and-configmap/environment-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment and volume
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20 services
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    20 services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../20-services/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cli
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_20" >
+        
+          
+          <label class="md-nav__link" for="__nav_20" id="__nav_20_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    21 storage class pv pvc
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_20_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    21 storage class pv pvc
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../21-storage-class-pv-pvc/example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../21-storage-class-pv-pvc/selector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Selector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-vpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 What is VPA?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 What is VPA?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-analogy-tailoring-clothes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Analogy: Tailoring Clothes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-vs-hpa-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 VPA vs HPA Comparison
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-architecture-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏗️ VPA Architecture &amp; Components
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ VPA Architecture &amp; Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vpa-component-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPA Component Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚀 VPA Installation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 VPA Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-1-official-release-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 1: Official Release (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-2-helm-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 2: Helm Installation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-3-manifest-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 3: Manifest Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-components-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚙️ VPA Components Explained
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ VPA Components Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vpa-recommender" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. VPA Recommender
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-vpa-updater" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. VPA Updater
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-vpa-admission-controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. VPA Admission Controller
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-configuration-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📝 VPA Configuration Modes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📝 VPA Configuration Modes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#four-update-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Four Update Modes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Four Update Modes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-initial-mode-most-common" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Initial Mode (Most Common)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-auto-mode-aggressive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Auto Mode (Aggressive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-recreate-mode-rarely-used" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Recreate Mode (Rarely Used)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-off-mode-monitor-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Off Mode (Monitor Only)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-vpa-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 Basic VPA Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Basic VPA Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minimal-vpa-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Minimal VPA Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-vpa-with-all-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete VPA with All Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resource-policy-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Resource Policy Explained
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Resource Policy Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#container-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Container Policies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wildcard-vs-specific-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wildcard vs Specific Containers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#practical-vpa-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ Practical VPA Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ Practical VPA Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-web-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: Web Application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-database-with-statefulset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2: Database with StatefulSet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-multi-container-microservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 3: Multi-Container Microservice
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vpa-makes-recommendations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 How VPA Makes Recommendations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 How VPA Makes Recommendations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recommendation-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommendation Algorithm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#viewing-recommendations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Viewing Recommendations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sample-vpa-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sample VPA Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-vpa-step-by-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Testing VPA Step by Step
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧪 Testing VPA Step by Step">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-create-test-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Create Test Deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-create-vpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Create VPA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-apply-and-generate-load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Apply and Generate Load
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 VPA Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚨 VPA Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-issues-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Issues &amp; Solutions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Issues &amp; Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-1-vpa-shows-no-recommendations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 1: VPA shows no recommendations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-2-pods-not-being-updated-in-auto-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 2: Pods not being updated in Auto mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-3-admission-controller-not-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 3: Admission controller not working
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diagnostic-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostic Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚡ VPA Best Practices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚡ VPA Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-start-with-initial-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Start with Initial Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-set-conservative-bounds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Set Conservative Bounds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-monitor-before-switching-to-auto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Monitor Before Switching to Auto
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-combine-with-hpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Combine with HPA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-regular-reviews" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Regular Reviews
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-with-hpa-combined-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📈 VPA with HPA: Combined Strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📈 VPA with HPA: Combined Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-combine-both" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Combine Both?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#important-interaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important Interaction
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpa-limitations-gotchas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ VPA Limitations &amp; Gotchas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚠️ VPA Limitations &amp; Gotchas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-pod-recreation-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pod Recreation Required
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-learning-period-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Learning Period Required
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-container-name-dependency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Container Name Dependency
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-not-for-all-workloads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Not for All Workloads
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-resource-quota-conflicts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Resource Quota Conflicts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-vpa-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 Advanced VPA Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Advanced VPA Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-metrics-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Metrics Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-specific-controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource-Specific Controls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-cpumemory-percentiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Target CPU/Memory Percentiles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-vpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Monitoring VPA
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Monitoring VPA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-metrics-to-track" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Metrics to Track
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-metrics-if-exposed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prometheus Metrics (if exposed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-vpa-decision-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 When to Use VPA - Decision Guide
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 When to Use VPA - Decision Guide">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#use-vpa-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use VPA When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dont-use-vpa-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Don't Use VPA When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommended-vpa-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended VPA Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Quick Reference Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📋 Quick Reference Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vpa-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPA Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing &amp; Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pro-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💡 Pro Tips
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-vpa-in-one-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎓 Summary: VPA in One Page
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="vertical-pod-autoscaler-vpa">Vertical Pod Autoscaler (VPA)</h1>
+<h2 id="what-is-vpa">🎯 <strong>What is VPA?</strong></h2>
+<p><strong>Vertical Pod Autoscaler (VPA)</strong> automatically adjusts the <strong>CPU and memory requests/limits</strong> of your pods based on actual usage patterns. Unlike HPA (which adds/removes pods), VPA <strong>right-sizes</strong> individual pods by modifying their resource specifications.</p>
+<p><strong>💡 Explanation:</strong> Think of your pods wearing clothes. HPA buys more shirts when you have more people (adds pods). VPA measures each person and tailors their shirt to fit perfectly (adjusts CPU/memory per pod). If someone grows or shrinks, VPA remeasures and makes them a new shirt.</p>
+<h3 id="core-analogy-tailoring-clothes"><strong>Core Analogy: Tailoring Clothes</strong></h3>
+<ul>
+<li><strong>HPA</strong>: Buys more shirts when you have more people</li>
+<li><strong>VPA</strong>: Resizes each shirt to perfectly fit each person</li>
+</ul>
+<h2 id="vpa-vs-hpa-comparison">📊 <strong>VPA vs HPA Comparison</strong></h2>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Horizontal Pod Autoscaler (HPA)</th>
+<th>Vertical Pod Autoscaler (VPA)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Scales</strong></td>
+<td>Number of pod replicas</td>
+<td>CPU/Memory per pod</td>
+</tr>
+<tr>
+<td><strong>Direction</strong></td>
+<td>Horizontal (more/fewer pods)</td>
+<td>Vertical (more/fewer resources)</td>
+</tr>
+<tr>
+<td><strong>Best for</strong></td>
+<td>Variable traffic</td>
+<td>Predictable resource patterns</td>
+</tr>
+<tr>
+<td><strong>Disruption</strong></td>
+<td>None (adds/removes pods)</td>
+<td>Pod recreation required</td>
+</tr>
+<tr>
+<td><strong>Typical Use</strong></td>
+<td>Web apps, APIs</td>
+<td>Databases, memory-heavy apps</td>
+</tr>
+</tbody>
+</table>
+<p><strong>💡 Key Difference:</strong> HPA changes <strong>quantity</strong> (pod count), VPA changes <strong>quality</strong> (resources per pod). They can work together: VPA makes each pod the right size, HPA decides how many of those right-sized pods you need.</p>
+<h2 id="vpa-architecture-components">🏗️ <strong>VPA Architecture &amp; Components</strong></h2>
+<h3 id="vpa-component-diagram"><strong>VPA Component Diagram</strong></h3>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────┐
+│                  VPA Controller                          │
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │              1. RECOMMENDER                     │   │
+│  │  • Analyzes historical usage                    │   │
+│  │  • Creates resource profiles                    │   │
+│  │  • Suggests optimal requests/limits            │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │              2. UPDATER                         │   │
+│  │  • Evicts pods needing updates                 │   │
+│  │  • Only in &quot;Auto&quot; mode                         │   │
+│  │  • Gracefully terminates pods                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │        3. ADMISSION CONTROLLER                  │   │
+│  │  • Intercepts pod creation                      │   │
+│  │  • Injects recommended resources               │   │
+│  │  • Mutating webhook                            │   │
+│  └─────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────┐
+│               METRICS HISTORY                           │
+│          (Metrics Server / Prometheus)                  │
+└─────────────────────────────────────────────────────────┘
+</code></pre></div>
+<p><strong>💡 How They Work Together:</strong>
+1. <strong>Recommender</strong> = The "brain" that learns what resources pods actually need
+2. <strong>Updater</strong> = The "action taker" that replaces pods when they need new sizes (only in Auto mode)
+3. <strong>Admission Controller</strong> = The "gatekeeper" that gives new pods the right resources from the start
+4. <strong>Metrics</strong> = The "memory" that stores what happened in the past</p>
+<h2 id="vpa-installation">🚀 <strong>VPA Installation</strong></h2>
+<h3 id="method-1-official-release-recommended"><strong>Method 1: Official Release (Recommended)</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Clone VPA repository</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/kubernetes/autoscaler.git
+<span class="nb">cd</span><span class="w"> </span>autoscaler/vertical-pod-autoscaler
+
+<span class="c1"># Install all components</span>
+./hack/vpa-up.sh
+
+<span class="c1"># Verify installation</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>vpa
+</code></pre></div>
+<p><strong>💡 What This Installs:</strong>
+- <code>vpa-recommender</code>: Learns and suggests resource sizes
+- <code>vpa-updater</code>: Takes action to resize pods (in Auto mode)
+- <code>vpa-admission-controller</code>: Updates new pods as they're created
+- <code>vpa-crd</code>: Custom Resource Definition for VPA objects</p>
+<h3 id="method-2-helm-installation"><strong>Method 2: Helm Installation</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Add Helm repository</span>
+helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>fairwinds-stable<span class="w"> </span>https://charts.fairwinds.com/stable
+helm<span class="w"> </span>repo<span class="w"> </span>update
+
+<span class="c1"># Install VPA</span>
+helm<span class="w"> </span>install<span class="w"> </span>vpa<span class="w"> </span>fairwinds-stable/vpa<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--namespace<span class="w"> </span>kube-system<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>recommender.enabled<span class="o">=</span><span class="nb">true</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>updater.enabled<span class="o">=</span><span class="nb">true</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>admissionController.enabled<span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+<p><strong>💡 Helm Benefits:</strong> Easier upgrades, configuration management, and clean uninstalls.</p>
+<h3 id="method-3-manifest-files"><strong>Method 3: Manifest Files</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Apply individual components</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>https://github.com/kubernetes/autoscaler/releases/latest/download/vertical-pod-autoscaler-recommender.yaml
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>https://github.com/kubernetes/autoscaler/releases/latest/download/vertical-pod-autoscaler-updater.yaml
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>https://github.com/kubernetes/autoscaler/releases/latest/download/vertical-pod-autoscaler-admission-controller.yaml
+
+<span class="c1"># Verify</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>vpa
+</code></pre></div>
+<h2 id="vpa-components-explained">⚙️ <strong>VPA Components Explained</strong></h2>
+<h3 id="1-vpa-recommender"><strong>1. VPA Recommender</strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Analyzes historical resource usage</li>
+<li><strong>Output</strong>: Resource recommendations stored in VPA object</li>
+<li><strong>Data Source</strong>: Metrics Server (last 8 days by default)</li>
+<li><strong>Algorithm</strong>: Uses histogram of usage patterns</li>
+</ul>
+<p><strong>💡 How It Learns:</strong> Imagine you have a pod that uses between 200-400m CPU over time. Recommender watches for 8 days, builds a histogram, and says: "This pod usually needs 300m CPU, but sometimes hits 400m. Let's recommend 350m to be safe."</p>
+<h3 id="2-vpa-updater"><strong>2. VPA Updater</strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Evicts pods that need resource adjustments</li>
+<li><strong>Action</strong>: Deletes pods with incorrect allocations</li>
+<li><strong>Trigger</strong>: When recommendations differ significantly from current</li>
+<li><strong>Mode</strong>: Only active in <code>Auto</code> mode</li>
+</ul>
+<p><strong>💡 The "Pod Killer":</strong> Updater is like a tailor who says "Your shirt doesn't fit anymore!" and makes you take it off so they can give you a new one. It doesn't resize the shirt while you're wearing it—it makes you change shirts entirely.</p>
+<h3 id="3-vpa-admission-controller"><strong>3. VPA Admission Controller</strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Modifies pod specs during creation</li>
+<li><strong>How</strong>: Mutating admission webhook</li>
+<li><strong>When</strong>: Intercepts all pod creation requests</li>
+<li><strong>What</strong>: Replaces resource requests/limits with recommendations</li>
+</ul>
+<p><strong>💡 The "Birth Certificate":</strong> When a pod is born, Admission Controller checks the Recommender's notes and says: "This pod should have 350m CPU, not the 100m written in its DNA (YAML file)." It secretly changes the birth certificate before anyone notices.</p>
+<h2 id="vpa-configuration-modes">📝 <strong>VPA Configuration Modes</strong></h2>
+<h3 id="four-update-modes"><strong>Four Update Modes</strong></h3>
+<h4 id="1-initial-mode-most-common"><strong>1. <code>Initial</code> Mode</strong> (Most Common)</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Initial&quot;</span>
+</code></pre></div>
+- <strong>Behavior</strong>: Only sets resources on pod creation
+- <strong>Existing pods</strong>: Never updated
+- <strong>New pods</strong>: Get recommended resources
+- <strong>Best for</strong>: Safe production use, testing</p>
+<p><strong>💡 Analogy:</strong> Like a hospital that measures every newborn baby and gives them the right size diaper, but doesn't change diapers on babies who've already left the hospital.</p>
+<h4 id="2-auto-mode-aggressive"><strong>2. <code>Auto</code> Mode</strong> (Aggressive)</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Auto&quot;</span>
+</code></pre></div>
+- <strong>Behavior</strong>: Updates resources and recreates pods
+- <strong>Existing pods</strong>: Evicted and recreated with new resources
+- <strong>Risk</strong>: Pod disruptions, potential downtime
+- <strong>Best for</strong>: Non-critical workloads, dev environments</p>
+<p><strong>💡 Analogy:</strong> Like a strict parent who makes you change clothes immediately if your shirt doesn't fit perfectly, even if you're in the middle of dinner.</p>
+<h4 id="3-recreate-mode-rarely-used"><strong>3. <code>Recreate</code> Mode</strong> (Rarely Used)</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Recreate&quot;</span>
+</code></pre></div>
+- <strong>Behavior</strong>: Only recreates pods (no resource updates)
+- <strong>Use case</strong>: When pod recreation needed without resource changes</p>
+<p><strong>💡 When to Use:</strong> If you want VPA to restart pods periodically but not change their resources. Rare case.</p>
+<h4 id="4-off-mode-monitor-only"><strong>4. <code>Off</code> Mode</strong> (Monitor Only)</h4>
+<p><div class="highlight"><pre><span></span><code><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Off&quot;</span>
+</code></pre></div>
+- <strong>Behavior</strong>: Only provides recommendations
+- <strong>Action</strong>: No automatic changes
+- <strong>Best for</strong>: Learning patterns, manual optimization</p>
+<p><strong>💡 Analogy:</strong> Like a nutritionist who tells you "You should eat 2000 calories per day" but doesn't stop you from eating a whole pizza.</p>
+<h2 id="basic-vpa-configuration">🔧 <strong>Basic VPA Configuration</strong></h2>
+<h3 id="minimal-vpa-example"><strong>Minimal VPA Example</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VerticalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapp-vpa</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;apps/v1&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapp-deployment</span>
+
+<span class="w">  </span><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Initial&quot;</span><span class="w">  </span><span class="c1"># Safe mode</span>
+
+<span class="w">  </span><span class="nt">resourcePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">containerPolicies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w">   </span><span class="c1"># Apply to all containers</span>
+<span class="w">      </span><span class="nt">minAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;128Mi&quot;</span>
+<span class="w">      </span><span class="nt">maxAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2Gi&quot;</span>
+<span class="w">      </span><span class="nt">controlledResources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;cpu&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;memory&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<p><strong>💡 Breaking It Down:</strong>
+- <code>targetRef</code>: Which deployment/statefulset to watch (like tagging a person for measurement)
+- <code>updateMode: "Initial"</code>: Safe mode—only fix new pods
+- <code>containerName: "*"</code>: Apply to ALL containers in the pod (asterisk = wildcard)
+- <code>minAllowed/maxAllowed</code>: Safety rails so VPA doesn't recommend crazy sizes
+- <code>controlledResources</code>: Which resources to adjust (CPU, memory, or both)</p>
+<h3 id="complete-vpa-with-all-options"><strong>Complete VPA with All Options</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VerticalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">complete-vpa</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;apps/v1&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w">       </span><span class="c1"># Can be: Deployment, StatefulSet, DaemonSet</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-application</span>
+
+<span class="w">  </span><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Auto&quot;</span><span class="w">     </span><span class="c1"># Initial, Auto, Recreate, or Off</span>
+<span class="w">    </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w">         </span><span class="c1"># Optional: Minimum pods to consider</span>
+
+<span class="w">  </span><span class="nt">resourcePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">containerPolicies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app&quot;</span>
+<span class="w">      </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Auto&quot;</span><span class="w">         </span><span class="c1"># Auto, Off, or Initial</span>
+<span class="w">      </span><span class="nt">minAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;128Mi&quot;</span>
+<span class="w">      </span><span class="nt">maxAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8Gi&quot;</span>
+<span class="w">      </span><span class="nt">controlledResources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;cpu&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;memory&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">controlledValues</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;RequestsAndLimits&quot;</span><span class="w">  </span><span class="c1"># or &quot;RequestsOnly&quot;</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sidecar&quot;</span>
+<span class="w">      </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Off&quot;</span><span class="w">          </span><span class="c1"># Don&#39;t autoscale this container</span>
+</code></pre></div>
+<p><strong>💡 Advanced Options Explained:</strong>
+- <code>minReplicas</code>: Only start recommending if you have at least this many pods (more data = better recommendations)
+- <code>container-specific mode</code>: Different rules per container in same pod
+- <code>controlledValues</code>: "RequestsOnly" = only adjust requests, not limits (limits stay as you set them)</p>
+<h2 id="resource-policy-explained">📊 <strong>Resource Policy Explained</strong></h2>
+<h3 id="container-policies"><strong>Container Policies</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">resourcePolicy</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containerPolicies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;webapp&quot;</span><span class="w">      </span><span class="c1"># Specific container</span>
+<span class="w">    </span><span class="nt">minAllowed</span><span class="p">:</span><span class="w">                  </span><span class="c1"># Minimum VPA can recommend</span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;256Mi&quot;</span>
+<span class="w">    </span><span class="nt">maxAllowed</span><span class="p">:</span><span class="w">                  </span><span class="c1"># Maximum VPA can recommend</span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4Gi&quot;</span>
+<span class="w">    </span><span class="nt">controlledResources</span><span class="p">:</span><span class="w">         </span><span class="c1"># Which resources to adjust</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;cpu&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;memory&quot;</span>
+<span class="w">    </span><span class="nt">controlledValues</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;RequestsAndLimits&quot;</span><span class="w">  </span><span class="c1"># Options:</span>
+<span class="w">                                           </span><span class="c1"># - RequestsAndLimits (default)</span>
+<span class="w">                                           </span><span class="c1"># - RequestsOnly</span>
+</code></pre></div>
+<p><strong>💡 Why Min/Max Matters:</strong> Without these, VPA might recommend 0.001m CPU (too small to run) or 1000 CPU cores (breaks your cluster). These are guardrails.</p>
+<h3 id="wildcard-vs-specific-containers"><strong>Wildcard vs Specific Containers</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Option 1: All containers</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w">  </span><span class="c1"># Apply to EVERY container</span>
+
+<span class="c1"># Option 2: Specific containers</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app-server&quot;</span><span class="w">   </span><span class="c1"># Only this container</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cache&quot;</span><span class="w">        </span><span class="c1"># Different policy for cache</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;logger&quot;</span><span class="w">       </span><span class="c1"># Don&#39;t set mode: &quot;Off&quot;</span>
+</code></pre></div>
+<p><strong>💡 Real Example:</strong> Your pod has 3 containers: app (needs lots of CPU), redis (needs lots of memory), logger (tiny, fixed needs). Use specific names to treat each differently.</p>
+<h2 id="practical-vpa-examples">🛠️ <strong>Practical VPA Examples</strong></h2>
+<h3 id="example-1-web-application"><strong>Example 1: Web Application</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VerticalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">webapp-vpa</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;apps/v1&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">webapp</span>
+
+<span class="w">  </span><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Initial&quot;</span><span class="w">  </span><span class="c1"># Safe for production</span>
+
+<span class="w">  </span><span class="nt">resourcePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">containerPolicies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nginx&quot;</span>
+<span class="w">      </span><span class="nt">minAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;128Mi&quot;</span>
+<span class="w">      </span><span class="nt">maxAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1Gi&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app&quot;</span>
+<span class="w">      </span><span class="nt">minAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;200m&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;256Mi&quot;</span>
+<span class="w">      </span><span class="nt">maxAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2Gi&quot;</span>
+</code></pre></div>
+<p><strong>💡 Two Containers, Different Needs:</strong> Nginx (web server) vs App (application logic) have different resource patterns. VPA handles each separately.</p>
+<h3 id="example-2-database-with-statefulset"><strong>Example 2: Database with StatefulSet</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VerticalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres-vpa</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;apps/v1&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StatefulSet</span><span class="w">       </span><span class="c1"># Works with StatefulSets!</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+
+<span class="w">  </span><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Initial&quot;</span><span class="w">   </span><span class="c1"># CRITICAL: Databases hate pod restarts!</span>
+
+<span class="w">  </span><span class="nt">resourcePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">containerPolicies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;postgres&quot;</span>
+<span class="w">      </span><span class="nt">minAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;500m&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1Gi&quot;</span>
+<span class="w">      </span><span class="nt">maxAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;16Gi&quot;</span>
+</code></pre></div>
+<p><strong>💡 StatefulSet Warning:</strong> Databases store data on disk. If VPA kills the pod in <code>Auto</code> mode, database might get confused. <code>Initial</code> mode is safer—only fixes new pods when they're created during maintenance.</p>
+<h3 id="example-3-multi-container-microservice"><strong>Example 3: Multi-Container Microservice</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VerticalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">microservice-vpa</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;apps/v1&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">order-service</span>
+
+<span class="w">  </span><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Auto&quot;</span><span class="w">      </span><span class="c1"># Will recreate pods</span>
+
+<span class="w">  </span><span class="nt">resourcePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">containerPolicies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;order-processor&quot;</span>
+<span class="w">      </span><span class="nt">minAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;200m&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;512Mi&quot;</span>
+<span class="w">      </span><span class="nt">maxAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4Gi&quot;</span>
+<span class="w">      </span><span class="nt">controlledValues</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;RequestsAndLimits&quot;</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;redis-sidecar&quot;</span>
+<span class="w">      </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Off&quot;</span><span class="w">           </span><span class="c1"># Don&#39;t autoscale sidecar</span>
+<span class="w">      </span><span class="c1"># No min/max needed when mode is Off</span>
+</code></pre></div>
+<p><strong>💡 Sidecar Pattern:</strong> Redis runs alongside your app as a cache. You might not want VPA changing it because Redis has known memory patterns. <code>mode: "Off"</code> tells VPA to leave it alone.</p>
+<h2 id="how-vpa-makes-recommendations">🔍 <strong>How VPA Makes Recommendations</strong></h2>
+<h3 id="recommendation-algorithm"><strong>Recommendation Algorithm</strong></h3>
+<div class="highlight"><pre><span></span><code>VPA Recommendation Process:
+1. Collect 8 days of usage data (default)
+2. Build histogram of CPU/Memory usage
+3. Calculate:
+   - Target: 90th percentile of usage + safety margin
+   - Lower Bound: 50th percentile
+   - Upper Bound: 95th percentile + safety margin
+4. Store in VPA object status
+</code></pre></div>
+<p><strong>💡 What This Means:</strong> If your pod uses 100m, 200m, 300m, 400m CPU over time:
+- <strong>50th percentile (Lower Bound)</strong>: 250m (half the time it uses less than this)
+- <strong>90th percentile (Target)</strong>: 380m (90% of the time it uses less than this)
+- <strong>95th percentile (Upper Bound)</strong>: 390m (almost never uses more than this)</p>
+<p>VPA recommends <strong>Target</strong> (380m) as the "right size" with safety margins.</p>
+<h3 id="viewing-recommendations"><strong>Viewing Recommendations</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check VPA status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>vpa
+
+<span class="c1"># Detailed view with recommendations</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>vpa<span class="w"> </span>myapp-vpa
+
+<span class="c1"># Raw YAML with recommendations</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>vpa<span class="w"> </span>myapp-vpa<span class="w"> </span>-o<span class="w"> </span>yaml
+</code></pre></div>
+<h3 id="sample-vpa-output"><strong>Sample VPA Output</strong></h3>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>describe<span class="w"> </span>vpa/webapp-vpa
+
+Status:
+<span class="w">  </span>Conditions:
+<span class="w">    </span>Status:<span class="w"> </span>True
+<span class="w">    </span>Type:<span class="w"> </span>RecommendationProvided
+<span class="w">  </span>Recommendation:
+<span class="w">    </span>Container<span class="w"> </span>Recommendations:
+<span class="w">      </span>Container<span class="w"> </span>Name:<span class="w">  </span>nginx
+<span class="w">      </span>Lower<span class="w"> </span>Bound:<span class="w">     </span><span class="c1"># Minimum safe</span>
+<span class="w">        </span>Cpu:<span class="w">     </span>100m
+<span class="w">        </span>Memory:<span class="w">  </span>128Mi
+<span class="w">      </span>Target:<span class="w">          </span><span class="c1"># ⭐ RECOMMENDED VALUE ⭐</span>
+<span class="w">        </span>Cpu:<span class="w">     </span>350m
+<span class="w">        </span>Memory:<span class="w">  </span>512Mi
+<span class="w">      </span>Uncapped<span class="w"> </span>Target:<span class="w"> </span><span class="c1"># Without min/max constraints</span>
+<span class="w">        </span>Cpu:<span class="w">     </span>420m
+<span class="w">        </span>Memory:<span class="w">  </span>600Mi
+<span class="w">      </span>Upper<span class="w"> </span>Bound:<span class="w">     </span><span class="c1"># Maximum safe</span>
+<span class="w">        </span>Cpu:<span class="w">     </span>500m
+<span class="w">        </span>Memory:<span class="w">  </span>1Gi
+</code></pre></div>
+<p><strong>💡 Reading This Output:</strong>
+- <strong>Target (350m CPU)</strong>: What VPA wants to set your pod to
+- <strong>Lower Bound (100m)</strong>: Below this is dangerously small
+- <strong>Upper Bound (500m)</strong>: Above this is wastefully large<br />
+- <strong>Uncapped Target (420m)</strong>: What VPA would recommend if you had no min/max limits</p>
+<h2 id="testing-vpa-step-by-step">🧪 <strong>Testing VPA Step by Step</strong></h2>
+<h3 id="step-1-create-test-deployment"><strong>Step 1: Create Test Deployment</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># test-deployment.yaml</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpa-test</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpa-test</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpa-test</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-app</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">polinux/stress</span>
+<span class="w">        </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;sleep&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;3600&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;50m&quot;</span><span class="w">     </span><span class="c1"># Intentionally TOO LOW</span>
+<span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;64Mi&quot;</span><span class="w"> </span><span class="c1"># Intentionally TOO LOW</span>
+</code></pre></div>
+<p><strong>💡 Setting Up the Test:</strong> We create pods with obviously wrong resources (50m CPU) so VPA has something to fix.</p>
+<h3 id="step-2-create-vpa"><strong>Step 2: Create VPA</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># test-vpa.yaml</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VerticalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpa-test-vpa</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;apps/v1&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpa-test</span>
+<span class="w">  </span><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Auto&quot;</span><span class="w">  </span><span class="c1"># Will show immediate effect</span>
+<span class="w">  </span><span class="nt">resourcePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">containerPolicies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
+<span class="w">      </span><span class="nt">minAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;128Mi&quot;</span>
+<span class="w">      </span><span class="nt">maxAllowed</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2Gi&quot;</span>
+</code></pre></div>
+<p><strong>💡 Using Auto Mode for Testing:</strong> In real life, start with <code>Initial</code>. For testing, <code>Auto</code> shows VPA in action immediately.</p>
+<h3 id="step-3-apply-and-generate-load"><strong>Step 3: Apply and Generate Load</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Apply configurations</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>test-deployment.yaml
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>test-vpa.yaml
+
+<span class="c1"># Generate load to help VPA learn</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deployment/vpa-test<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">2</span><span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>200M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">300</span>
+
+<span class="c1"># Wait for VPA to analyze (5-10 minutes)</span>
+sleep<span class="w"> </span><span class="m">300</span>
+
+<span class="c1"># Check recommendations</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>vpa<span class="w"> </span>vpa-test-vpa
+
+<span class="c1"># Watch pods get recreated (Auto mode)</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>vpa-test<span class="w"> </span>-w
+</code></pre></div>
+<p><strong>💡 The Learning Process:</strong> VPA needs to see actual usage. <code>stress</code> command simulates load so VPA can say "Hey, this pod needs more than 50m CPU!"</p>
+<h2 id="vpa-troubleshooting">🚨 <strong>VPA Troubleshooting</strong></h2>
+<h3 id="common-issues-solutions"><strong>Common Issues &amp; Solutions</strong></h3>
+<h4 id="issue-1-vpa-shows-no-recommendations"><strong>Issue 1: VPA shows no recommendations</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check VPA components are running</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>vpa
+
+<span class="c1"># Check logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>deployment/vpa-recommender
+
+<span class="c1"># Verify metrics are available</span>
+kubectl<span class="w"> </span>top<span class="w"> </span>pods
+
+<span class="c1"># Check VPA object</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>vpa<span class="w"> </span>&lt;name&gt;
+</code></pre></div>
+<p><strong>💡 Likely Causes:</strong> Metrics server not running, VPA pods crashed, or not enough time has passed (VPA needs hours of data).</p>
+<h4 id="issue-2-pods-not-being-updated-in-auto-mode"><strong>Issue 2: Pods not being updated in Auto mode</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check update mode</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>vpa<span class="w"> </span>&lt;name&gt;<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>updateMode
+
+<span class="c1"># Check if recommendations exist</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>vpa<span class="w"> </span>&lt;name&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A5<span class="w"> </span><span class="s2">&quot;Recommendation&quot;</span>
+
+<span class="c1"># Check updater logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>deployment/vpa-updater
+
+<span class="c1"># Check events</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>events<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>vpa
+</code></pre></div>
+<p><strong>💡 Common Reason:</strong> Recommendations don't differ enough from current resources. VPA won't restart pods for tiny changes.</p>
+<h4 id="issue-3-admission-controller-not-working"><strong>Issue 3: Admission controller not working</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check mutating webhook</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>mutatingwebhookconfigurations
+
+<span class="c1"># Check webhook logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>deployment/vpa-admission-controller
+
+<span class="c1"># Test pod creation</span>
+kubectl<span class="w"> </span>run<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--image<span class="o">=</span>nginx<span class="w"> </span>--dry-run<span class="o">=</span>client<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
+</code></pre></div>
+<p><strong>💡 Webhook Issues:</strong> Admission controller is a webhook that intercepts pod creation. If it's down, new pods won't get VPA recommendations.</p>
+<h3 id="diagnostic-commands"><strong>Diagnostic Commands</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get all VPA resources</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>vpa<span class="w"> </span>--all-namespaces
+
+<span class="c1"># Check VPA system status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>vpa
+kubectl<span class="w"> </span>get<span class="w"> </span>deployments<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>vpa
+kubectl<span class="w"> </span>get<span class="w"> </span>services<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>vpa
+
+<span class="c1"># Check events</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>events<span class="w"> </span>--field-selector<span class="w"> </span>involvedObject.kind<span class="o">=</span>VerticalPodAutoscaler
+kubectl<span class="w"> </span>get<span class="w"> </span>events<span class="w"> </span>--sort-by<span class="o">=</span>.metadata.creationTimestamp<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
+
+<span class="c1"># Check resource usage history</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>--raw<span class="w"> </span><span class="s2">&quot;/apis/metrics.k8s.io/v1beta1/pods&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.items[] | select(.metadata.name | contains(&quot;your-pod&quot;))&#39;</span>
+</code></pre></div>
+<h2 id="vpa-best-practices">⚡ <strong>VPA Best Practices</strong></h2>
+<h3 id="1-start-with-initial-mode"><strong>1. Start with <code>Initial</code> Mode</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Initial&quot;</span><span class="w">  </span><span class="c1"># Always start here</span>
+</code></pre></div>
+<p><strong>💡 Why:</strong> Zero risk. Existing pods keep running, only new pods get changes. Like dipping your toe in water before jumping in.</p>
+<h3 id="2-set-conservative-bounds"><strong>2. Set Conservative Bounds</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">minAllowed</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span><span class="w">     </span><span class="c1"># Prevent too-small pods</span>
+<span class="w">  </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;128Mi&quot;</span>
+<span class="nt">maxAllowed</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w">        </span><span class="c1"># Prevent runaway growth</span>
+<span class="w">  </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8Gi&quot;</span>
+</code></pre></div>
+<p><strong>💡 Safety Rails:</strong> Without bounds, VPA might recommend 0.1m CPU (pod won't start) or 100 CPU cores (bankrupts your cloud bill).</p>
+<h3 id="3-monitor-before-switching-to-auto"><strong>3. Monitor Before Switching to Auto</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Run in Initial/Off mode for 1-2 weeks</span>
+<span class="c1"># Check recommendations are stable</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>vpa<span class="w"> </span>&lt;name&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A10<span class="w"> </span><span class="s2">&quot;Recommendation&quot;</span>
+
+<span class="c1"># Only switch to Auto when:</span>
+<span class="c1"># 1. Recommendations are stable for 7+ days</span>
+<span class="c1"># 2. You understand the impact of pod recreation</span>
+<span class="c1"># 3. Your app can handle pod restarts</span>
+</code></pre></div>
+<p><strong>💡 The 7-Day Rule:</strong> VPA needs to see weekly patterns (weekday vs weekend, business hours vs night). Don't trust day 1 recommendations.</p>
+<h3 id="4-combine-with-hpa"><strong>4. Combine with HPA</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># VPA optimizes resource per pod</span>
+<span class="c1"># HPA adjusts number of pods</span>
+<span class="c1"># Perfect combination for variable workloads</span>
+</code></pre></div>
+<p><strong>💡 Dream Team:</strong> VPA makes each pod the perfect size. HPA decides how many perfect-sized pods you need based on traffic.</p>
+<h3 id="5-regular-reviews"><strong>5. Regular Reviews</strong></h3>
+<ul>
+<li>Weekly: Check VPA recommendations</li>
+<li>Monthly: Adjust min/max bounds if needed</li>
+<li>Quarterly: Review if VPA still needed</li>
+</ul>
+<p><strong>💡 VPA Isn't Fire-and-Forget:</strong> Like a garden, it needs occasional checking. Applications change, usage patterns shift.</p>
+<h2 id="vpa-with-hpa-combined-strategy">📈 <strong>VPA with HPA: Combined Strategy</strong></h2>
+<h3 id="why-combine-both"><strong>Why Combine Both?</strong></h3>
+<ul>
+<li><strong>VPA</strong>: Gets resource requests right for each pod</li>
+<li><strong>HPA</strong>: Scales pod count based on those correct resources</li>
+<li><strong>Result</strong>: Optimal scaling in both dimensions</li>
+</ul>
+<h3 id="implementation-example"><strong>Implementation Example</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Deployment with placeholder resources</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combined-app</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">        </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span><span class="w">    </span><span class="c1"># Placeholder - VPA will fix</span>
+<span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;256Mi&quot;</span><span class="w"> </span><span class="c1"># Placeholder - VPA will fix</span>
+
+<span class="nn">---</span>
+<span class="c1"># 2. VPA for resource optimization</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VerticalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combined-vpa</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;apps/v1&quot;</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combined-app</span>
+<span class="w">  </span><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Initial&quot;</span><span class="w">  </span><span class="c1"># Safe mode</span>
+
+<span class="nn">---</span>
+<span class="c1"># 3. HPA for replica scaling</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling/v2</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HorizontalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combined-hpa</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">scaleTargetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combined-app</span>
+<span class="w">  </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">  </span><span class="nt">metrics</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Resource</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpu</span>
+<span class="w">      </span><span class="nt">target</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Utilization</span>
+<span class="w">        </span><span class="nt">averageUtilization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70</span><span class="w">  </span><span class="c1"># Scale based on VPA-optimized resources</span>
+</code></pre></div>
+<h3 id="important-interaction"><strong>Important Interaction</strong></h3>
+<p>HPA uses: <code>(actual usage / requested resources) × 100%</code></p>
+<p>Since VPA optimizes requested resources, HPA makes better scaling decisions!</p>
+<p><strong>💡 Example:</strong> Your pod actually uses 300m CPU.
+- Without VPA: You guessed 500m request → HPA sees 60% usage (300/500) → No scaling
+- With VPA: VPA sets 350m request → HPA sees 85% usage (300/350) → Scales up!</p>
+<p>VPA makes HPA's math more accurate.</p>
+<h2 id="vpa-limitations-gotchas">⚠️ <strong>VPA Limitations &amp; Gotchas</strong></h2>
+<h3 id="1-pod-recreation-required"><strong>1. Pod Recreation Required</strong></h3>
+<ul>
+<li>VPA cannot update running pods' resources</li>
+<li>Pods must be recreated (causes brief downtime)</li>
+<li>Not suitable for stateful applications that hate restarts</li>
+</ul>
+<p><strong>💡 The Shirt Problem:</strong> You can't resize a shirt while someone's wearing it. You must give them a new shirt (recreate pod).</p>
+<h3 id="2-learning-period-required"><strong>2. Learning Period Required</strong></h3>
+<ul>
+<li>Needs 8+ hours of metrics for good recommendations</li>
+<li>Longer (24-48 hours) for stable patterns</li>
+<li>Initial recommendations may be inaccurate</li>
+</ul>
+<p><strong>💡 Like a New Doctor:</strong> A doctor needs to examine you multiple times before understanding your health patterns. Day 1 diagnosis might be wrong.</p>
+<h3 id="3-container-name-dependency"><strong>3. Container Name Dependency</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># VPA tracks by CONTAINER NAME</span>
+<span class="nt">containers</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app&quot;</span><span class="w">          </span><span class="c1"># Profile tied to THIS name</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app-v2&quot;</span><span class="w">       </span><span class="c1"># Different name = different profile!</span>
+</code></pre></div>
+<p><strong>💡 Name Change = New Person:</strong> If you rename container from "app" to "app-v2", VPA thinks it's a completely different container and starts learning from scratch.</p>
+<h3 id="4-not-for-all-workloads"><strong>4. Not for All Workloads</strong></h3>
+<p><strong>Avoid VPA for:</strong>
+- ❌ Short-lived Jobs (&lt; 5 minutes)
+- ❌ StatefulSets with persistent data
+- ❌ Applications with bursty, unpredictable patterns
+- ❌ When pod recreation causes issues</p>
+<p><strong>💡 Wrong Tool for the Job:</strong> VPA is great for steady workloads. For spiky, unpredictable workloads, HPA is better.</p>
+<h3 id="5-resource-quota-conflicts"><strong>5. Resource Quota Conflicts</strong></h3>
+<ul>
+<li>VPA might recommend resources exceeding namespace quotas</li>
+<li>Can cause pod creation failures</li>
+<li>Monitor quotas when using VPA</li>
+</ul>
+<p><strong>💡 Quota Jail:</strong> If your namespace has 2 CPU quota and VPA wants to give one pod 3 CPU, that pod can't be created.</p>
+<h2 id="advanced-vpa-configuration">🔧 <strong>Advanced VPA Configuration</strong></h2>
+<h3 id="custom-metrics-integration"><strong>Custom Metrics Integration</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># VPA can use Prometheus metrics</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VerticalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom-vpa</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">vpa.custom.metrics.prometheus.io/cpu</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">rate(container_cpu_usage_seconds_total{container=&quot;myapp&quot;}[5m])</span>
+<span class="w">    </span><span class="nt">vpa.custom.metrics.prometheus.io/memory</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">container_memory_working_set_bytes{container=&quot;myapp&quot;}</span>
+</code></pre></div>
+<p><strong>💡 Beyond CPU/Memory:</strong> In theory, VPA could use any metric (requests per second, queue length), but CPU/memory are the standard ones.</p>
+<h3 id="resource-specific-controls"><strong>Resource-Specific Controls</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">controlledValues</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;RequestsOnly&quot;</span><span class="w">  </span><span class="c1"># Only adjust requests, not limits</span>
+<span class="c1"># or</span>
+<span class="nt">controlledValues</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;RequestsAndLimits&quot;</span><span class="w">  </span><span class="c1"># Adjust both (default)</span>
+
+<span class="nt">controlledResources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;cpu&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># Only adjust CPU, not memory</span>
+<span class="c1"># or</span>
+<span class="nt">controlledResources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;cpu&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;memory&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># Adjust both (default)</span>
+</code></pre></div>
+<p><strong>💡 Requests vs Limits:</strong> 
+- <strong>Requests</strong>: What Kubernetes guarantees you
+- <strong>Limits</strong>: Maximum you can use
+- Most people let VPA adjust both, but <code>RequestsOnly</code> is safer.</p>
+<h3 id="target-cpumemory-percentiles"><strong>Target CPU/Memory Percentiles</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Adjust safety margins (advanced)</span>
+<span class="c1"># These are VPA recommender flags, not in VPA spec</span>
+<span class="c1"># Set as command-line args to recommender</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">recommender</span>
+<span class="w">    </span><span class="nt">args</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--cpu-histogram-decay-half-life=24h</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--memory-histogram-decay-half-life=48h</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--target-cpu-utilization=0.9</span><span class="w">  </span><span class="c1"># 90th percentile</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--target-memory-utilization=0.9</span>
+</code></pre></div>
+<p><strong>💡 Tuning Knobs:</strong> 
+- <code>decay-half-life</code>: How quickly VPA "forgets" old data (24h = yesterday's data matters half as much as today's)
+- <code>target-utilization</code>: How aggressive to be (0.9 = 90th percentile = 10% safety margin)</p>
+<h2 id="monitoring-vpa">📊 <strong>Monitoring VPA</strong></h2>
+<h3 id="key-metrics-to-track"><strong>Key Metrics to Track</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Resource optimization</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>vpa<span class="w"> </span>&lt;name&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A5<span class="w"> </span><span class="s2">&quot;Recommendation&quot;</span>
+
+<span class="c1"># 2. Pod evictions (Auto mode)</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>events<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;vpa.*evict&quot;</span>
+
+<span class="c1"># 3. Cost savings</span>
+<span class="c1"># Compare before/after resource requests</span>
+
+<span class="c1"># 4. Application performance</span>
+<span class="c1"># Monitor app metrics after VPA changes</span>
+</code></pre></div>
+<h3 id="prometheus-metrics-if-exposed"><strong>Prometheus Metrics (if exposed)</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># VPA recommender metrics</span>
+<span class="nv">vpa_recommendation_cpu_cores</span>
+<span class="nv">vpa_recommendation_memory_bytes</span>
+<span class="nv">vpa_checkpoint_created_total</span>
+
+<span class="c1"># VPA updater metrics</span>
+<span class="nv">vpa_updater_evictions_total</span>
+<span class="nv">vpa_updater_errors_total</span>
+</code></pre></div>
+<h2 id="when-to-use-vpa-decision-guide">🎯 <strong>When to Use VPA - Decision Guide</strong></h2>
+<h3 id="use-vpa-when"><strong>Use VPA When:</strong></h3>
+<ul>
+<li>✅ Memory-intensive applications (Java, .NET, Node.js)</li>
+<li>✅ Applications with growing resource needs</li>
+<li>✅ You're unsure of resource requirements</li>
+<li>✅ Cost optimization is important</li>
+<li>✅ Combined with HPA for complete autoscaling</li>
+</ul>
+<p><strong>💡 Perfect Example:</strong> A Java microservice that starts with 1GB heap but grows to need 2GB over months. VPA notices and adjusts automatically.</p>
+<h3 id="dont-use-vpa-when"><strong>Don't Use VPA When:</strong></h3>
+<ul>
+<li>❌ Stateful applications (databases with persistent storage)</li>
+<li>❌ Short-lived batch jobs</li>
+<li>❌ When pod recreation causes business impact</li>
+<li>❌ You have precise, known resource requirements</li>
+<li>❌ Your cluster has strict resource quotas</li>
+</ul>
+<p><strong>💡 Bad Example:</strong> PostgreSQL database. If VPA kills the pod to resize it, database recovery might take minutes.</p>
+<h3 id="recommended-vpa-strategy"><strong>Recommended VPA Strategy</strong></h3>
+<ol>
+<li><strong>Week 1</strong>: Deploy VPA in <code>Off</code> mode, monitor recommendations</li>
+<li><strong>Week 2</strong>: Switch to <code>Initial</code> mode, verify new pods get correct resources</li>
+<li><strong>Week 3+:</strong>: If stable, consider <code>Auto</code> mode for continuous optimization</li>
+<li><strong>Ongoing</strong>: Combine with HPA, monitor monthly</li>
+</ol>
+<p><strong>💡 The VPA Journey:</strong> Off → Initial → (maybe) Auto. Like learning to drive: Parking lot (Off) → Quiet streets (Initial) → Highway (Auto, if you're brave).</p>
+<h2 id="quick-reference-commands">📋 <strong>Quick Reference Commands</strong></h2>
+<h3 id="vpa-management"><strong>VPA Management</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Basic commands</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>vpa<span class="w">                          </span><span class="c1"># List VPAs</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>vpa<span class="w"> </span>&lt;name&gt;<span class="w">              </span><span class="c1"># Detailed view</span>
+kubectl<span class="w"> </span>edit<span class="w"> </span>vpa<span class="w"> </span>&lt;name&gt;<span class="w">                  </span><span class="c1"># Edit VPA</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>vpa<span class="w"> </span>&lt;name&gt;<span class="w">                </span><span class="c1"># Delete VPA</span>
+
+<span class="c1"># Check components</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>vpa
+kubectl<span class="w"> </span>get<span class="w"> </span>deployments<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>vpa
+kubectl<span class="w"> </span>get<span class="w"> </span>services<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>vpa
+
+<span class="c1"># Debugging</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>deployment/vpa-recommender
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>deployment/vpa-updater
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>deployment/vpa-admission-controller
+</code></pre></div>
+<h3 id="testing-validation"><strong>Testing &amp; Validation</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check current resource usage</span>
+kubectl<span class="w"> </span>top<span class="w"> </span>pods
+kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>&lt;pod&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A10<span class="w"> </span><span class="s2">&quot;Resources&quot;</span>
+
+<span class="c1"># Generate test load</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod&gt;<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">2</span><span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>200M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">300</span>
+
+<span class="c1"># Monitor VPA actions</span>
+watch<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s1">&#39;kubectl get vpa,pods &amp;&amp; echo &quot;---&quot; &amp;&amp; kubectl describe vpa &lt;name&gt; | grep -A5 &quot;Recommendation&quot;&#39;</span>
+</code></pre></div>
+<h2 id="pro-tips">💡 <strong>Pro Tips</strong></h2>
+<ol>
+<li><strong>Always set min/max bounds</strong> to prevent extreme recommendations</li>
+<li><strong>Start with <code>Initial</code> mode</strong> in production</li>
+<li><strong>Monitor for 1-2 weeks</strong> before switching to <code>Auto</code></li>
+<li><strong>Combine with HPA</strong> for complete autoscaling</li>
+<li><strong>Regularly review recommendations</strong> - VPA isn't "set and forget"</li>
+<li><strong>Test pod recreation impact</strong> before enabling <code>Auto</code> mode</li>
+<li><strong>Use with resource quotas</strong> to prevent runaway growth</li>
+</ol>
+<hr />
+<h2 id="summary-vpa-in-one-page">🎓 <strong>Summary: VPA in One Page</strong></h2>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Recommendation</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Installation</strong></td>
+<td>Use Helm or official manifests</td>
+<td>Clean management</td>
+</tr>
+<tr>
+<td><strong>Initial Mode</strong></td>
+<td><code>updateMode: "Initial"</code></td>
+<td>Safe start</td>
+</tr>
+<tr>
+<td><strong>Resource Bounds</strong></td>
+<td>Always set min/max</td>
+<td>Prevent extremes</td>
+</tr>
+<tr>
+<td><strong>Monitoring Period</strong></td>
+<td>1-2 weeks before trusting</td>
+<td>Learn patterns</td>
+</tr>
+<tr>
+<td><strong>Production Use</strong></td>
+<td>Start with <code>Initial</code>, move to <code>Auto</code> cautiously</td>
+<td>Avoid surprises</td>
+</tr>
+<tr>
+<td><strong>Best Combo</strong></td>
+<td>VPA + HPA</td>
+<td>Complete autoscaling</td>
+</tr>
+<tr>
+<td><strong>Avoid For</strong></td>
+<td>Stateful apps, short jobs</td>
+<td>Wrong tool</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Remember</strong>: VPA is a powerful tool for resource optimization, but requires careful implementation and monitoring. Start small, learn patterns, and expand gradually!</p>
+<p><strong>Final Thought:</strong> VPA is like having a personal tailor for your pods. A good tailor measures carefully, makes small adjustments, and never ruins your favorite suit. A bad tailor cuts without measuring and leaves you with clothes that don't fit. Be a good VPA tailor.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "navigation.indexes", "toc.follow", "content.code.copy", "content.tabs.link", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,4079 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/docs/14-ingress-controller-and-resources/regex/">
+      
+      
+        <link rel="prev" href="../north-south-traffic-management/">
+      
+      
+        <link rel="next" href="../../cluster%20architecture%2C%20installation%20%26%20configuration/apiserver-misconfigured-approach/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Regex From Absolute Scratch - You WILL Understand This 🎯 - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#regex-from-absolute-scratch-you-will-understand-this" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Regex From Absolute Scratch - You WILL Understand This 🎯
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KillerCoda Notes – CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nginx-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Configs that Mimic Kubernetes Ingress Behavior
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nginx-regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Mystery of (/|$): NGINX Ingress Controller's Secret Sauce
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nginx-vs-ingress-compare/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nginx vs ingress compare
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nginx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Location Block Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../north-south-traffic-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes NGINX Ingress — Complete Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regex From Absolute Scratch - You WILL Understand This 🎯
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regex From Absolute Scratch - You WILL Understand This 🎯
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-1-the-absolute-basics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎪 PART 1: The Absolute Basics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎪 PART 1: The Absolute Basics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🤔 What is Regex?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-the-6-things-you-actually-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧱 PART 2: The 6 Things You Actually Need
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧱 PART 2: The 6 Things You Actually Need">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-literal-characters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1️⃣ Literal Characters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-the-dot-any-single-character" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2️⃣ The Dot . = ANY SINGLE CHARACTER
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-star-zero-or-more-of-previous-thing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3️⃣ Star * = ZERO OR MORE of previous thing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-plus-one-or-more-of-previous-thing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4️⃣ Plus + = ONE OR MORE of previous thing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-question-mark-zero-or-one-of-previous-thing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5️⃣ Question Mark ? = ZERO OR ONE of previous thing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-square-brackets-any-one-of-these-characters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6️⃣ Square Brackets [ ] = ANY ONE OF these characters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-lets-build-something-real" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏗️ PART 3: Let's Build Something Real
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ PART 3: Let&#39;s Build Something Real">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-find-dates-like-jan-15-2023" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📅 Example 1: Find dates like "Jan 15, 2023"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-find-phone-numbers-xxx-xxx-xxxx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📞 Example 2: Find phone numbers (xxx) xxx-xxxx
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-find-urls-starting-with-http-or-https" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌐 Example 3: Find URLs starting with http or https
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-special-characters-you-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 PART 4: Special Characters You Need
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 PART 4: Special Characters You Need">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#start-of-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ^ = START of line
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#end-of-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        $ = END of line
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-digit-same-as-0-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        \d = DIGIT (same as [0-9])
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#w-word-character-letter-digit-or-underscore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        \w = WORD character (letter, digit, or underscore)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#s-whitespace-space-tab-newline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        \s = WHITESPACE (space, tab, newline)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-word-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        \b = WORD BOUNDARY
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-5-capture-groups-the-magic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎪 PART 5: CAPTURE GROUPS - The Magic ( )
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎪 PART 5: CAPTURE GROUPS - The Magic ( )">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-capture-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Basic Capture Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backreferences-reuse-captured-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔄 BACKREFERENCES - Reuse captured groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-capture-groups-pname" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📝 NAMED CAPTURE GROUPS (?P&lt;name&gt;...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#non-capturing-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚫 Non-capturing group (?: )
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lookarounds-magic-without-consuming-characters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎭 LOOKAROUNDS - Magic without consuming characters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-6-real-examples-step-by-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏗️ PART 6: Real Examples Step by Step
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ PART 6: Real Examples Step by Step">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#build-an-email-validator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📧 Build an email validator:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-a-url-path-matcher-for-apiv1users123" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔗 Build a URL path matcher for /api/v1/users/123:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-7-more-practical-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌟 PART 7: More Practical Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌟 PART 7: More Practical Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-4-match-html-tags-basic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌐 Example 4: Match HTML tags (basic)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-5-match-ip-addresses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📡 Example 5: Match IP addresses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-6-match-credit-card-numbers-basic-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💳 Example 6: Match credit card numbers (basic pattern)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-7-match-hexadecimal-color-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎨 Example 7: Match hexadecimal color codes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-8-match-version-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔢 Example 8: Match version numbers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-9-match-file-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📁 Example 9: Match file paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-10-match-twitter-handles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🐦 Example 10: Match Twitter handles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-11-match-uuids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🆔 Example 11: Match UUIDs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-12-match-csv-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Example 12: Match CSV values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-13-extract-all-links-from-html" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 Example 13: Extract all links from HTML
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-8-complex-patterns-advanced-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 PART 8: Complex Patterns &amp; Advanced Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 PART 8: Complex Patterns &amp; Advanced Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-14-password-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎭 Example 14: Password Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-15-date-validation-yyyy-mm-dd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗓️ Example 15: Date Validation (YYYY-MM-DD)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-16-complex-url-parser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔗 Example 16: Complex URL Parser
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-17-arithmetic-expression-validator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧮 Example 17: Arithmetic Expression Validator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-18-extract-javascript-function-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📝 Example 18: Extract JavaScript Function Definitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-19-parse-log-file-entries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗂️ Example 19: Parse Log File Entries
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-20-game-coordinate-parser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎮 Example 20: Game Coordinate Parser
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-9-practice-problems-try-these" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎪 PART 9: Practice Problems - Try These
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎪 PART 9: Practice Problems - Try These">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problem-1-match-time-hhmm-24-hour-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🕐 Problem 1: Match time "HH:MM" (24-hour format)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-2-match-hashtags-in-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏷️ Problem 2: Match hashtags in text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-3-extract-prices-1999-or-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💰 Problem 3: Extract prices "$19.99" or "€25"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-4-find-all-words-in-quotes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗣️ Problem 4: Find all words in quotes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-5-match-mac-addresses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔌 Problem 5: Match MAC addresses
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-10-common-pitfalls-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ PART 10: Common Pitfalls &amp; Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚠️ PART 10: Common Pitfalls &amp; Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-greedy-vs-lazy-quantifiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔥 1. Greedy vs Lazy Quantifiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-escaping-special-characters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛡️ 2. Escaping Special Characters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-performance-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⏱️ 3. Performance Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-anchoring-for-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 4. Anchoring for Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-11-quick-reference-card" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 PART 11: Quick Reference Card
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-12-your-practice-routine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚀 PART 12: Your Practice Routine
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 PART 12: Your Practice Routine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#day-1-3-literals-and-basic-symbols" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📅 Day 1-3: Literals and Basic Symbols
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#day-4-7-character-classes-and-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📅 Day 4-7: Character Classes and Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#day-8-10-advanced-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📅 Day 8-10: Advanced Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#day-11-14-real-projects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📅 Day 11-14: Real Projects
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-one-sentence-to-remember" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💡 THE ONE SENTENCE TO REMEMBER:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#need-to-practice-right-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎮 Need to practice RIGHT NOW?
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster architecture, installation & configuration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster architecture, installation & configuration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/apiserver-misconfigured-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kube-apiserver Crash (Static Pod)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/apiserver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Control Plane (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/cka-kubernetes-upgrade-complete-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Kubernetes Cluster Upgrade Guide for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/etcd-backup-and-restore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    etcd Snapshot Backup and Restore (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubeadm-certificate-commands-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete kubeadm Certificate Management Command Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubeadm-cluster-init-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Cluster Initialization and Node Join Process Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubelet-misconfigured/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubelet Misconfigured
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/probing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Probes &amp; Health Endpoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/rbac-namespace-scope-with-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespacing ClusterRoles Using RoleBindings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/rbac-pipeline-serviceaccount-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes RBAC: Pipeline ServiceAccount with Cluster-Wide Read and Namespaced Deployment Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/vimsetpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal Vim Configuration for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API: Complete Master Guide 🚀
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API vs Ingress Controller: Deep Dive into Complex Logic 🧠
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/load-of-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services & networking
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services & networking
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/ingress-cli-pathType-and-class/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Ingress via kubectl CLI with Prefix Paths and IngressClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-cross-namespace-egress-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restricting Cross-Namespace Traffic Using NetworkPolicies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-egress-cross-namespace-label-based/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Egress NetworkPolicy for Label-Based Cross-Namespace Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Storage
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/affinity-with-hostPath-and-selector-on-pvc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    affinity with hostPath and selector on pvc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/cheatshett/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cheatshett
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/consumption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Consumption
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/minimal-pv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal pv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/standard-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standard sc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/usage-of-manual-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual StorageClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workload & scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workload & scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/all-possible-way-to-create-secret/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Secrets - Complete Reference Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-env-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using ConfigMaps as Environment Variables and Volumes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-selective/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configmap selective
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/daemonset-troubleshooting-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DaemonSet YAML Troubleshooting Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment-nodeName-scheduling-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment Scheduling Failure Due to Hard-Coded nodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment.strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment.strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/multi-container-port-conflict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CrashLoopBackOff Due to Port Conflict in Multi-Container Pod
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-affinity-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Pod Affinity: Advanced Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-priority-and-priorityclass-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pod Priority Using PriorityClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-1-the-absolute-basics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎪 PART 1: The Absolute Basics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎪 PART 1: The Absolute Basics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🤔 What is Regex?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-the-6-things-you-actually-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧱 PART 2: The 6 Things You Actually Need
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧱 PART 2: The 6 Things You Actually Need">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-literal-characters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1️⃣ Literal Characters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-the-dot-any-single-character" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2️⃣ The Dot . = ANY SINGLE CHARACTER
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-star-zero-or-more-of-previous-thing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3️⃣ Star * = ZERO OR MORE of previous thing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-plus-one-or-more-of-previous-thing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4️⃣ Plus + = ONE OR MORE of previous thing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-question-mark-zero-or-one-of-previous-thing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5️⃣ Question Mark ? = ZERO OR ONE of previous thing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-square-brackets-any-one-of-these-characters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6️⃣ Square Brackets [ ] = ANY ONE OF these characters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-lets-build-something-real" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏗️ PART 3: Let's Build Something Real
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ PART 3: Let&#39;s Build Something Real">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-find-dates-like-jan-15-2023" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📅 Example 1: Find dates like "Jan 15, 2023"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-find-phone-numbers-xxx-xxx-xxxx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📞 Example 2: Find phone numbers (xxx) xxx-xxxx
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-find-urls-starting-with-http-or-https" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌐 Example 3: Find URLs starting with http or https
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-special-characters-you-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 PART 4: Special Characters You Need
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 PART 4: Special Characters You Need">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#start-of-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ^ = START of line
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#end-of-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        $ = END of line
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-digit-same-as-0-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        \d = DIGIT (same as [0-9])
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#w-word-character-letter-digit-or-underscore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        \w = WORD character (letter, digit, or underscore)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#s-whitespace-space-tab-newline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        \s = WHITESPACE (space, tab, newline)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-word-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        \b = WORD BOUNDARY
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-5-capture-groups-the-magic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎪 PART 5: CAPTURE GROUPS - The Magic ( )
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎪 PART 5: CAPTURE GROUPS - The Magic ( )">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-capture-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Basic Capture Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backreferences-reuse-captured-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔄 BACKREFERENCES - Reuse captured groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-capture-groups-pname" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📝 NAMED CAPTURE GROUPS (?P&lt;name&gt;...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#non-capturing-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚫 Non-capturing group (?: )
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lookarounds-magic-without-consuming-characters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎭 LOOKAROUNDS - Magic without consuming characters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-6-real-examples-step-by-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏗️ PART 6: Real Examples Step by Step
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ PART 6: Real Examples Step by Step">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#build-an-email-validator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📧 Build an email validator:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-a-url-path-matcher-for-apiv1users123" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔗 Build a URL path matcher for /api/v1/users/123:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-7-more-practical-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌟 PART 7: More Practical Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌟 PART 7: More Practical Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-4-match-html-tags-basic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌐 Example 4: Match HTML tags (basic)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-5-match-ip-addresses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📡 Example 5: Match IP addresses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-6-match-credit-card-numbers-basic-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💳 Example 6: Match credit card numbers (basic pattern)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-7-match-hexadecimal-color-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎨 Example 7: Match hexadecimal color codes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-8-match-version-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔢 Example 8: Match version numbers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-9-match-file-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📁 Example 9: Match file paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-10-match-twitter-handles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🐦 Example 10: Match Twitter handles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-11-match-uuids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🆔 Example 11: Match UUIDs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-12-match-csv-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Example 12: Match CSV values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-13-extract-all-links-from-html" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 Example 13: Extract all links from HTML
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-8-complex-patterns-advanced-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 PART 8: Complex Patterns &amp; Advanced Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 PART 8: Complex Patterns &amp; Advanced Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-14-password-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎭 Example 14: Password Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-15-date-validation-yyyy-mm-dd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗓️ Example 15: Date Validation (YYYY-MM-DD)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-16-complex-url-parser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔗 Example 16: Complex URL Parser
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-17-arithmetic-expression-validator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧮 Example 17: Arithmetic Expression Validator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-18-extract-javascript-function-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📝 Example 18: Extract JavaScript Function Definitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-19-parse-log-file-entries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗂️ Example 19: Parse Log File Entries
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-20-game-coordinate-parser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎮 Example 20: Game Coordinate Parser
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-9-practice-problems-try-these" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎪 PART 9: Practice Problems - Try These
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎪 PART 9: Practice Problems - Try These">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problem-1-match-time-hhmm-24-hour-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🕐 Problem 1: Match time "HH:MM" (24-hour format)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-2-match-hashtags-in-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏷️ Problem 2: Match hashtags in text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-3-extract-prices-1999-or-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💰 Problem 3: Extract prices "$19.99" or "€25"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-4-find-all-words-in-quotes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗣️ Problem 4: Find all words in quotes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-5-match-mac-addresses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔌 Problem 5: Match MAC addresses
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-10-common-pitfalls-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ PART 10: Common Pitfalls &amp; Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚠️ PART 10: Common Pitfalls &amp; Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-greedy-vs-lazy-quantifiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔥 1. Greedy vs Lazy Quantifiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-escaping-special-characters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛡️ 2. Escaping Special Characters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-performance-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⏱️ 3. Performance Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-anchoring-for-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 4. Anchoring for Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-11-quick-reference-card" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 PART 11: Quick Reference Card
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-12-your-practice-routine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚀 PART 12: Your Practice Routine
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 PART 12: Your Practice Routine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#day-1-3-literals-and-basic-symbols" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📅 Day 1-3: Literals and Basic Symbols
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#day-4-7-character-classes-and-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📅 Day 4-7: Character Classes and Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#day-8-10-advanced-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📅 Day 8-10: Advanced Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#day-11-14-real-projects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📅 Day 11-14: Real Projects
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-one-sentence-to-remember" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💡 THE ONE SENTENCE TO REMEMBER:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#need-to-practice-right-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎮 Need to practice RIGHT NOW?
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="regex-from-absolute-scratch-you-will-understand-this">Regex From Absolute Scratch - You WILL Understand This 🎯</h1>
+<h2 id="part-1-the-absolute-basics">🎪 PART 1: The Absolute Basics</h2>
+<h3 id="what-is-regex">🤔 What is Regex?</h3>
+<p>It's just <strong>text pattern matching</strong>. Like CTRL+F but more powerful.</p>
+<p><div class="highlight"><pre><span></span><code>cat
+</code></pre></div>
+This matches: "cat" in "I have a <strong>cat</strong>", "concatenate", "catch"</p>
+<hr />
+<h2 id="part-2-the-6-things-you-actually-need">🧱 PART 2: The 6 Things You Actually Need</h2>
+<h3 id="1-literal-characters">1️⃣ Literal Characters</h3>
+<p>The letter <code>a</code> matches the letter <code>a</code>. That's it.</p>
+<p><div class="highlight"><pre><span></span><code>dog
+</code></pre></div>
+✅ "I have a <strong>dog</strong>"<br />
+✅ "hot<strong>dog</strong>"<br />
+✅ "<strong>dog</strong>matic"<br />
+❌ "DOG" (case sensitive by default)<br />
+❌ "d og" (needs exact letters together)</p>
+<h3 id="2-the-dot-any-single-character">2️⃣ The Dot <code>.</code> = ANY SINGLE CHARACTER</h3>
+<p><div class="highlight"><pre><span></span><code>d.g
+</code></pre></div>
+✅ "<strong>dog</strong>" (d, then o, then g)<br />
+✅ "<strong>dig</strong>" (d, then i, then g)<br />
+✅ "<strong>dug</strong>" (d, then u, then g)<br />
+❌ "dg" (needs something between d and g)<br />
+❌ "dogg" (too many characters)</p>
+<h3 id="3-star-zero-or-more-of-previous-thing">3️⃣ Star <code>*</code> = ZERO OR MORE of previous thing</h3>
+<p><div class="highlight"><pre><span></span><code>do*g
+</code></pre></div>
+✅ "<strong>dg</strong>" (zero 'o's)<br />
+✅ "<strong>dog</strong>" (one 'o')<br />
+✅ "<strong>doog</strong>" (two 'o's)<br />
+✅ "<strong>dooooog</strong>" (many 'o's)</p>
+<p><strong>💡 Common pattern: <code>.*</code> = ANYTHING (zero or more of any character)</strong>
+<div class="highlight"><pre><span></span><code>d.*g
+</code></pre></div>
+✅ "<strong>dg</strong>"<br />
+✅ "<strong>dog</strong>"<br />
+✅ "<strong>d123g</strong>"<br />
+✅ "<strong>d anything here g</strong>"</p>
+<h3 id="4-plus-one-or-more-of-previous-thing">4️⃣ Plus <code>+</code> = ONE OR MORE of previous thing</h3>
+<p><div class="highlight"><pre><span></span><code>do+g
+</code></pre></div>
+✅ "<strong>dog</strong>" (one 'o')<br />
+✅ "<strong>doog</strong>" (two 'o's)<br />
+✅ "<strong>dooooog</strong>" (many 'o's)<br />
+❌ "<strong>dg</strong>" (needs at least one 'o')</p>
+<h3 id="5-question-mark-zero-or-one-of-previous-thing">5️⃣ Question Mark <code>?</code> = ZERO OR ONE of previous thing</h3>
+<p><div class="highlight"><pre><span></span><code>dogs?
+</code></pre></div>
+✅ "<strong>dog</strong>" (zero 's')<br />
+✅ "<strong>dogs</strong>" (one 's')<br />
+❌ "<strong>dogss</strong>" (too many 's's)</p>
+<h3 id="6-square-brackets-any-one-of-these-characters">6️⃣ Square Brackets <code>[ ]</code> = ANY ONE OF these characters</h3>
+<p><div class="highlight"><pre><span></span><code>b[aeiou]t
+</code></pre></div>
+✅ "<strong>bat</strong>"<br />
+✅ "<strong>bet</strong>"<br />
+✅ "<strong>bit</strong>"<br />
+✅ "<strong>bot</strong>"<br />
+✅ "<strong>but</strong>"<br />
+❌ "<strong>bxt</strong>" (x not in the list)</p>
+<p><strong>📏 Ranges:</strong>
+<div class="highlight"><pre><span></span><code>[0-9]       # Any single digit
+[a-z]       # Any lowercase letter
+[A-Z]       # Any uppercase letter
+[a-zA-Z]    # Any letter
+[a-z0-9]    # Any lowercase letter or digit
+</code></pre></div></p>
+<p><strong>🔥 Negation in brackets <code>[^ ]</code>:</strong>
+<div class="highlight"><pre><span></span><code>[^aeiou]    # Any character EXCEPT a,e,i,o,u
+[^0-9]      # Any character EXCEPT digits
+</code></pre></div></p>
+<hr />
+<h2 id="part-3-lets-build-something-real">🏗️ PART 3: Let's Build Something Real</h2>
+<h3 id="example-1-find-dates-like-jan-15-2023">📅 Example 1: Find dates like "Jan 15, 2023"</h3>
+<p><div class="highlight"><pre><span></span><code>[A-Z][a-z][a-z] [0-9]+, [0-9][0-9][0-9][0-9]
+</code></pre></div>
+<strong>🔍 Breakdown:</strong>
+- <code>[A-Z]</code> - One uppercase letter (J)
+- <code>[a-z][a-z]</code> - Two lowercase letters (an)
+- Space
+- <code>[0-9]+</code> - One or more digits (15)
+- <code>,</code> - Comma
+- Space
+- <code>[0-9][0-9][0-9][0-9]</code> - Four digits (2023)</p>
+<p>✅ "<strong>Jan 15, 2023</strong>"<br />
+✅ "<strong>Dec 1, 1999</strong>"<br />
+❌ "Jan 15 2023" (missing comma)</p>
+<h3 id="example-2-find-phone-numbers-xxx-xxx-xxxx">📞 Example 2: Find phone numbers (xxx) xxx-xxxx</h3>
+<p><div class="highlight"><pre><span></span><code>\([0-9][0-9][0-9]\) [0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]
+</code></pre></div>
+<strong>✨ Better with <code>{n}</code> quantifier:</strong>
+<div class="highlight"><pre><span></span><code>\([0-9]{3}\) [0-9]{3}-[0-9]{4}
+</code></pre></div>
+<code>{3}</code> means "exactly 3 times"</p>
+<p>✅ "(<strong>123) 456-7890</strong>"<br />
+❌ "(12) 456-7890" (only 2 digits in area code)</p>
+<h3 id="example-3-find-urls-starting-with-http-or-https">🌐 Example 3: Find URLs starting with http or https</h3>
+<p><div class="highlight"><pre><span></span><code>https?://[a-zA-Z0-9.-]+
+</code></pre></div>
+<strong>🔍 Breakdown:</strong>
+- <code>http</code> literal
+- <code>s?</code> optional 's' (http OR https)
+- <code>://</code> literal
+- <code>[a-zA-Z0-9.-]+</code> one or more letters, digits, dots, or hyphens</p>
+<p>✅ "<strong>https://google.com</strong>"<br />
+✅ "<strong>http://example.com</strong>"<br />
+❌ "htt://example.com" (missing p)</p>
+<hr />
+<h2 id="part-4-special-characters-you-need">🎯 PART 4: Special Characters You Need</h2>
+<h3 id="start-of-line"><code>^</code> = START of line</h3>
+<p><div class="highlight"><pre><span></span><code>^Hello
+</code></pre></div>
+✅ "<strong>Hello</strong> world" (at start)<br />
+❌ "Say <strong>Hello</strong>" (not at start)</p>
+<h3 id="end-of-line"><code>$</code> = END of line</h3>
+<p><div class="highlight"><pre><span></span><code>world$
+</code></pre></div>
+✅ "Hello <strong>world</strong>" (at end)<br />
+❌ "<strong>world</strong> hello" (not at end)</p>
+<p><strong>💡 Common: <code>^...$</code> = ENTIRE line must match</strong>
+<div class="highlight"><pre><span></span><code>^[0-9]+$
+</code></pre></div>
+✅ "<strong>123</strong>" (entire line is digits)<br />
+❌ "<strong>123 abc</strong>" (has non-digits)</p>
+<h3 id="d-digit-same-as-0-9"><code>\d</code> = DIGIT (same as [0-9])</h3>
+<p><div class="highlight"><pre><span></span><code>\d\d\d-\d\d\d-\d\d\d\d
+</code></pre></div>
+Same as: <code>[0-9][0-9][0-9]-[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]</code></p>
+<h3 id="w-word-character-letter-digit-or-underscore"><code>\w</code> = WORD character (letter, digit, or underscore)</h3>
+<p><div class="highlight"><pre><span></span><code>\w+
+</code></pre></div>
+✅ "<strong>hello</strong>", "<strong>user123</strong>", "<strong>my_name</strong>"</p>
+<h3 id="s-whitespace-space-tab-newline"><code>\s</code> = WHITESPACE (space, tab, newline)</h3>
+<p><div class="highlight"><pre><span></span><code>hello\sworld
+</code></pre></div>
+✅ "<strong>hello world</strong>", "<strong>hello(tab)world</strong>"</p>
+<h3 id="b-word-boundary"><code>\b</code> = WORD BOUNDARY</h3>
+<p><div class="highlight"><pre><span></span><code>\bcat\b
+</code></pre></div>
+✅ "The <strong>cat</strong> sat"<br />
+❌ "<strong>cat</strong>alog" (cat not at word boundary)</p>
+<hr />
+<h2 id="part-5-capture-groups-the-magic">🎪 PART 5: CAPTURE GROUPS - The Magic <code>( )</code></h2>
+<h3 id="basic-capture-groups">🎯 Basic Capture Groups</h3>
+<p>Parentheses <code>( )</code> capture text for later use:</p>
+<p><div class="highlight"><pre><span></span><code>Name: (\w+)
+</code></pre></div>
+Text: "Name: John"<br />
+Captures: <code>$1 = "John"</code></p>
+<p><div class="highlight"><pre><span></span><code>(\d+)-(\d+)-(\d+)
+</code></pre></div>
+Text: "123-456-7890"<br />
+Captures: <code>$1 = "123"</code>, <code>$2 = "456"</code>, <code>$3 = "7890"</code></p>
+<h3 id="backreferences-reuse-captured-groups">🔄 BACKREFERENCES - Reuse captured groups</h3>
+<p>Use <code>\1</code>, <code>\2</code>, etc., to reference captured groups:</p>
+<p><div class="highlight"><pre><span></span><code>(\w+) \1
+</code></pre></div>
+✅ "<strong>hello hello</strong>" (same word twice)<br />
+✅ "<strong>test test</strong>"<br />
+❌ "hello world"</p>
+<p><div class="highlight"><pre><span></span><code>([&#39;&quot;])(.*?)\1
+</code></pre></div>
+✅ "<strong>'hello'</strong>" (same quote start and end)<br />
+✅ '<strong>"world"</strong>'<br />
+❌ "'hello" (quotes don't match)</p>
+<h3 id="named-capture-groups-pname">📝 NAMED CAPTURE GROUPS <code>(?P&lt;name&gt;...)</code></h3>
+<p>Give your groups names:</p>
+<p><div class="highlight"><pre><span></span><code>(?P&lt;year&gt;\d{4})-(?P&lt;month&gt;\d{2})-(?P&lt;day&gt;\d{2})
+</code></pre></div>
+Text: "2023-12-25"<br />
+Captures: <code>year=2023</code>, <code>month=12</code>, <code>day=25</code></p>
+<h3 id="non-capturing-group">🚫 Non-capturing group <code>(?: )</code></h3>
+<p>Use when you need grouping but don't want to capture:
+<div class="highlight"><pre><span></span><code>(?:Mr|Ms|Mrs)\. (\w+)
+</code></pre></div>
+Text: "Mr. Smith"<br />
+Captures: <code>$1 = "Smith"</code> (only the name, not the title)</p>
+<p><strong>💡 Why use non-capturing?</strong>
+- Faster performance
+- Cleaner backreference numbering
+- When you just need grouping for alternation</p>
+<h3 id="lookarounds-magic-without-consuming-characters">🎭 LOOKAROUNDS - Magic without consuming characters</h3>
+<p><strong>Positive Lookahead <code>(?=...)</code></strong> - Must have this AFTER, but don't include in match:
+<div class="highlight"><pre><span></span><code>\w+(?=\.com)
+</code></pre></div>
+Text: "google.com yahoo.com"<br />
+Matches: "<strong>google</strong>", "<strong>yahoo</strong>" (but not the .com)</p>
+<p><strong>Negative Lookahead <code>(?!...)</code></strong> - Must NOT have this AFTER:
+<div class="highlight"><pre><span></span><code>\w+(?!\.com)
+</code></pre></div>
+Text: "google.com example.org"<br />
+Matches: "<strong>example</strong>" (but not google)</p>
+<p><strong>Positive Lookbehind <code>(?&lt;=...)</code></strong> - Must have this BEFORE:
+<div class="highlight"><pre><span></span><code>(?&lt;=\$)\d+
+</code></pre></div>
+Text: "Price: $100 and $200"<br />
+Matches: "<strong>100</strong>", "<strong>200</strong>" (dollar sign not included)</p>
+<p><strong>Negative Lookbehind <code>(?&lt;!...)</code></strong> - Must NOT have this BEFORE:
+<div class="highlight"><pre><span></span><code>(?&lt;!\$)\d+
+</code></pre></div>
+Text: "Price $100 and weight 200"<br />
+Matches: "<strong>200</strong>" (not preceded by $)</p>
+<hr />
+<h2 id="part-6-real-examples-step-by-step">🏗️ PART 6: Real Examples Step by Step</h2>
+<h3 id="build-an-email-validator">📧 Build an email validator:</h3>
+<div class="highlight"><pre><span></span><code>Step 1: Username part
+\w+                         # One or more word characters
+
+Step 2: Add @ symbol
+\w+@                        # username@
+
+Step 3: Domain name
+\w+@\w+                     # username@domain
+
+Step 4: Add dot and extension
+\w+@\w+\.\w+               # username@domain.com
+
+Step 5: Allow dots in username
+[\w\.]+@\w+\.\w+           # first.last@domain.com
+
+Step 6: Allow hyphens in domain
+[\w\.]+@[\w-]+\.\w+        # first.last@my-domain.com
+
+Step 7: Multiple extensions (like .co.uk)
+[\w\.]+@[\w-]+(?:\.[\w-]+)+  # user@domain.co.uk
+
+Final:
+^[\w\.]+@[\w-]+(?:\.[\w-]+)+$
+</code></pre></div>
+<h3 id="build-a-url-path-matcher-for-apiv1users123">🔗 Build a URL path matcher for /api/v1/users/123:</h3>
+<div class="highlight"><pre><span></span><code>Step 1: Start with /api
+^/api
+
+Step 2: Add version /v1
+^/api/v[0-9]+
+
+Step 3: Add resource /users
+^/api/v[0-9]+/[a-z]+
+
+Step 4: Add ID /123 (optional with ?)
+^/api/v[0-9]+/[a-z]+(?:/\d+)?
+
+Step 5: Capture parts
+^/api/v([0-9]+)/([a-z]+)(?:/(\d+))?
+
+Final:
+^/api/v(\d+)/(\w+)(?:/(\d+))?$
+# Captures: version, resource, optional ID
+</code></pre></div>
+<hr />
+<h2 id="part-7-more-practical-examples">🌟 PART 7: More Practical Examples</h2>
+<h3 id="example-4-match-html-tags-basic">🌐 Example 4: Match HTML tags (basic)</h3>
+<p><div class="highlight"><pre><span></span><code>&lt;[^&gt;]+&gt;
+</code></pre></div>
+Matches: <code>&lt;div&gt;</code>, <code>&lt;span class="test"&gt;</code>, <code>&lt;/p&gt;</code></p>
+<h3 id="example-5-match-ip-addresses">📡 Example 5: Match IP addresses</h3>
+<p><div class="highlight"><pre><span></span><code>\b(?:\d{1,3}\.){3}\d{1,3}\b
+</code></pre></div>
+Matches: "192.168.1.1", "10.0.0.1"</p>
+<h3 id="example-6-match-credit-card-numbers-basic-pattern">💳 Example 6: Match credit card numbers (basic pattern)</h3>
+<p><div class="highlight"><pre><span></span><code>\d{4}[- ]?\d{4}[- ]?\d{4}[- ]?\d{4}
+</code></pre></div>
+Matches: "1234-5678-9012-3456", "1234 5678 9012 3456", "1234567890123456"</p>
+<h3 id="example-7-match-hexadecimal-color-codes">🎨 Example 7: Match hexadecimal color codes</h3>
+<p><div class="highlight"><pre><span></span><code>#(?:[0-9a-fA-F]{3}){1,2}
+</code></pre></div>
+Matches: "#fff", "#ffffff", "#abc123"</p>
+<h3 id="example-8-match-version-numbers">🔢 Example 8: Match version numbers</h3>
+<p><div class="highlight"><pre><span></span><code>v?\d+(?:\.\d+)+(?:-[a-zA-Z0-9]+)?
+</code></pre></div>
+Matches: "1.0.0", "v2.1.3", "3.14.15-beta"</p>
+<h3 id="example-9-match-file-paths">📁 Example 9: Match file paths</h3>
+<p><div class="highlight"><pre><span></span><code>(?:/[^/]+)+/[\w\-\.]+\.\w+
+</code></pre></div>
+Matches: "/home/user/file.txt", "/var/log/app.log", "/path/to/my-file_v1.2.pdf"</p>
+<h3 id="example-10-match-twitter-handles">🐦 Example 10: Match Twitter handles</h3>
+<p><div class="highlight"><pre><span></span><code>@\w{1,15}
+</code></pre></div>
+Matches: "@username", "@john_doe123"</p>
+<h3 id="example-11-match-uuids">🆔 Example 11: Match UUIDs</h3>
+<p><div class="highlight"><pre><span></span><code>[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}
+</code></pre></div>
+Matches: "550e8400-e29b-41d4-a716-446655440000"</p>
+<h3 id="example-12-match-csv-values">📊 Example 12: Match CSV values</h3>
+<p><div class="highlight"><pre><span></span><code>&quot;[^&quot;]*&quot;|[^,]+
+</code></pre></div>
+Text: 'John,"Doe, Jr.",30,"New York, NY"'<br />
+Matches: "John", '"Doe, Jr."', "30", '"New York, NY"'</p>
+<h3 id="example-13-extract-all-links-from-html">🔍 Example 13: Extract all links from HTML</h3>
+<p><div class="highlight"><pre><span></span><code>&lt;a\s+(?:[^&gt;]*?\s+)?href=&quot;([^&quot;]*)&quot;[^&gt;]*&gt;
+</code></pre></div>
+Extracts URLs from <code>&lt;a href="..."&gt;</code> tags</p>
+<hr />
+<h2 id="part-8-complex-patterns-advanced-examples">🎯 PART 8: Complex Patterns &amp; Advanced Examples</h2>
+<h3 id="example-14-password-validation">🎭 Example 14: Password Validation</h3>
+<p><div class="highlight"><pre><span></span><code>^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&amp;])[A-Za-z\d@$!%*?&amp;]{8,}$
+</code></pre></div>
+<strong>🔍 Breakdown:</strong>
+- <code>^</code> start
+- <code>(?=.*[A-Z])</code> at least one uppercase (lookahead)
+- <code>(?=.*[a-z])</code> at least one lowercase
+- <code>(?=.*\d)</code> at least one digit
+- <code>(?=.*[@$!%*?&amp;])</code> at least one special char
+- <code>[A-Za-z\d@$!%*?&amp;]{8,}</code> 8+ chars from allowed set
+- <code>$</code> end</p>
+<h3 id="example-15-date-validation-yyyy-mm-dd">🗓️ Example 15: Date Validation (YYYY-MM-DD)</h3>
+<p><div class="highlight"><pre><span></span><code>^(?:(?:19|20)\d\d)-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$
+</code></pre></div>
+<strong>🔍 Breakdown:</strong>
+- <code>(?:19|20)\d\d</code> years 1900-2099
+- <code>(?:0[1-9]|1[0-2])</code> months 01-12
+- <code>(?:0[1-9]|[12][0-9]|3[01])</code> days 01-31</p>
+<h3 id="example-16-complex-url-parser">🔗 Example 16: Complex URL Parser</h3>
+<p><div class="highlight"><pre><span></span><code>^((https?|ftp):\/\/)?([\w\-]+\.)+[\w\-]+(:\d+)?(\/[\w\-\.\/?#&amp;%=]*)?$
+</code></pre></div>
+<strong>🔍 Breakdown:</strong>
+- <code>((https?|ftp):\/\/)?</code> optional protocol
+- <code>([\w\-]+\.)+[\w\-]+</code> domain
+- <code>(:\d+)?</code> optional port
+- <code>(\/[\w\-\.\/?#&amp;%=]*)?</code> optional path</p>
+<h3 id="example-17-arithmetic-expression-validator">🧮 Example 17: Arithmetic Expression Validator</h3>
+<p><div class="highlight"><pre><span></span><code>^\s*(\d+(?:\.\d+)?)\s*([+\-*/])\s*(\d+(?:\.\d+)?)\s*$
+</code></pre></div>
+Matches: "5 + 3", "10.5 * 2.3", "100 / 25"</p>
+<h3 id="example-18-extract-javascript-function-definitions">📝 Example 18: Extract JavaScript Function Definitions</h3>
+<p><div class="highlight"><pre><span></span><code>function\s+(\w+)\s*\(([^)]*)\)\s*{
+</code></pre></div>
+Matches: <code>function myFunc(arg1, arg2) {</code></p>
+<h3 id="example-19-parse-log-file-entries">🗂️ Example 19: Parse Log File Entries</h3>
+<p><div class="highlight"><pre><span></span><code>^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s+(\w+)\s+\[(\w+)\]\s+(.*)$
+</code></pre></div>
+Parses: <code>2023-12-25 10:30:00 INFO [Main] User logged in</code></p>
+<h3 id="example-20-game-coordinate-parser">🎮 Example 20: Game Coordinate Parser</h3>
+<p><div class="highlight"><pre><span></span><code>\((-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)\)
+</code></pre></div>
+Matches: <code>(10.5, -20.3, 5.0)</code></p>
+<hr />
+<h2 id="part-9-practice-problems-try-these">🎪 PART 9: Practice Problems - Try These</h2>
+<h3 id="problem-1-match-time-hhmm-24-hour-format">🕐 Problem 1: Match time "HH:MM" (24-hour format)</h3>
+<div class="highlight"><pre><span></span><code>Your answer: ________
+
+Should match: &quot;14:30&quot;, &quot;09:45&quot;, &quot;23:59&quot;
+Should NOT match: &quot;24:00&quot;, &quot;14:60&quot;, &quot;abc&quot;
+</code></pre></div>
+<p><strong>✅ Solution:</strong>
+<div class="highlight"><pre><span></span><code>^(?:[01][0-9]|2[0-3]):[0-5][0-9]$
+</code></pre></div>
+<strong>🔍 Breakdown:</strong>
+- <code>^</code> start
+- <code>(?:[01][0-9]|2[0-3])</code> hours: 00-19 OR 20-23
+- <code>:</code> literal colon
+- <code>[0-5][0-9]</code> minutes: 00-59
+- <code>$</code> end</p>
+<h3 id="problem-2-match-hashtags-in-text">🏷️ Problem 2: Match hashtags in text</h3>
+<p>Text: "I love #coding and #regex101"
+Should match: "#coding", "#regex101"</p>
+<p><strong>✅ Solution:</strong>
+<div class="highlight"><pre><span></span><code>#\w+
+</code></pre></div></p>
+<h3 id="problem-3-extract-prices-1999-or-25">💰 Problem 3: Extract prices "$19.99" or "€25"</h3>
+<p><div class="highlight"><pre><span></span><code>[$€]?\d+(?:\.\d{2})?
+</code></pre></div>
+<strong>🔍 Breakdown:</strong>
+- <code>[$€]?</code> optional $ or €
+- <code>\d+</code> one or more digits
+- <code>(?:\.\d{2})?</code> optional . followed by exactly 2 digits</p>
+<h3 id="problem-4-find-all-words-in-quotes">🗣️ Problem 4: Find all words in quotes</h3>
+<p>Text: 'Hello' and "World" and <code>Code</code>
+Should match: "Hello", "World", "Code"</p>
+<p><strong>✅ Solution:</strong>
+<div class="highlight"><pre><span></span><code>[&#39;&quot;`]([^&#39;&quot;`]+)[&#39;&quot;`]
+</code></pre></div></p>
+<h3 id="problem-5-match-mac-addresses">🔌 Problem 5: Match MAC addresses</h3>
+<p><div class="highlight"><pre><span></span><code>(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}
+</code></pre></div>
+Matches: "00:1A:2B:3C:4D:5E", "00-1A-2B-3C-4D-5E"</p>
+<hr />
+<h2 id="part-10-common-pitfalls-fixes">⚠️ PART 10: Common Pitfalls &amp; Fixes</h2>
+<h3 id="1-greedy-vs-lazy-quantifiers">🔥 1. Greedy vs Lazy Quantifiers</h3>
+<p>By default: <code>.*</code> is GREEDY (takes as much as possible)
+<div class="highlight"><pre><span></span><code>&lt;.*&gt;
+</code></pre></div>
+Text: "<div>hello</div><p>world</p>"<br />
+Matches: "<strong><div>hello</div><p>world</p></strong>" (the WHOLE thing!)</p>
+<p><strong>✅ Fix: Use <code>.*?</code> for LAZY (takes as little as possible)</strong>
+<div class="highlight"><pre><span></span><code>&lt;.*?&gt;
+</code></pre></div>
+Matches: "<strong><div></strong>" and "<strong></div></strong>" and "<strong><p></strong>" and "<strong></p></strong>" separately</p>
+<h3 id="2-escaping-special-characters">🛡️ 2. Escaping Special Characters</h3>
+<p>If you want to match literal <code>.</code> or <code>*</code> or <code>?</code>, escape with <code>\</code>
+<div class="highlight"><pre><span></span><code>File: report\.pdf
+</code></pre></div>
+Matches "<strong>report.pdf</strong>" not "<strong>reportapdf</strong>"</p>
+<h3 id="3-performance-issues">⏱️ 3. Performance Issues</h3>
+<p><strong>❌ Bad (catastrophic backtracking):</strong>
+<div class="highlight"><pre><span></span><code>(.*)*=(.*)*
+</code></pre></div>
+<strong>✅ Good (efficient):</strong>
+<div class="highlight"><pre><span></span><code>[^=]*=[^=]*
+</code></pre></div></p>
+<h3 id="4-anchoring-for-validation">🎯 4. Anchoring for Validation</h3>
+<p><strong>❌ Bad (might match partial string):</strong>
+<div class="highlight"><pre><span></span><code>\d{3}-\d{3}-\d{4}
+</code></pre></div>
+Could match: "abc123-456-7890def"</p>
+<p><strong>✅ Good (full string validation):</strong>
+<div class="highlight"><pre><span></span><code>^\d{3}-\d{3}-\d{4}$
+</code></pre></div></p>
+<hr />
+<h2 id="part-11-quick-reference-card">📊 PART 11: Quick Reference Card</h2>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Means</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.</code></td>
+<td>Any single character</td>
+<td><code>d.g</code> → dog, dig, dug</td>
+</tr>
+<tr>
+<td><code>*</code></td>
+<td>Zero or more</td>
+<td><code>do*g</code> → dg, dog, doog</td>
+</tr>
+<tr>
+<td><code>+</code></td>
+<td>One or more</td>
+<td><code>do+g</code> → dog, doog</td>
+</tr>
+<tr>
+<td><code>?</code></td>
+<td>Zero or one</td>
+<td><code>dogs?</code> → dog, dogs</td>
+</tr>
+<tr>
+<td><code>{n}</code></td>
+<td>Exactly n times</td>
+<td><code>\d{3}</code> → 123</td>
+</tr>
+<tr>
+<td><code>{n,}</code></td>
+<td>n or more times</td>
+<td><code>\d{3,}</code> → 123, 1234</td>
+</tr>
+<tr>
+<td><code>{n,m}</code></td>
+<td>n to m times</td>
+<td><code>\d{2,4}</code> → 12, 123, 1234</td>
+</tr>
+<tr>
+<td><code>[abc]</code></td>
+<td>Any of a,b,c</td>
+<td><code>[aeiou]</code> → a,e,i,o,u</td>
+</tr>
+<tr>
+<td><code>[^abc]</code></td>
+<td>Not a,b,c</td>
+<td><code>[^aeiou]</code> → b,c,d,f</td>
+</tr>
+<tr>
+<td><code>[a-z]</code></td>
+<td>Any lowercase</td>
+<td><code>[a-z]</code> → a,b,c...z</td>
+</tr>
+<tr>
+<td><code>\d</code></td>
+<td>Digit</td>
+<td><code>\d</code> → 0-9</td>
+</tr>
+<tr>
+<td><code>\D</code></td>
+<td>Not digit</td>
+<td><code>\D</code> → a,b,c,...</td>
+</tr>
+<tr>
+<td><code>\w</code></td>
+<td>Word char</td>
+<td><code>\w</code> → a-z,A-Z,0-9,_</td>
+</tr>
+<tr>
+<td><code>\W</code></td>
+<td>Not word char</td>
+<td><code>\W</code> → !,@,#,$</td>
+</tr>
+<tr>
+<td><code>\s</code></td>
+<td>Whitespace</td>
+<td><code>\s</code> → space, tab</td>
+</tr>
+<tr>
+<td><code>\S</code></td>
+<td>Not whitespace</td>
+<td><code>\S</code> → a,b,1,2</td>
+</tr>
+<tr>
+<td><code>\b</code></td>
+<td>Word boundary</td>
+<td><code>\bcat\b</code> → matches "cat"</td>
+</tr>
+<tr>
+<td><code>\B</code></td>
+<td>Not word boundary</td>
+<td><code>\Bcat\B</code> → matches "scatter"</td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td>Start of line</td>
+<td><code>^Hello</code> → Hello at start</td>
+</tr>
+<tr>
+<td><code>$</code></td>
+<td>End of line</td>
+<td><code>end$</code> → end at end</td>
+</tr>
+<tr>
+<td><code>( )</code></td>
+<td>Capture group</td>
+<td><code>(\d+)</code> → captures 123</td>
+</tr>
+<tr>
+<td><code>(?: )</code></td>
+<td>Non-capture group</td>
+<td><code>(?:\d+)</code> → groups but no capture</td>
+</tr>
+<tr>
+<td><code>(?= )</code></td>
+<td>Positive lookahead</td>
+<td><code>\d(?=px)</code> → digit before px</td>
+</tr>
+<tr>
+<td><code>(?! )</code></td>
+<td>Negative lookahead</td>
+<td><code>\d(?!px)</code> → digit not before px</td>
+</tr>
+<tr>
+<td><code>(?&lt;= )</code></td>
+<td>Positive lookbehind</td>
+<td><code>(?&lt;=\$)\d</code> → digit after $</td>
+</tr>
+<tr>
+<td><code>(?&lt;! )</code></td>
+<td>Negative lookbehind</td>
+<td><code>(?&lt;!\$)\d</code> → digit not after $</td>
+</tr>
+<tr>
+<td><code>\|</code></td>
+<td>OR</td>
+<td><code>cat|dog</code> → cat OR dog</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-12-your-practice-routine">🚀 PART 12: Your Practice Routine</h2>
+<h3 id="day-1-3-literals-and-basic-symbols">📅 Day 1-3: Literals and Basic Symbols</h3>
+<p>Practice with:
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;The cat sat on the mat&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;cat&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;dog dig dug&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;d.g&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;dg dog doog doooog&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;do*g&quot;</span>
+</code></pre></div></p>
+<h3 id="day-4-7-character-classes-and-groups">📅 Day 4-7: Character Classes and Groups</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Find phone numbers</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Call 123-456-7890 or 555-1234&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;[0-9]{3}-[0-9]{3}-[0-9]{4}&quot;</span>
+
+<span class="c1"># Find email addresses</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Email me at test@example.com or admin@site.org&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;\w+@\w+\.\w+&quot;</span>
+
+<span class="c1"># Extract dates</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Dates: 2023-12-25, 1999-01-01, 2024-02-30&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;\d{4}-\d{2}-\d{2}&quot;</span>
+</code></pre></div>
+<h3 id="day-8-10-advanced-patterns">📅 Day 8-10: Advanced Patterns</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Validate passwords</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Pass: Abc123! Test456? Weak pass&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#</span>$<span class="s2">%^&amp;*]).{8,}&quot;</span>
+
+<span class="c1"># Parse log files</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;2023-12-25 10:30:00 ERROR [Auth] Login failed&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s+(\w+)\s+\[(\w+)\]\s+(.*)</span>$<span class="s2">&quot;</span>
+</code></pre></div>
+<h3 id="day-11-14-real-projects">📅 Day 11-14: Real Projects</h3>
+<ol>
+<li>Extract all links from HTML</li>
+<li>Validate form inputs (email, phone, password)</li>
+<li>Parse log files</li>
+<li>Search and replace in code</li>
+<li>Data cleaning and transformation</li>
+</ol>
+<hr />
+<h2 id="the-one-sentence-to-remember">💡 THE ONE SENTENCE TO REMEMBER:</h2>
+<p><strong>"Regex is just patterns: <code>.</code> means any character, <code>*</code> means repeat, <code>[ ]</code> means choose, <code>( )</code> means group, and <code>^$</code> anchor the ends."</strong></p>
+<hr />
+<h2 id="need-to-practice-right-now">🎮 Need to practice RIGHT NOW?</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Quick test environment</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>test.txt<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">Hello world</span>
+<span class="s">test@example.com</span>
+<span class="s">Phone: 123-456-7890</span>
+<span class="s">Date: 2023-12-25</span>
+<span class="s">#hashtag1 #hashtag2</span>
+<span class="s">Password: Abc123!</span>
+<span class="s">Log: 2023-12-25 10:30:00 INFO [Main] Started</span>
+<span class="s">Coordinates: (10.5, 20.3, 5.0)</span>
+<span class="s">EOF</span>
+
+<span class="c1"># Try these:</span>
+grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;#\w+&quot;</span><span class="w"> </span>test.txt<span class="w">           </span><span class="c1"># Find hashtags</span>
+grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;\d{3}-\d{3}-\d{4}&quot;</span><span class="w"> </span>test.txt<span class="w"> </span><span class="c1"># Find phone numbers</span>
+grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;\w+@\w+\.\w+&quot;</span><span class="w"> </span>test.txt<span class="w">   </span><span class="c1"># Find emails</span>
+grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;^[\w\.]+@[\w-]+(?:\.[\w-]+)+</span>$<span class="s2">&quot;</span><span class="w"> </span>test.txt<span class="w"> </span><span class="c1"># Validate email format</span>
+grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;\([^)]+\)&quot;</span><span class="w"> </span>test.txt<span class="w">      </span><span class="c1"># Find things in parentheses</span>
+</code></pre></div>
+<p><strong>🎯 Start with simple patterns. Get them working. Then add complexity. You'll be a regex expert in 10 days!</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "content.code.copy", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>
