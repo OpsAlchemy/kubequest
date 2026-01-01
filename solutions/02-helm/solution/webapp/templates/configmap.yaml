@@ -1,0 +1,17 @@
+{{- if .Values.enabled }}
+{{- range $cmName, $cmData := .Values.configMaps }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "webapp.fullname" $ }}-{{ $cmName }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "webapp.labels" $ | nindent 4 }}
+    config-type: {{ $cmName }}
+data:
+  {{- range $key, $value := $cmData.data }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
+{{- end }}

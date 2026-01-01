@@ -1,3 +1,0 @@
-{{- if not .Values.disableDefaultAppDeployment }}
-{{- include "common.hpa" . }}
-{{- end }}

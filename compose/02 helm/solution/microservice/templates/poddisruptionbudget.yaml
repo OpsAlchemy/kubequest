@@ -1,5 +1,0 @@
-{{- if .Values.podDisruptionBudget }}
-{{- if .Values.podDisruptionBudget.enabled }}
-{{- include "common.poddisruptionbudget" . }}
-{{- end }}
-{{- end }}

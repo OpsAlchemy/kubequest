@@ -1,0 +1,77 @@
+appName: webapp
+enabled: true
+
+replicaCount: 2
+image: busybox:latest
+imagePullPolicy: IfNotPresent
+
+containerPort: 8080
+servicePort: 8080
+serviceType: ClusterIP
+
+command:
+  - /bin/sh
+  - -c
+  - echo "App Started on port 8080" && sleep 3600
+
+nameOverride: ""
+fullnameOverride: ""
+
+configMaps:
+  app-config:
+    data:
+      LOG_LEVEL: "INFO"
+      APP_VERSION: "0.1.0"
+      ENVIRONMENT: "dev"
+
+  app-settings:
+    data:
+      MAX_CONNECTIONS: "100"
+      TIMEOUT: "30"
+
+envFromConfigMaps:
+  - name: app-config
+  - name: app-settings
+
+env:
+  - name: POD_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  - name: POD_NAMESPACE
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.namespace
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+rbac:
+  create: true
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotation:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: webapp.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: webapp-tls
+      hosts:
+        - webapp.example.com
+
+persistance:
+  enabled: false
+  storageClassName: ""
+  size: 1Gi
+  mountPath: /data
+
+monitoring:
+  enabled: false
+  scrapeInterval: 30s
