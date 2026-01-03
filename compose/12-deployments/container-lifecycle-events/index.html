@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Vikash Kumar">
+    <link rel="canonical" href="https://opsalchemy.github.io/kubequest/compose/12-deployments/container-lifecycle-events/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Container Lifecycle Events - CKA Exam Mastery</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <link href="../../stylesheets/extra.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Container Lifecycle Events", url: "#_top", children: [
+              {title: "Container States", url: "#container-states" },
+              {title: "Lifecycle Hooks (Related)", url: "#lifecycle-hooks-related" },
+              {title: "Monitoring Container Lifecycle", url: "#monitoring-container-lifecycle" },
+              {title: "Exit Codes and Signals", url: "#exit-codes-and-signals" },
+              {title: "Example: Tracking Lifecycle", url: "#example-tracking-lifecycle" },
+              {title: "Restarting Container vs Pod", url: "#restarting-container-vs-pod" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="../../javascripts/extra.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../daemonsets/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../daemonsets/" class="btn btn-xs btn-link">
+        DaemonSet
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../../11-coredns/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../../11-coredns/" class="btn btn-xs btn-link">
+        Index
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="container-lifecycle-events">Container Lifecycle Events</h1>
+<p>Container lifecycle events track the state transitions of a container from creation to termination.</p>
+<h2 id="container-states">Container States</h2>
+<h3 id="waiting">Waiting</h3>
+<p>Container is not yet running. Reasons include:
+- <strong>PullBackOff</strong> - Failed to pull image
+- <strong>CrashLoopBackOff</strong> - Container keeps crashing
+- <strong>CreateContainerConfigError</strong> - Invalid config
+- <strong>ImagePullBackOff</strong> - Can't access image registry</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>&lt;pod-name&gt;
+<span class="c1"># Shows: State: Waiting, Reason: ImagePullBackOff</span>
+</code></pre></div>
+<h3 id="running">Running</h3>
+<p>Container is executing and healthy.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">State</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">Running</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">Started</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-01-03T11:00:00Z</span>
+</code></pre></div>
+<h3 id="terminated">Terminated</h3>
+<p>Container has finished execution. Can be due to:
+- Successful exit (exit code 0)
+- Failure (non-zero exit code)
+- Signal (SIGKILL, SIGTERM)
+- Resource limit exceeded</p>
+<div class="highlight"><pre><span></span><code><span class="nt">State</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">Terminated</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">Exit Code</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">137</span><span class="w">  </span><span class="c1"># SIGKILL</span>
+<span class="w">  </span><span class="nt">Reason</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OOMKilled</span>
+<span class="w">  </span><span class="nt">Message</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Out of memory</span>
+</code></pre></div>
+<h2 id="lifecycle-hooks-related">Lifecycle Hooks (Related)</h2>
+<h3 id="poststart">postStart</h3>
+<p>Runs right after container starts (not guaranteed before ENTRYPOINT).</p>
+<div class="highlight"><pre><span></span><code><span class="nt">lifecycle</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">postStart</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;echo</span><span class="nv"> </span><span class="s">&#39;Started&#39;&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<h3 id="prestop">preStop</h3>
+<p>Runs before container is terminated.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">lifecycle</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">preStop</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;sleep</span><span class="nv"> </span><span class="s">15&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<h2 id="monitoring-container-lifecycle">Monitoring Container Lifecycle</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># View detailed container state</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>&lt;pod-name&gt;
+
+<span class="c1"># Watch state transitions in real-time</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-w
+
+<span class="c1"># Check container logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>&lt;container-name&gt;
+
+<span class="c1"># View previous logs (if container restarted)</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>&lt;container-name&gt;<span class="w"> </span>--previous
+</code></pre></div>
+<h2 id="exit-codes-and-signals">Exit Codes and Signals</h2>
+<table>
+<thead>
+<tr>
+<th>Exit Code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Success</td>
+</tr>
+<tr>
+<td>1-127</td>
+<td>Application error</td>
+</tr>
+<tr>
+<td>128+N</td>
+<td>Killed by signal N</td>
+</tr>
+<tr>
+<td>137</td>
+<td>SIGKILL (OOMKilled)</td>
+</tr>
+<tr>
+<td>143</td>
+<td>SIGTERM (Graceful shutdown)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="example-tracking-lifecycle">Example: Tracking Lifecycle</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Pod starts</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods
+<span class="c1"># NAME              READY   STATUS</span>
+<span class="c1"># myapp-abc123      0/1     Pending</span>
+
+<span class="c1"># Container is pulling image</span>
+<span class="c1"># STATUS: PullImage</span>
+
+<span class="c1"># Container is running</span>
+<span class="c1"># READY: 1/1, STATUS: Running</span>
+
+<span class="c1"># Container crashes</span>
+<span class="c1"># READY: 0/1, STATUS: CrashLoopBackOff</span>
+<span class="c1"># Check logs: kubectl logs &lt;pod-name&gt;</span>
+</code></pre></div>
+<h2 id="restarting-container-vs-pod">Restarting Container vs Pod</h2>
+<ul>
+<li><strong>Container restart</strong> - Only the container restarts, increment restart count</li>
+<li><strong>Pod restart</strong> - Entire Pod is terminated and recreated</li>
+</ul>
+<p>Container restarts (controlled by RestartPolicy) are less disruptive than Pod restarts.</p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../daemonsets/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../daemonsets/" class="btn btn-xs btn-link">
+        DaemonSet
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../../11-coredns/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../../11-coredns/" class="btn btn-xs btn-link">
+        Index
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>

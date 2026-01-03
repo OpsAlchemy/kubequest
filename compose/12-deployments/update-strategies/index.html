@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Vikash Kumar">
+    <link rel="canonical" href="https://opsalchemy.github.io/kubequest/compose/12-deployments/update-strategies/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Update Strategies - CKA Exam Mastery</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <link href="../../stylesheets/extra.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Update Strategies", url: "#_top", children: [
+              {title: "RollingUpdate (Default)", url: "#rollingupdate-default" },
+              {title: "Recreate", url: "#recreate" },
+              {title: "Update Strategy Selection", url: "#update-strategy-selection" },
+              {title: "Blue-Green Deployment Pattern", url: "#blue-green-deployment-pattern" },
+              {title: "Canary Deployment Pattern", url: "#canary-deployment-pattern" },
+              {title: "Monitoring Updates", url: "#monitoring-updates" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="../../javascripts/extra.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../probing/probing-psotgres/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../probing/probing-psotgres/" class="btn btn-xs btn-link">
+        Probing psotgres
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../termination-grace-period/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../termination-grace-period/" class="btn btn-xs btn-link">
+        Termination Grace Period
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="update-strategies">Update Strategies</h1>
+<p>Update strategies define how Pods are updated when a Deployment changes (e.g., new image version).</p>
+<h2 id="rollingupdate-default">RollingUpdate (Default)</h2>
+<p>Gradually replaces old Pods with new ones to maintain availability.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">strategy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RollingUpdate</span>
+<span class="w">    </span><span class="nt">rollingUpdate</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">maxSurge</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">maxUnavailable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+</code></pre></div>
+<h3 id="parameters">Parameters</h3>
+<p><strong>maxSurge</strong>
+- Maximum number of Pods above the desired replica count
+- Default: 1
+- Allows creating additional Pods during update for testing</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Desired: 3 Pods</span>
+<span class="c1"># maxSurge: 2</span>
+<span class="c1"># During update: up to 5 Pods running temporarily</span>
+<span class="nt">maxSurge</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+</code></pre></div>
+<p><strong>maxUnavailable</strong>
+- Maximum number of Pods that can be unavailable
+- Default: 1
+- Higher value = faster update, lower availability
+- Set to 0 for zero-downtime deployments</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Zero-downtime update</span>
+<span class="nt">maxUnavailable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="nt">maxSurge</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</code></pre></div>
+<h2 id="recreate">Recreate</h2>
+<p>Terminates all old Pods before starting new ones. Causes downtime.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">strategy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Recreate</span>
+</code></pre></div>
+<p><strong>Use Case:</strong> Development/testing environments where downtime is acceptable.</p>
+<p><strong>Behavior:</strong>
+1. All existing Pods are terminated
+2. All new Pods are created
+3. Brief service unavailability</p>
+<h2 id="update-strategy-selection">Update Strategy Selection</h2>
+<h3 id="rollingupdate-production">RollingUpdate - Production</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">strategy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RollingUpdate</span>
+<span class="w">    </span><span class="nt">rollingUpdate</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">maxSurge</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">maxUnavailable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+</code></pre></div>
+<p>Ensures at least 3 Pods always available.</p>
+<h3 id="recreate-development">Recreate - Development</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">strategy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Recreate</span>
+</code></pre></div>
+<p>Simple and fast for non-critical environments.</p>
+<h3 id="aggressive-rollingupdate-fast-updates">Aggressive RollingUpdate - Fast Updates</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">  </span><span class="nt">strategy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RollingUpdate</span>
+<span class="w">    </span><span class="nt">rollingUpdate</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">maxSurge</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">      </span><span class="nt">maxUnavailable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</code></pre></div>
+<p>Balances speed and availability.</p>
+<h2 id="blue-green-deployment-pattern">Blue-Green Deployment Pattern</h2>
+<p>Not a built-in strategy, but achievable with manual Deployment management:</p>
+<ol>
+<li>Create "blue" Deployment with current version</li>
+<li>Create "green" Deployment with new version</li>
+<li>Switch Service selector from blue to green</li>
+<li>Delete old blue Deployment</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># Blue Deployment</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapp-blue</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blue</span>
+<span class="nn">---</span>
+<span class="c1"># Service routes to current version</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapp</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blue</span><span class="w">  </span><span class="c1"># Points to blue or green</span>
+</code></pre></div>
+<h2 id="canary-deployment-pattern">Canary Deployment Pattern</h2>
+<p>Gradually roll out new version to small percentage of users:</p>
+<ol>
+<li>Keep most replicas on old version</li>
+<li>Add few replicas with new version</li>
+<li>Monitor metrics</li>
+<li>Gradually increase new version replicas</li>
+<li>Remove old version</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># Initial: 9 old Pods, 1 new Pod</span>
+<span class="c1"># Monitor: Check metrics on new Pod</span>
+<span class="c1"># 9 old, 2 new → 8 old, 3 new → ... until fully updated</span>
+</code></pre></div>
+<h2 id="monitoring-updates">Monitoring Updates</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Watch update progress</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment<span class="w"> </span>&lt;deployment-name&gt;
+
+<span class="c1"># View update history</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span><span class="nb">history</span><span class="w"> </span>deployment<span class="w"> </span>&lt;deployment-name&gt;
+
+<span class="c1"># Rollback to previous version</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>undo<span class="w"> </span>deployment<span class="w"> </span>&lt;deployment-name&gt;
+</code></pre></div>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../probing/probing-psotgres/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../probing/probing-psotgres/" class="btn btn-xs btn-link">
+        Probing psotgres
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../termination-grace-period/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../termination-grace-period/" class="btn btn-xs btn-link">
+        Termination Grace Period
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>

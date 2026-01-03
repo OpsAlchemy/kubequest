@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Vikash Kumar">
+    <link rel="canonical" href="https://opsalchemy.github.io/kubequest/compose/12-deployments/termination-grace-period/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Termination Grace Period - CKA Exam Mastery</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <link href="../../stylesheets/extra.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Termination Grace Period", url: "#_top", children: [
+              {title: "Default Value", url: "#default-value" },
+              {title: "How It Works", url: "#how-it-works" },
+              {title: "Setting Termination Grace Period", url: "#setting-termination-grace-period" },
+              {title: "Typical Use Cases", url: "#typical-use-cases" },
+              {title: "Best Practices", url: "#best-practices" },
+              {title: "Example: Web Server with Graceful Shutdown", url: "#example-web-server-with-graceful-shutdown" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="../../javascripts/extra.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../update-strategies/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../update-strategies/" class="btn btn-xs btn-link">
+        Update Strategies
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../restart-policies/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../restart-policies/" class="btn btn-xs btn-link">
+        Restart Policies
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="termination-grace-period">Termination Grace Period</h1>
+<p>The amount of time Kubernetes waits for a container to gracefully shut down before forcefully terminating it.</p>
+<h2 id="default-value">Default Value</h2>
+<p>30 seconds</p>
+<h2 id="how-it-works">How It Works</h2>
+<ol>
+<li>Pod receives SIGTERM signal</li>
+<li>Container has <code>terminationGracePeriodSeconds</code> to shut down gracefully</li>
+<li>If container doesn't exit, SIGKILL is sent to force termination</li>
+<li>Pod is removed</li>
+</ol>
+<h2 id="setting-termination-grace-period">Setting Termination Grace Period</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">terminationGracePeriodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapp:1.0</span>
+</code></pre></div>
+<h2 id="typical-use-cases">Typical Use Cases</h2>
+<h3 id="web-application">Web Application</h3>
+<p>Need time to drain connection pools and close active requests.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">terminationGracePeriodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+</code></pre></div>
+<h3 id="database">Database</h3>
+<p>Needs time to flush writes and close gracefully.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">terminationGracePeriodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">120</span>
+</code></pre></div>
+<h3 id="long-running-job">Long-Running Job</h3>
+<p>Needs significant time to save state.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">terminationGracePeriodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+</code></pre></div>
+<h2 id="best-practices">Best Practices</h2>
+<ol>
+<li><strong>Combine with preStop hook</strong> - preStop should complete before grace period expires</li>
+<li><strong>Match with app shutdown time</strong> - set grace period longer than app's shutdown time</li>
+<li><strong>Default 30s is usually sufficient</strong> - increase only if needed</li>
+<li><strong>Monitor actual shutdown times</strong> - adjust based on real behavior</li>
+</ol>
+<h2 id="example-web-server-with-graceful-shutdown">Example: Web Server with Graceful Shutdown</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-server</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">terminationGracePeriodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">45</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:latest</span>
+<span class="w">    </span><span class="nt">lifecycle</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">preStop</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">exec</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;nginx</span><span class="nv"> </span><span class="s">-s</span><span class="nv"> </span><span class="s">quit;</span><span class="nv"> </span><span class="s">while</span><span class="nv"> </span><span class="s">killall</span><span class="nv"> </span><span class="s">-0</span><span class="nv"> </span><span class="s">nginx</span><span class="nv"> </span><span class="s">2&gt;/dev/null;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">1;</span><span class="nv"> </span><span class="s">done&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Always</span>
+</code></pre></div>
+<p>This gives nginx up to 45 seconds to gracefully shut down before being killed.</p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../update-strategies/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../update-strategies/" class="btn btn-xs btn-link">
+        Update Strategies
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../restart-policies/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../restart-policies/" class="btn btn-xs btn-link">
+        Restart Policies
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>

@@ -11,7 +11,7 @@
     <link rel="canonical" href="https://opsalchemy.github.io/kubequest/compose/01-autoscaling/question/">
     <link rel="shortcut icon" href="../../img/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <title>HPA &amp; VPA Practice Questions - CKA Exam Mastery</title>
+    <title>Autoscaling Practice - CKA Exam Mastery</title>
     <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
     <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
     <link href="../../css/base.css" rel="stylesheet">
@@ -33,18 +33,13 @@
       var is_top_frame = false;
         
         var pageToc = [
-          {title: "HPA \u0026amp; VPA Practice Questions", url: "#_top", children: [
-              {title: "\ud83d\udd25 HPA PRACTICE QUESTIONS", url: "#hpa-practice-questions" },
-              {title: "Question 1: Memory-based HPA", url: "#question-1-memory-based-hpa" },
-              {title: "Question 2: CPU-based HPA", url: "#question-2-cpu-based-hpa" },
-              {title: "Question 3: Multi-Metric HPA (CPU OR Memory)", url: "#question-3-multi-metric-hpa-cpu-or-memory" },
-              {title: "\ud83d\ude80 VPA PRACTICE QUESTIONS", url: "#vpa-practice-questions" },
-              {title: "Question 4: VPA Initial Mode", url: "#question-4-vpa-initial-mode" },
-              {title: "Question 5: VPA Auto Mode", url: "#question-5-vpa-auto-mode" },
-              {title: "Question 6: VPA Off Mode", url: "#question-6-vpa-off-mode" },
-              {title: "Question 7: Combined HPA + VPA", url: "#question-7-combined-hpa-vpa" },
-              {title: "\u2699\ufe0f Running stress in the Background (Correct Ways)", url: "#running-stress-in-the-background-correct-ways" },
-              {title: "\ud83d\udccb YAML TEMPLATES (FULL)", url: "#yaml-templates-full" },
+          {title: "Autoscaling Practice", url: "#_top", children: [
+              {title: "QUESTIONS", url: "#questions" },
+              {title: "\ud83d\udd25 Question 1 \u2014 Memory-based HPA with Custom Behavior", url: "#question-1-memory-based-hpa-with-custom-behavior" },
+              {title: "\ud83d\udd25 Question 2 \u2014 CPU + Memory HPA with Complex Custom Behavior", url: "#question-2-cpu-memory-hpa-with-complex-custom-behavior" },
+              {title: "\ud83d\ude80 Question 3 \u2014 VPA in Off Mode", url: "#question-3-vpa-in-off-mode" },
+              {title: "\ud83d\ude80 Question 4 \u2014 VPA in Initial Mode", url: "#question-4-vpa-in-initial-mode" },
+              {title: "\ud83d\ude80 Question 5 \u2014 VPA in Auto Mode (Fully Configured)", url: "#question-5-vpa-in-auto-mode-fully-configured" },
           ]},
         ];
 
@@ -72,12 +67,12 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
   <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
     
     <div class="wm-article-nav pull-right">
-      <a href="../vpa/" class="btn btn-xs btn-default pull-right">
+      <a href="../solution/" class="btn btn-xs btn-default pull-right">
         Next
         <i class="fa fa-chevron-right" aria-hidden="true"></i>
       </a>
-      <a href="../vpa/" class="btn btn-xs btn-link">
-        Vertical Pod Autoscaler (VPA)
+      <a href="../solution/" class="btn btn-xs btn-link">
+        Solution
       </a>
     </div>
     
@@ -93,157 +88,139 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
 
     
 
-    <h1 id="hpa-vpa-practice-questions">HPA &amp; VPA Practice Questions</h1>
-<p>This document contains <strong>detailed, step-by-step practice questions</strong> for understanding <strong>Horizontal Pod Autoscaler (HPA)</strong> and <strong>Vertical Pod Autoscaler (VPA)</strong> behavior using realistic workloads.
-All workloads are intentionally simple so that autoscaling behavior is clearly observable.</p>
+    <h1 id="autoscaling-practice">Autoscaling Practice</h1>
 <hr />
-<h2 id="hpa-practice-questions">🔥 HPA PRACTICE QUESTIONS</h2>
+<h2 id="questions">QUESTIONS</h2>
 <hr />
-<h2 id="question-1-memory-based-hpa">Question 1: Memory-based HPA</h2>
+<h2 id="question-1-memory-based-hpa-with-custom-behavior">🔥 Question 1 — Memory-based HPA with Custom Behavior</h2>
 <h3 id="objective">Objective</h3>
-<p>Practice configuring an HPA that scales <strong>based on memory utilization</strong>.
-Understand how memory usage is calculated <strong>relative to memory requests</strong>, not limits.</p>
+<p>Configure a Horizontal Pod Autoscaler that scales <strong>only on memory utilization</strong> and uses <strong>custom scaling behavior</strong>.</p>
 <h3 id="requirements">Requirements</h3>
 <ul>
-<li>Create a Deployment named <strong><code>mem-hpa</code></strong></li>
-<li>Container image: <code>polinux/stress</code></li>
-<li>Container must stay running using:</li>
+<li>Deployment name: <code>mem-hpa</code></li>
+<li>Image: <code>polinux/stress</code></li>
+<li>Command:
+  <div class="highlight"><pre><span></span><code><span class="p p-Indicator">[</span><span class="s">&quot;sleep&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;3600&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div></li>
+<li>Resource requests:
+  <div class="highlight"><pre><span></span><code><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50Mi</span>
+</code></pre></div></li>
 </ul>
-<p><div class="highlight"><pre><span></span><code><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;sleep&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;3600&quot;</span><span class="p p-Indicator">]</span>
-</code></pre></div>
-* Set <strong>memory request</strong> to:</p>
-<p><div class="highlight"><pre><span></span><code><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50Mi</span>
-</code></pre></div>
-* Configure an HPA with:</p>
+<p><strong>HPA configuration:</strong></p>
 <ul>
 <li>Metric: memory utilization</li>
 <li>Target: <strong>80%</strong></li>
-<li>Minimum replicas: <strong>1</strong></li>
-<li>Maximum replicas: <strong>4</strong></li>
+<li>Min replicas: <strong>1</strong></li>
+<li>Max replicas: <strong>5</strong> </li>
 </ul>
-<h3 id="expected-behavior">Expected Behavior</h3>
+<p><strong>Behavior:</strong></p>
 <ul>
-<li>
-<p>When memory usage crosses ~40Mi per pod:</p>
-</li>
-<li>
-<p>HPA should calculate a higher desired replica count</p>
-</li>
-<li>New pods should be created</li>
-<li>
-<p>When memory load stops:</p>
-</li>
-<li>
-<p>Replica count should eventually reduce</p>
-</li>
+<li>Scale up: <strong>+2 pods per 30 seconds</strong></li>
+<li>Scale down: <strong>−1 pod per 60 seconds</strong></li>
+<li>Scale-down stabilization window: <strong>300 seconds</strong></li>
 </ul>
 <h3 id="load-generation">Load Generation</h3>
-<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/mem-hpa<span class="w"> </span>-it<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>45M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">600</span>
+<div class="highlight"><pre><span></span><code><span class="nv">POD</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>mem-hpa<span class="w"> </span>-o<span class="w"> </span>name<span class="w"> </span><span class="p">|</span><span class="w"> </span>shuf<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="k">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Running stress in: </span><span class="nv">$POD</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$POD</span><span class="s2">&quot;</span><span class="w"> </span>--<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="se">\</span>
+<span class="s1">&#39;nohup stress --vm 1 --vm-bytes 200Mi --timeout 600 &gt; /dev/null 2&gt;&amp;1 &amp;&#39;</span>
 </code></pre></div>
 <h3 id="observation">Observation</h3>
 <div class="highlight"><pre><span></span><code>watch<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s1">&#39;</span>
-<span class="s1">kubectl get hpa mem-hpa;</span>
-<span class="s1">echo &quot;---&quot;;</span>
-<span class="s1">kubectl get pods -l app=mem-hpa</span>
+<span class="s1">kubectl top po;</span>
+<span class="s1">echo &quot;-----&quot;;</span>
+<span class="s1">kubectl get po -l app=mem-hpa</span>
 <span class="s1">&#39;</span>
 </code></pre></div>
 <hr />
-<h2 id="question-2-cpu-based-hpa">Question 2: CPU-based HPA</h2>
+<h2 id="question-2-cpu-memory-hpa-with-complex-custom-behavior">🔥 Question 2 — CPU + Memory HPA with Complex Custom Behavior</h2>
 <h3 id="objective_1">Objective</h3>
-<p>Understand CPU utilization–based scaling and the importance of <strong>CPU requests</strong>.</p>
+<p>Configure a <strong>multi-metric HPA</strong> that scales on <strong>CPU OR memory</strong>, using <strong>asymmetric, production-style behavior rules</strong>.</p>
 <h3 id="requirements_1">Requirements</h3>
 <ul>
-<li>Deployment name: <strong><code>cpu-hpa</code></strong></li>
+<li>Deployment name: <code>multi-hpa</code></li>
 <li>Image: <code>polinux/stress</code></li>
-<li>Command:</li>
+<li>Command:
+  <div class="highlight"><pre><span></span><code><span class="p p-Indicator">[</span><span class="s">&quot;sleep&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;3600&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div></li>
+<li>Resource requests:
+  <div class="highlight"><pre><span></span><code><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40m</span>
+<span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60Mi</span>
+</code></pre></div></li>
 </ul>
-<p><div class="highlight"><pre><span></span><code><span class="p p-Indicator">[</span><span class="s">&quot;sleep&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;3600&quot;</span><span class="p p-Indicator">]</span>
-</code></pre></div>
-* Set <strong>CPU request</strong> to:</p>
-<p><div class="highlight"><pre><span></span><code><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50m</span>
-</code></pre></div>
-* HPA configuration:</p>
+<p><strong>HPA configuration:</strong></p>
 <ul>
-<li>Metric: CPU utilization</li>
-<li>Target: <strong>70%</strong></li>
+<li>CPU target: <strong>65%</strong></li>
+<li>Memory target: <strong>75%</strong></li>
 <li>Min replicas: <strong>2</strong></li>
-<li>Max replicas: <strong>6</strong></li>
+<li>Max replicas: <strong>8</strong></li>
 </ul>
-<h3 id="expected-behavior_1">Expected Behavior</h3>
+<p><strong>Behavior:</strong></p>
 <ul>
 <li>
-<p>Sustained CPU usage above ~35m per pod should:</p>
+<p>Scale up:</p>
+<ul>
+<li><strong>Max of 4 pods OR 50% per 30 seconds</strong></li>
+<li>Select policy: <strong>Max</strong></li>
+</ul>
 </li>
 <li>
-<p>Trigger scale-up</p>
-</li>
-<li>
-<p>Removing CPU stress should:</p>
-</li>
-<li>
-<p>Gradually scale replicas down</p>
+<p>Scale down:</p>
+<ul>
+<li><strong>−1 pod per 90 seconds</strong></li>
+<li>Stabilization window: <strong>300 seconds</strong></li>
+</ul>
 </li>
 </ul>
 <h3 id="load-generation_1">Load Generation</h3>
-<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/cpu-hpa<span class="w"> </span>-it<span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">4</span><span class="w"> </span>--timeout<span class="w"> </span><span class="m">600</span>
+<div class="highlight"><pre><span></span><code><span class="nv">POD</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>multi-hpa<span class="w"> </span>-o<span class="w"> </span>name<span class="w"> </span><span class="p">|</span><span class="w"> </span>shuf<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="k">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Running stress in: </span><span class="nv">$POD</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$POD</span><span class="s2">&quot;</span><span class="w"> </span>--<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="se">\</span>
+<span class="s1">&#39;nohup stress --cpu 2 --vm 1 --vm-bytes 180Mi --timeout 600 &gt; /dev/null 2&gt;&amp;1 &amp;&#39;</span>
 </code></pre></div>
 <h3 id="observation_1">Observation</h3>
 <div class="highlight"><pre><span></span><code>watch<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="s1">&#39;</span>
-<span class="s1">kubectl get hpa cpu-hpa;</span>
-<span class="s1">kubectl top pods -l app=cpu-hpa</span>
+<span class="s1">kubectl describe hpa multi-hpa | grep -A15 &quot;Metrics:&quot;;</span>
+<span class="s1">echo &quot;-----&quot;;</span>
+<span class="s1">kubectl get po -l app=multi-hpa</span>
 <span class="s1">&#39;</span>
 </code></pre></div>
 <hr />
-<h2 id="question-3-multi-metric-hpa-cpu-or-memory">Question 3: Multi-Metric HPA (CPU OR Memory)</h2>
+<h2 id="question-3-vpa-in-off-mode">🚀 Question 3 — VPA in Off Mode</h2>
 <h3 id="objective_2">Objective</h3>
-<p>Understand how HPA behaves when <strong>multiple metrics are configured</strong>.
-HPA scales if <strong>any single metric</strong> breaches its target.</p>
+<p>Validate that <strong>VPA Off mode</strong> only observes usage and never mutates pods.</p>
 <h3 id="requirements_2">Requirements</h3>
 <ul>
-<li>Deployment name: <strong><code>multi-hpa</code></strong></li>
+<li>Deployment name: <code>vpa-off</code></li>
 <li>Image: <code>polinux/stress</code></li>
 <li>Command:</li>
 </ul>
 <p><div class="highlight"><pre><span></span><code><span class="p p-Indicator">[</span><span class="s">&quot;sleep&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;3600&quot;</span><span class="p p-Indicator">]</span>
 </code></pre></div>
-* Resource requests:</p>
-<p><div class="highlight"><pre><span></span><code><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30m</span>
-<span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40Mi</span>
+* Initial requests:</p>
+<p><div class="highlight"><pre><span></span><code><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20m</span>
+<span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30Mi</span>
 </code></pre></div>
-* HPA rules:</p>
+* VPA configuration:</p>
 <ul>
-<li>CPU utilization &gt; <strong>60%</strong></li>
-<li>OR memory utilization &gt; <strong>75%</strong></li>
-<li>Replica range: <strong>1 → 5</strong></li>
-</ul>
-<h3 id="expected-behavior_2">Expected Behavior</h3>
-<ul>
-<li>Either CPU or memory pressure alone can trigger scaling</li>
-<li>HPA uses the <strong>largest calculated replica count</strong> across metrics</li>
+<li>Update mode: <code>Off</code></li>
+<li>Min allowed: <code>30m / 40Mi</code></li>
+<li>Max allowed: <code>200m / 200Mi</code></li>
 </ul>
 <h3 id="load-generation_2">Load Generation</h3>
-<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/multi-hpa<span class="w"> </span>-it<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">2</span><span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>35M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">600</span>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/vpa-off<span class="w"> </span>--<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="se">\</span>
+<span class="s1">&#39;stress --cpu 2 --vm 1 --vm-bytes 100Mi --timeout 600&#39;</span>
 </code></pre></div>
 <h3 id="observation_2">Observation</h3>
-<div class="highlight"><pre><span></span><code>watch<span class="w"> </span>-n<span class="w"> </span><span class="m">15</span><span class="w"> </span><span class="s1">&#39;</span>
-<span class="s1">kubectl describe hpa multi-hpa | grep -A12 &quot;Metrics:&quot;</span>
-<span class="s1">&#39;</span>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>describe<span class="w"> </span>vpa<span class="w"> </span>vpa-off
 </code></pre></div>
 <hr />
-<h2 id="vpa-practice-questions">🚀 VPA PRACTICE QUESTIONS</h2>
-<hr />
-<h2 id="question-4-vpa-initial-mode">Question 4: VPA Initial Mode</h2>
+<h2 id="question-4-vpa-in-initial-mode">🚀 Question 4 — VPA in Initial Mode</h2>
 <h3 id="objective_3">Objective</h3>
-<p>Learn how VPA:</p>
-<ul>
-<li>Observes historical usage</li>
-<li>Builds recommendation profiles</li>
-<li>Injects resource requests <strong>only at pod creation time</strong></li>
-</ul>
+<p>Understand how <strong>VPA Initial mode injects requests only at pod creation time</strong>.</p>
 <h3 id="requirements_3">Requirements</h3>
 <ul>
-<li>Deployment name: <strong><code>vpa-initial</code></strong></li>
+<li>Deployment name: <code>vpa-initial</code></li>
 <li>Image: <code>polinux/stress</code></li>
 <li>Command:</li>
 </ul>
@@ -256,230 +233,53 @@ HPA scales if <strong>any single metric</strong> breaches its target.</p>
 * VPA configuration:</p>
 <ul>
 <li>Update mode: <code>Initial</code></li>
-<li>Minimum allowed: <code>20m / 30Mi</code></li>
-<li>Maximum allowed: <code>100m / 100Mi</code></li>
-<li>Controlled resources: CPU and memory</li>
-</ul>
-<h3 id="expected-behavior_3">Expected Behavior</h3>
-<ul>
-<li>Running pods remain unchanged</li>
-<li>VPA generates recommendations</li>
-<li>New pods receive injected requests</li>
+<li>Min allowed: <code>20m / 30Mi</code></li>
+<li>Max allowed: <code>100m / 100Mi</code></li>
 </ul>
 <h3 id="load-generation_3">Load Generation</h3>
-<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/vpa-initial<span class="w"> </span>-it<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>25M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">600</span>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/vpa-initial<span class="w"> </span>--<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="se">\</span>
+<span class="s1">&#39;stress --cpu 1 --vm 1 --vm-bytes 60Mi --timeout 600&#39;</span>
 </code></pre></div>
 <h3 id="observation_3">Observation</h3>
 <div class="highlight"><pre><span></span><code>watch<span class="w"> </span>-n<span class="w"> </span><span class="m">30</span><span class="w"> </span><span class="s1">&#39;</span>
-<span class="s1">kubectl describe vpa vpa-initial | grep -A6 -B6 &quot;Recommendation&quot;</span>
+<span class="s1">kubectl describe vpa vpa-initial | grep -A8 -B6 &quot;Recommendation&quot;</span>
 <span class="s1">&#39;</span>
 </code></pre></div>
 <hr />
-<h2 id="question-5-vpa-auto-mode">Question 5: VPA Auto Mode</h2>
+<h2 id="question-5-vpa-in-auto-mode-fully-configured">🚀 Question 5 — VPA in Auto Mode (Fully Configured)</h2>
 <h3 id="objective_4">Objective</h3>
-<p>Understand how VPA actively enforces resource sizing by <strong>restarting pods</strong>.</p>
+<p>Observe <strong>automatic pod eviction and recreation</strong> when VPA actively enforces sizing.</p>
 <h3 id="requirements_4">Requirements</h3>
 <ul>
-<li>Deployment name: <strong><code>vpa-auto</code></strong></li>
-<li>Initial requests:</li>
+<li>Deployment name: <code>vpa-auto</code></li>
+<li>Image: <code>polinux/stress</code></li>
+<li>Command:</li>
 </ul>
+<p><div class="highlight"><pre><span></span><code><span class="p p-Indicator">[</span><span class="s">&quot;sleep&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;3600&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+* Initial requests:</p>
 <p><div class="highlight"><pre><span></span><code><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15m</span>
 <span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">25Mi</span>
 </code></pre></div>
-* VPA update mode: <code>Auto</code>
-* Minimum allowed: <code>20m / 30Mi</code>
-* Maximum allowed: <code>100m / 150Mi</code></p>
-<h3 id="expected-behavior_4">Expected Behavior</h3>
+* VPA configuration:</p>
 <ul>
-<li>VPA detects sustained overuse</li>
-<li>Pods are evicted and recreated</li>
-<li>New pods have updated requests</li>
+<li>Update mode: <code>Auto</code></li>
+<li>Min allowed: <code>20m / 30Mi</code></li>
+<li>Max allowed: <code>150m / 200Mi</code></li>
+<li>Controlled resources: CPU and memory</li>
 </ul>
 <h3 id="load-generation_4">Load Generation</h3>
-<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/vpa-auto<span class="w"> </span>-it<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">3</span><span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>80M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">300</span>
+<div class="highlight"><pre><span></span><code><span class="nv">POD</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>vpa-auto<span class="w"> </span>-o<span class="w"> </span>name<span class="w"> </span><span class="p">|</span><span class="w"> </span>shuf<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="k">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Running stress in: </span><span class="nv">$POD</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$POD</span><span class="s2">&quot;</span><span class="w"> </span>--<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="se">\</span>
+<span class="s1">&#39;nohup stress --cpu 3 --vm 1 --vm-bytes 150Mi --timeout 300 &gt; /dev/null 2&gt;&amp;1 &amp;&#39;</span>
 </code></pre></div>
 <h3 id="observation_4">Observation</h3>
-<div class="highlight"><pre><span></span><code>watch<span class="w"> </span>-n<span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="s1">&#39;</span>
-<span class="s1">kubectl get pods -l app=vpa-auto</span>
+<div class="highlight"><pre><span></span><code>watch<span class="w"> </span>-n<span class="w"> </span><span class="m">15</span><span class="w"> </span><span class="s1">&#39;</span>
+<span class="s1">kubectl get po -l app=vpa-auto</span>
 <span class="s1">&#39;</span>
 </code></pre></div>
 <hr />
-<h2 id="question-6-vpa-off-mode">Question 6: VPA Off Mode</h2>
-<h3 id="objective_5">Objective</h3>
-<p>Confirm that <code>Off</code> mode:</p>
-<ul>
-<li>Collects metrics</li>
-<li>Produces recommendations</li>
-<li>Never modifies running pods</li>
-</ul>
-<h3 id="requirements_5">Requirements</h3>
-<ul>
-<li>Deployment name: <strong><code>vpa-off</code></strong></li>
-<li>Requests:</li>
-</ul>
-<p><div class="highlight"><pre><span></span><code><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20m</span>
-<span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30Mi</span>
-</code></pre></div>
-* VPA update mode: <code>Off</code>
-* Minimum allowed: <code>30m / 40Mi</code>
-* Maximum allowed: <code>200m / 200Mi</code></p>
-<h3 id="expected-behavior_5">Expected Behavior</h3>
-<ul>
-<li>No pod restarts</li>
-<li>No resource injection</li>
-<li>Recommendations visible only via VPA status</li>
-</ul>
-<h3 id="load-generation_5">Load Generation</h3>
-<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/vpa-off<span class="w"> </span>-it<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">2</span><span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>100M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">600</span>
-</code></pre></div>
-<h3 id="observation_5">Observation</h3>
-<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>describe<span class="w"> </span>vpa<span class="w"> </span>vpa-off
-</code></pre></div>
-<hr />
-<h2 id="question-7-combined-hpa-vpa">Question 7: Combined HPA + VPA</h2>
-<h3 id="objective_6">Objective</h3>
-<p>Practice the <strong>safe and recommended combination</strong>:</p>
-<ul>
-<li>HPA controls replica count</li>
-<li>VPA controls initial resource sizing</li>
-</ul>
-<h3 id="requirements_6">Requirements</h3>
-<ul>
-<li>Deployment name: <strong><code>combined-app</code></strong></li>
-<li>Requests:</li>
-</ul>
-<p><div class="highlight"><pre><span></span><code><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20m</span>
-<span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30Mi</span>
-</code></pre></div>
-* VPA:</p>
-<ul>
-<li>Update mode: <code>Initial</code></li>
-<li>
-<p>HPA:</p>
-</li>
-<li>
-<p>Metric: CPU</p>
-</li>
-<li>Target: <strong>65%</strong></li>
-<li>Replica range: <strong>2 → 4</strong></li>
-</ul>
-<h3 id="expected-behavior_6">Expected Behavior</h3>
-<ul>
-<li>VPA injects requests for new pods only</li>
-<li>HPA scales replicas independently</li>
-<li>No feedback loop or oscillation</li>
-</ul>
-<h3 id="load-generation_6">Load Generation</h3>
-<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/combined-app<span class="w"> </span>-it<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">2</span><span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>25M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">600</span>
-</code></pre></div>
-<h3 id="observation_6">Observation</h3>
-<div class="highlight"><pre><span></span><code>watch<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="s1">&#39;</span>
-<span class="s1">kubectl get hpa,vpa,pods -l app=combined-app</span>
-<span class="s1">&#39;</span>
-</code></pre></div>
-<hr />
-<h2 id="running-stress-in-the-background-correct-ways">⚙️ Running <code>stress</code> in the Background (Correct Ways)</h2>
-<h3 id="method-1-separate-terminals">Method 1: Separate terminals</h3>
-<ul>
-<li>Terminal 1 runs stress (blocking)</li>
-<li>Terminal 2 is used for monitoring</li>
-</ul>
-<hr />
-<h3 id="method-2-nohup-inside-the-pod">Method 2: <code>nohup</code> inside the pod</h3>
-<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/app<span class="w"> </span>-it<span class="w"> </span>--<span class="w"> </span>bash
-nohup<span class="w"> </span>stress<span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>40M<span class="w"> </span>--timeout<span class="w"> </span><span class="m">600</span><span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">&amp;</span>
-<span class="nb">exit</span>
-</code></pre></div>
-<hr />
-<h3 id="method-3-tmux-screen">Method 3: tmux / screen</h3>
-<div class="highlight"><pre><span></span><code>tmux<span class="w"> </span>new-session<span class="w"> </span>-d<span class="w"> </span>-s<span class="w"> </span>stress-test<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span><span class="s1">&#39;kubectl exec deploy/app -it -- stress --cpu 2 --timeout 600&#39;</span>
-</code></pre></div>
-<hr />
-<h3 id="method-4-run-stress-on-all-replicas">Method 4: Run stress on all replicas</h3>
-<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>pod<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>app<span class="w"> </span>-o<span class="w"> </span>name<span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
-<span class="w">  </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="nv">$pod</span><span class="w"> </span>--<span class="w"> </span>stress<span class="w"> </span>--cpu<span class="w"> </span><span class="m">1</span><span class="w"> </span>--timeout<span class="w"> </span><span class="m">300</span><span class="w"> </span><span class="p">&amp;</span>
-<span class="k">done</span>
-</code></pre></div>
-<hr />
-<h2 id="yaml-templates-full">📋 YAML TEMPLATES (FULL)</h2>
-<h3 id="deployment-template">Deployment Template</h3>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
-<span class="nt">metadata</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
-<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
-<span class="nt">spec</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
-<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
-<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
-<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stress</span>
-<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">polinux/stress</span>
-<span class="w">        </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;sleep&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;3600&quot;</span><span class="p p-Indicator">]</span>
-<span class="w">        </span><span class="nt">resources</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">requests</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50m</span>
-<span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50Mi</span>
-</code></pre></div>
-<hr />
-<h3 id="hpa-template">HPA Template</h3>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling/v2</span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HorizontalPodAutoscaler</span>
-<span class="nt">metadata</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-hpa</span>
-<span class="nt">spec</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">scaleTargetRef</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
-<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
-<span class="w">  </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
-<span class="w">  </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
-<span class="w">  </span><span class="nt">metrics</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Resource</span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpu</span>
-<span class="w">      </span><span class="nt">target</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Utilization</span>
-<span class="w">        </span><span class="nt">averageUtilization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70</span>
-</code></pre></div>
-<hr />
-<h3 id="vpa-template">VPA Template</h3>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling.k8s.io/v1</span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VerticalPodAutoscaler</span>
-<span class="nt">metadata</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-vpa</span>
-<span class="nt">spec</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
-<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
-<span class="w">  </span><span class="nt">updatePolicy</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Initial</span>
-<span class="w">  </span><span class="nt">resourcePolicy</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">containerPolicies</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stress</span>
-<span class="w">      </span><span class="nt">minAllowed</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20m</span>
-<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30Mi</span>
-<span class="w">      </span><span class="nt">maxAllowed</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100m</span>
-<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100Mi</span>
-<span class="w">      </span><span class="nt">controlledResources</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpu</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">memory</span>
-</code></pre></div>
 
   <br>
     
@@ -492,12 +292,12 @@ nohup<span class="w"> </span>stress<span class="w"> </span>--vm<span class="w"> 
   <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
     
     <div class="wm-article-nav pull-right">
-      <a href="../vpa/" class="btn btn-xs btn-default pull-right">
+      <a href="../solution/" class="btn btn-xs btn-default pull-right">
         Next
         <i class="fa fa-chevron-right" aria-hidden="true"></i>
       </a>
-      <a href="../vpa/" class="btn btn-xs btn-link">
-        Vertical Pod Autoscaler (VPA)
+      <a href="../solution/" class="btn btn-xs btn-link">
+        Solution
       </a>
     </div>
     

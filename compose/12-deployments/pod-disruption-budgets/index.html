@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Vikash Kumar">
+    <link rel="canonical" href="https://opsalchemy.github.io/kubequest/compose/12-deployments/pod-disruption-budgets/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Pod Disruption Budgets (PDB) - CKA Exam Mastery</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <link href="../../stylesheets/extra.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Pod Disruption Budgets (PDB)", url: "#_top", children: [
+              {title: "What is a Disruption?", url: "#what-is-a-disruption" },
+              {title: "PDB Specification", url: "#pdb-specification" },
+              {title: "Percentage-Based PDB", url: "#percentage-based-pdb" },
+              {title: "Real-World Example", url: "#real-world-example" },
+              {title: "Best Practices", url: "#best-practices" },
+              {title: "Checking PDB Status", url: "#checking-pdb-status" },
+              {title: "Limitations", url: "#limitations" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="../../javascripts/extra.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../questions/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../questions/" class="btn btn-xs btn-link">
+        DaemonSets
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../lifecycle-hooks/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../lifecycle-hooks/" class="btn btn-xs btn-link">
+        Pod Lifecycle Hooks
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="pod-disruption-budgets-pdb">Pod Disruption Budgets (PDB)</h1>
+<p>Pod Disruption Budgets are policies to maintain application availability during cluster maintenance or node failures.</p>
+<h2 id="what-is-a-disruption">What is a Disruption?</h2>
+<p>A voluntary disruption is when cluster operations intentionally remove or drain Pods:
+- Node maintenance
+- Cluster upgrades
+- Manual Pod deletion
+- Horizontal Pod Autoscaler scaling down</p>
+<p>Non-voluntary disruptions (hardware failures, network partitions) are NOT covered by PDB.</p>
+<h2 id="pdb-specification">PDB Specification</h2>
+<h3 id="minavailable">minAvailable</h3>
+<p>Minimum number of Pods that must remain available.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">policy/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PodDisruptionBudget</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-pdb</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">minAvailable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-server</span>
+</code></pre></div>
+<p>Ensures at least 2 web-server Pods remain available.</p>
+<h3 id="maxunavailable">maxUnavailable</h3>
+<p>Maximum number of Pods that can be unavailable.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">policy/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PodDisruptionBudget</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">database-pdb</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">maxUnavailable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+</code></pre></div>
+<p>Allows only 1 database Pod to be unavailable at a time.</p>
+<h2 id="percentage-based-pdb">Percentage-Based PDB</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">policy/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PodDisruptionBudget</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-pdb</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">minAvailable</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;50%&quot;</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapp</span>
+</code></pre></div>
+<p>Maintains at least 50% of Pods available.</p>
+<h2 id="real-world-example">Real-World Example</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">policy/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PodDisruptionBudget</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">critical-app-pdb</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">minAvailable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">tier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">critical</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server</span>
+</code></pre></div>
+<p>Ensures a critical API server always has at least 3 Pods running during maintenance.</p>
+<h2 id="best-practices">Best Practices</h2>
+<ol>
+<li><strong>Use minAvailable for critical apps</strong> - API servers, databases</li>
+<li><strong>Use maxUnavailable for less critical</strong> - Batch processors, workers</li>
+<li><strong>Set realistic values</strong> - Too strict (minAvailable: 10 out of 10) prevents maintenance</li>
+<li><strong>Monitor PDB status</strong> - Check if Pods are blocked from disruption</li>
+</ol>
+<h2 id="checking-pdb-status">Checking PDB Status</h2>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>pdb
+kubectl<span class="w"> </span>describe<span class="w"> </span>pdb<span class="w"> </span>&lt;name&gt;
+
+<span class="c1"># Output shows:</span>
+<span class="c1"># Allowed Disruptions: X  (how many Pods can be disrupted)</span>
+</code></pre></div>
+<h2 id="limitations">Limitations</h2>
+<ul>
+<li>PDB only prevents <strong>voluntary disruptions</strong></li>
+<li>Does NOT protect against node hardware failures</li>
+<li>Does NOT work with StaticPods</li>
+<li>Requires at least minAvailable/maxUnavailable replicas running</li>
+</ul>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../questions/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../questions/" class="btn btn-xs btn-link">
+        DaemonSets
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../lifecycle-hooks/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../lifecycle-hooks/" class="btn btn-xs btn-link">
+        Pod Lifecycle Hooks
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
