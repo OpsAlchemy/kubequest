@@ -52,7 +52,7 @@ install_docker() {
 
 install_kubectl() {
   if command -v kubectl >/dev/null 2>&1; then
-    echo "kubectl already installed: $(kubectl version --client --short)"
+    echo "kubectl already installed: $(kubectl version --client 2>/dev/null | head -n 1 || kubectl version --client --output=yaml 2>/dev/null | grep gitVersion | head -n 1)"
     return
   fi
   echo "Installing kubectl..."
@@ -115,9 +115,19 @@ install_azure_cli() {
   fi
   echo "Installing Azure CLI..."
   if [[ "$DRY_RUN" -eq 1 ]]; then
-    echo "DRY RUN: curl + install azure-cli from official script"
+    echo "DRY RUN: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash"
   else
-    curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+    # Run the official APT-based installer (requires sudo)
+    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+    echo "Verifying Azure CLI installation..."
+    if command -v az >/dev/null 2>&1; then
+      echo "az version:"
+      az version || true
+    else
+      echo "Azure CLI install failed or 'az' not found in PATH."
+      return 1
+    fi
   fi
 }
 
@@ -160,7 +170,7 @@ install_terraform() {
 verify_all() {
   echo "=== Verification ==="
   echo -n "docker: " ; command -v docker && docker --version || echo "not installed"
-  echo -n "kubectl: " ; command -v kubectl && kubectl version --client --short || echo "not installed"
+  echo -n "kubectl: " ; command -v kubectl && (kubectl version --client 2>/dev/null | head -n 1 || kubectl version --client --output=yaml 2>/dev/null | grep gitVersion | head -n 1) || echo "not installed"
   echo -n "kind: " ; command -v kind && kind --version || echo "not installed"
   echo -n "minikube: " ; command -v minikube && minikube version || echo "not installed"
   echo -n "helm: " ; command -v helm && helm version --short || echo "not installed"

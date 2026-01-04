@@ -16,7 +16,7 @@ A minimal, production-ready setup for experimenting with Crossplane managing AWS
 ### 1. Create kind cluster
 
 ```bash
-cd /mnt/c/Users/VikashKumar/Desktop/dev3/ops/kubequest/crossplane/sandbox
+cd /home/vagabond/peak/kubequest/crossplane/sandbox
 
 cat > kind-multinode.yaml <<'EOF'
 kind: Cluster
@@ -51,8 +51,13 @@ See [localstack/README.md](../../localstack/README.md) for full LocalStack docum
 
 ```bash
 kubectl create namespace crossplane-system
-kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-*/install.yaml
-kubectl -n crossplane-system wait --for=condition=ready pod -l app.kubernetes.io/name=crossplane --timeout=300s
+
+helm repo add crossplane-stable https://charts.crossplane.io/stable
+helm repo update
+
+helm install crossplane --namespace crossplane-system crossplane-stable/crossplane
+
+kubectl -n crossplane-system get pods
 ```
 
 ### 4. Install AWS provider
@@ -64,10 +69,13 @@ kind: Provider
 metadata:
   name: provider-aws
 spec:
-  package: crossplane/provider-aws:v0.39.0
+  package: xpkg.upbound.io/crossplane-contrib/provider-aws:v0.55.0
 EOF
 
-kubectl -n crossplane-system wait --for=condition=Installed pkg provider-aws --timeout=300s
+kubectl wait \
+  --for=condition=Installed \
+  provider.pkg.crossplane.io/provider-aws \
+  --timeout=300s
 ```
 
 ### 5. Apply secret + ProviderConfig
@@ -80,6 +88,11 @@ kubectl apply -f manifests/localstack-secret.yaml -n crossplane-system
 kubectl apply -f manifests/providerconfig-localstack.yaml
 ```
 
+```bash
+kubectl get providers.pkg.crossplane.io
+kubectl get providerrevisions.pkg.crossplane.io
+```
+
 ### 6. Deploy S3 bucket (managed by Crossplane)
 
 ```bash
@@ -87,7 +100,7 @@ kubectl apply -f manifests/s3-bucket.yaml
 
 # Watch it sync
 kubectl get buckets -A -w
-kubectl describe bucket demo-bucket
+kubectl describe bucket localstack-crossplane-bucket
 ```
 
 ### 7. Verify in LocalStack
@@ -122,5 +135,57 @@ kind delete cluster --name crossplane
 ```
 
 ---
+
+## Testing S3 Bucket with LocalStack
+
+After deploying the S3 bucket via Crossplane, you can test it with the AWS CLI:
+
+```bash
+# Set LocalStack credentials
+export AWS_ACCESS_KEY_ID=test
+export AWS_SECRET_ACCESS_KEY=test
+export AWS_DEFAULT_REGION=us-west-2
+export AWS_EC2_METADATA_DISABLED=true
+
+# Verify bucket exists
+aws --endpoint-url=http://localhost:4566 s3 ls
+aws --endpoint-url=http://localhost:4566 s3api head-bucket \
+  --bucket localstack-crossplane-bucket
+
+# Get bucket encryption and access block settings
+aws --endpoint-url=http://localhost:4566 s3api get-bucket-encryption \
+  --bucket localstack-crossplane-bucket
+aws --endpoint-url=http://localhost:4566 s3api get-public-access-block \
+  --bucket localstack-crossplane-bucket
+
+# Upload a test file
+echo "hello from crossplane" > /tmp/test.txt
+aws --endpoint-url=http://localhost:4566 s3 cp /tmp/test.txt \
+  s3://localstack-crossplane-bucket/test.txt
+
+# Download and verify
+aws --endpoint-url=http://localhost:4566 s3 cp \
+  s3://localstack-crossplane-bucket/test.txt -
+
+# Clean up the test file
+aws --endpoint-url=http://localhost:4566 s3 rm \
+  s3://localstack-crossplane-bucket/test.txt
+```
+
+---
+
+## Verify LocalStack Status
+
+```bash
+# Health check
+curl http://localhost:4566/_localstack/health
+
+# Get caller identity (verify AWS credentials work)
+aws --endpoint-url=http://localhost:4566 sts get-caller-identity
+```
+
+---
+
+## Next Steps
 
 **Next:** See `docs/README.md` for endpoint config, networking, and adding more resources (SQS, DynamoDB, etc.)

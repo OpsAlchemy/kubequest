@@ -16,6 +16,9 @@ No LocalStack Cloud. No license required.
 ## Start LocalStack 
 For WSL
 ```bash
+for local laptop directory location
+cd /home/vagabond/peak/kubequest/localstack
+for other laptop
 cd /mnt/c/Users/VikashKumar/Desktop/dev3/ops/kubequest/localstack
 docker compose up -d
 ```
