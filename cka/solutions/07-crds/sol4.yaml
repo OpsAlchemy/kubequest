@@ -1,0 +1,30 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: featuretoggles.config.example.com
+spec:
+  group: config.example.com
+  scope: Namespaced
+  names:
+    plural: featuretoggles
+    singular: featuretoggle
+    kind: FeatureToggle
+    shortNames:
+      - ft
+  schema:
+    openAPIV3Schema:
+      type: object
+      properties:
+        spec:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            description:
+              type: string
+---
+apiVersion: config.example.com/v1
+kind: FeatureToggle
+metadata:
+  name: generic
+  namespace: default

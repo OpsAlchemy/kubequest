@@ -1,0 +1,9 @@
+resources:
+  - ../../base
+
+namespace: prod
+
+nameSuffix: -prod
+
+patches:
+  - deployment-patch.yaml

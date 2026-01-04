@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hpa-test
+spec:
+  template:
+    spec:
+      containers:
+      - name: hpa-test
+        command:
+        - /bin/sh
+        - -c
+        - sleep 3600
+        resources:
+          requests:
+            cpu: 100m
+            memory: 45Mi
+          limits:
+            cpu: 200m
+            memory: 100Mi

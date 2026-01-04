@@ -1,0 +1,30 @@
+site_name: KillerCoda Notes
+site_description: Preparation notes for CKA
+site_author: Vikash Kumar
+site_url: https://github.com/OpsAlchemy/kubequest.git/docs/
+docs_dir: docs
+
+theme:
+  name: material
+  language: en
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight

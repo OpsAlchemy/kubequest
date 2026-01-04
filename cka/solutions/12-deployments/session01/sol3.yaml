@@ -1,0 +1,70 @@
+# Question 3 - DaemonSet: log-collector
+#
+# Namespace: monitoring
+# Name: log-collector
+# Image: busybox:1.36
+# Command: sh -c "while true; do echo '[SYSTEM] Node: '$HOSTNAME' - Memory: $(free -m | grep Mem | awk '{print $3}')MB' >> /var/log/node-metrics.log; sleep 30; done"
+#
+# Specifications:
+# - Nodes: All nodes
+# - Environment Variables: HOSTNAME from Downward API (pod.spec.nodeName)
+# - Volumes: HostPath /var/log mounted at /var/log (DirectoryOrCreate)
+# - Resources: Requests (CPU: 100m, Memory: 64Mi), Limits (CPU: 200m, Memory: 128Mi)
+# - Scheduling: One Pod per node, Tolerate all taints
+#
+# Task: Create a DaemonSet that collects and logs node metrics to a shared log file on each node.
+# The Pod should be able to run on all nodes including master nodes by using tolerations.
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: log-collector
+  name: log-collector
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: log-collector
+  template:
+    metadata:
+      labels:
+        app: log-collector
+    spec:
+      volumes:
+        - name: logdir
+          hostPath:
+            path: /var/log
+            type: DirectoryOrCreate
+      tolerations:
+        - key: test
+          value: "true"
+          operator: Equal
+          effect: NoSchedule
+      containers:
+        - image: busybox:1.36
+          name: busybox
+          env:
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              while true; do
+                MEMORY=$(free -m | grep Mem | awk '{print $3}')
+                echo "[SYSTEM] Node: $HOSTNAME - Memory: ${MEMORY}MB" >> /var/log/node-metrics.log
+                sleep 30
+              done
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 64Mi
+          volumeMounts:
+            - name: logdir
+              mountPath: /var/log

@@ -1,0 +1,62 @@
+site_name: CKA Exam Mastery
+site_description: Ultimate CKA Certification Preparation
+site_author: Vikash Kumar
+site_url: https://opsalchemy.github.io/kubequest/compose/
+docs_dir: compose
+
+theme:
+  name: windmill
+  language: en
+  logo: assets/kubernetes.svg  # Using YOUR kubernetes.svg
+  favicon: assets/kubernetes.svg  # Also as favicon
+  highlightjs: true
+  hljs_languages:
+    - yaml
+    - bash
+    - dockerfile
+    - json
+    - nginx
+    - go
+    - python
+  features:
+    - navigation.expand
+    - search.highlight
+    - toc.follow
+    - navigation.instant
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/extra.js
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.tabbed
+  - pymdownx.inlinehilite
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji
+
+extra:
+  version: '1.0'
+  repo_url: https://github.com/OpsAlchemy/kubequest
+  repo_name: 'OpsAlchemy/kubequest'
+  
+  # Social links
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/OpsAlchemy
+      name: GitHub
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com
+      name: Docker
+    - icon: fontawesome/brands/kubernetes
+      link: https://kubernetes.io
+      name: Kubernetes

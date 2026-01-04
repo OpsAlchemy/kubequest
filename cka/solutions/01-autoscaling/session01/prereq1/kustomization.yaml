@@ -1,0 +1,10 @@
+resources:
+- ../../base
+
+namePrefix: cpu-
+
+patches:
+- target:
+    kind: Deployment
+    name: hpa-test
+  path: patch.yaml

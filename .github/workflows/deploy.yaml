@@ -1,0 +1,122 @@
+name: Deploy Multiple MkDocs
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+env:
+  TRIGGER_KEYWORD: "cka-build"
+
+jobs:
+  check-trigger:
+    runs-on: ubuntu-latest
+    outputs:
+      should-deploy: ${{ steps.check.outputs.should-deploy }}
+    steps:
+      - name: Check commit message for trigger keyword
+        id: check
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == *"cka-build"* ]] || [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+            echo "Deployment trigger detected: cka-build keyword found or manual trigger"
+          else
+            echo "should-deploy=false" >> $GITHUB_OUTPUT
+            echo "Skipping deployment: cka-build keyword not found in commit message"
+          fi
+
+  build-and-deploy:
+    needs: check-trigger
+    if: needs.check-trigger.outputs.should-deploy == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Cache pip packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          echo "Installing dependencies from requirements.txt..."
+          if [ -f "requirements.txt" ]; then
+            pip install -r requirements.txt
+          else
+            echo "ERROR: requirements.txt not found, installing default packages"
+            pip install mkdocs mkdocs-material pymdown-extensions
+          fi
+          echo "Dependencies installed successfully"
+
+      - name: Build Docs Site
+        run: |
+          echo "Building docs site..."
+          if [ -f "cka/mkdocs.yml" ]; then
+            mkdocs build -f cka/mkdocs.yml --site-dir ./_site/docs
+            echo "Docs site built successfully"
+          else
+            echo "ERROR: cka/mkdocs.yml not found"
+            exit 1
+          fi
+
+      - name: Build Compose Site
+        run: |
+          echo "Building compose site..."
+          if [ -f "cka/mkdocs.compose.yml" ]; then
+            mkdocs build -f cka/mkdocs.compose.yml --site-dir ./_site/compose
+            echo "Compose site built successfully"
+          else
+            echo "ERROR: cka/mkdocs.compose.yml not found"
+            exit 1
+          fi
+
+      - name: Verify build output
+        run: |
+          echo "Verifying build output..."
+          if [ -d "_site/docs" ] && [ -f "_site/docs/index.html" ]; then
+            echo "Docs site output verified"
+          else
+            echo "ERROR: Docs site not built correctly"
+            exit 1
+          fi
+          
+          if [ -d "_site/compose" ] && [ -f "_site/compose/index.html" ]; then
+            echo "Compose site output verified"
+          else
+            echo "ERROR: Compose site not built correctly"
+            exit 1
+          fi
+          
+          echo "Build summary:"
+          find _site -name "*.html" | wc -l | xargs echo "Total HTML files:"
+          du -sh _site/docs | cut -f1 | xargs echo "Docs site size:"
+          du -sh _site/compose | cut -f1 | xargs echo "Compose site size:"
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.REPO_SECRET_TOKEN }}
+          publish_dir: ./_site
+          keep_files: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: "Deploy MkDocs sites: ${{ github.sha }}"
+
+      - name: Deployment status
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "Deployment completed successfully!"
+            echo "Docs site: https://vikashkumar.github.io/kubequest/docs/"
+            echo "Compose site: https://vikashkumar.github.io/kubequest/compose/"
+          else
+            echo "Deployment failed!"
+            echo "Check the logs above for details."
+          fi

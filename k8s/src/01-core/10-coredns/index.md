@@ -1,1 +1,0 @@
-okay so the service aroudn this guy, and the corefile is important

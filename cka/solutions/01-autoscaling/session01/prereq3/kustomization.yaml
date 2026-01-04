@@ -1,0 +1,10 @@
+resources:
+- ../../base
+
+namePrefix: vpa-off-
+
+patches:
+- target:
+    kind: Deployment
+    name: test
+  path: patch.yaml

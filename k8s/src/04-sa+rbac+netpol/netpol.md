@@ -1,1 +1,0 @@
-https://editor.networkpolicy.io/?id=isfUyIPMmFQTEbtm
