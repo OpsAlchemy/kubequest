@@ -7,7 +7,7 @@ A minimal, production-ready setup for experimenting with Crossplane managing AWS
 2. Start LocalStack 
 3. Deploy Crossplane with LocalStack endpoint
 
-**Then:** Apply an S3 bucket managed by Crossplane and watch it appear in LocalStack.
+**Then:** Apply AWS resources (S3 bucket, EC2 instance) managed by Crossplane and watch them appear in LocalStack.
 
 ---
 
@@ -106,13 +106,16 @@ kubectl describe bucket localstack-crossplane-bucket
 ### 7. Verify in LocalStack
 
 ```bash
-# Check LocalStack has the bucket
+# Check S3 bucket
 curl http://localhost:4566/_localstack/health
 aws --endpoint-url=http://localhost:4566 s3 ls
 
-# Crossplane status
+# Check EC2 instances
+aws --endpoint-url=http://localhost:4566 ec2 describe-instances
+
+# Crossplane resource status
 kubectl get buckets -A
-kubectl describe bucket demo-bucket
+kubectl get instances -A
 ```
 
 ---
@@ -121,7 +124,9 @@ kubectl describe bucket demo-bucket
 
 - **manifests/localstack-secret.yaml** — AWS credentials for LocalStack
 - **manifests/providerconfig-localstack.yaml** — ProviderConfig with endpoint URL
-- **manifests/s3-bucket.yaml** — Example S3 bucket managed by Crossplane
+- **manifests/s3-bucket.yaml** — S3 bucket managed by Crossplane
+- **manifests/ec2.yaml** — EC2 instance managed by Crossplane
+- **manifests/secretsmanager.yaml** — Secrets Manager resource (optional)
 - **docs/README.md** — Troubleshooting and advanced topics
 
 ---
@@ -129,8 +134,15 @@ kubectl describe bucket demo-bucket
 ## Cleanup
 
 ```bash
+# Delete all Crossplane-managed resources
 kubectl delete -f manifests/s3-bucket.yaml
+kubectl delete -f manifests/ec2.yaml
+kubectl delete -f manifests/secretsmanager.yaml
+
+# Stop LocalStack
 cd localstack && docker compose down
+
+# Delete kind cluster
 kind delete cluster --name crossplane
 ```
 
