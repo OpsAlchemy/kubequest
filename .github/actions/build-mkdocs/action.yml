@@ -1,0 +1,49 @@
+name: 'Build MkDocs Site'
+description: 'Build a MkDocs documentation site'
+
+inputs:
+  mkdocs-config:
+    description: 'Path to mkdocs config'
+    required: true
+  output-folder:
+    description: 'Output folder name'
+    required: true
+  requirements-file:
+    description: 'Path to requirements.txt'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.x"
+
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles(inputs.requirements-file) }}
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        if [ -f "${{ inputs.requirements-file }}" ]; then
+          pip install -r "${{ inputs.requirements-file }}"
+        else
+          pip install mkdocs mkdocs-material pymdown-extensions
+        fi
+
+    - name: Build site
+      shell: bash
+      run: |
+        mkdocs build -f "${{ inputs.mkdocs-config }}" --site-dir "./_site/${{ inputs.output-folder }}"
+
+    - name: Verify build
+      shell: bash
+      run: |
+        if [ ! -f "_site/${{ inputs.output-folder }}/index.html" ]; then
+          echo "Build failed"
+          exit 1
+        fi
