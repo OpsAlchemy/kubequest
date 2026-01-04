@@ -1,0 +1,18 @@
+apiVersion: ec2.aws.crossplane.io/v1alpha1
+kind: Instance
+metadata:
+  name: localstack-ec2
+spec:
+  deletionPolicy: Delete
+
+  providerConfigRef:
+    name: localstack
+
+  forProvider:
+    region: us-east-1
+    imageId: ami-12345678
+    instanceType: t3.micro
+
+    tags:
+      - key: Name
+        value: localstack-ec2
