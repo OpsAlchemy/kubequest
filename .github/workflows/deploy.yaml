@@ -1,122 +1,82 @@
 name: Deploy Multiple MkDocs
+
 on:
   push:
     branches: [main, master]
+    paths:
+      - 'cka/**'
+      - '.github/workflows/deploy.yaml'
+      - '.github/actions/build-mkdocs/**'
   workflow_dispatch:
 
 env:
-  TRIGGER_KEYWORD: "cka-build"
+  DOCS_CONFIG: |
+    [
+      {
+        "name": "docs",
+        "mkdocs_config": "cka/mkdocs.yml",
+        "output_folder": "docs",
+        "requirements_file": "cka/requirements.txt"
+      },
+      {
+        "name": "compose",
+        "mkdocs_config": "cka/mkdocs.compose.yml",
+        "output_folder": "compose",
+        "requirements_file": "cka/requirements.txt"
+      }
+    ]
 
 jobs:
-  check-trigger:
+  setup:
     runs-on: ubuntu-latest
     outputs:
-      should-deploy: ${{ steps.check.outputs.should-deploy }}
+      docs-matrix: ${{ steps.set-matrix.outputs.docs-matrix }}
     steps:
-      - name: Check commit message for trigger keyword
-        id: check
+      - name: Set matrix
+        id: set-matrix
         run: |
-          if [[ "${{ github.event.head_commit.message }}" == *"cka-build"* ]] || [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "should-deploy=true" >> $GITHUB_OUTPUT
-            echo "Deployment trigger detected: cka-build keyword found or manual trigger"
-          else
-            echo "should-deploy=false" >> $GITHUB_OUTPUT
-            echo "Skipping deployment: cka-build keyword not found in commit message"
-          fi
+          echo 'docs-matrix=${{ env.DOCS_CONFIG }}' >> $GITHUB_OUTPUT
 
-  build-and-deploy:
-    needs: check-trigger
-    if: needs.check-trigger.outputs.should-deploy == 'true'
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        doc: ${{ fromJson(needs.setup.outputs.docs-matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build ${{ matrix.doc.name }}
+        uses: ./.github/actions/build-mkdocs
+        with:
+          mkdocs-config: ${{ matrix.doc.mkdocs_config }}
+          output-folder: ${{ matrix.doc.output_folder }}
+          requirements-file: ${{ matrix.doc.requirements_file }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: site-${{ matrix.doc.name }}
+          path: _site/${{ matrix.doc.output_folder }}
+          retention-days: 1
+
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/download-artifact@v3
         with:
-          python-version: "3.x"
+          path: artifacts
 
-      - name: Cache pip packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Install dependencies
+      - name: Combine sites
         run: |
-          echo "Installing dependencies from requirements.txt..."
-          if [ -f "requirements.txt" ]; then
-            pip install -r requirements.txt
-          else
-            echo "ERROR: requirements.txt not found, installing default packages"
-            pip install mkdocs mkdocs-material pymdown-extensions
-          fi
-          echo "Dependencies installed successfully"
+          mkdir -p _site
+          for dir in artifacts/site-*/; do
+            site=$(basename "$dir" | sed 's/site-//')
+            cp -r "$dir" "_site/$site"
+          done
 
-      - name: Build Docs Site
-        run: |
-          echo "Building docs site..."
-          if [ -f "cka/mkdocs.yml" ]; then
-            mkdocs build -f cka/mkdocs.yml --site-dir ./_site/docs
-            echo "Docs site built successfully"
-          else
-            echo "ERROR: cka/mkdocs.yml not found"
-            exit 1
-          fi
-
-      - name: Build Compose Site
-        run: |
-          echo "Building compose site..."
-          if [ -f "cka/mkdocs.compose.yml" ]; then
-            mkdocs build -f cka/mkdocs.compose.yml --site-dir ./_site/compose
-            echo "Compose site built successfully"
-          else
-            echo "ERROR: cka/mkdocs.compose.yml not found"
-            exit 1
-          fi
-
-      - name: Verify build output
-        run: |
-          echo "Verifying build output..."
-          if [ -d "_site/docs" ] && [ -f "_site/docs/index.html" ]; then
-            echo "Docs site output verified"
-          else
-            echo "ERROR: Docs site not built correctly"
-            exit 1
-          fi
-          
-          if [ -d "_site/compose" ] && [ -f "_site/compose/index.html" ]; then
-            echo "Compose site output verified"
-          else
-            echo "ERROR: Compose site not built correctly"
-            exit 1
-          fi
-          
-          echo "Build summary:"
-          find _site -name "*.html" | wc -l | xargs echo "Total HTML files:"
-          du -sh _site/docs | cut -f1 | xargs echo "Docs site size:"
-          du -sh _site/compose | cut -f1 | xargs echo "Compose site size:"
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.REPO_SECRET_TOKEN }}
           publish_dir: ./_site
           keep_files: true
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: "Deploy MkDocs sites: ${{ github.sha }}"
-
-      - name: Deployment status
-        run: |
-          if [ "${{ job.status }}" = "success" ]; then
-            echo "Deployment completed successfully!"
-            echo "Docs site: https://vikashkumar.github.io/kubequest/docs/"
-            echo "Compose site: https://vikashkumar.github.io/kubequest/compose/"
-          else
-            echo "Deployment failed!"
-            echo "Check the logs above for details."
-          fi
