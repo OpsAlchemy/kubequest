@@ -3,15 +3,20 @@ kind: ProviderConfig
 metadata:
   name: localstack
 spec:
-  region: us-east-1
   credentials:
     source: Secret
     secretRef:
       namespace: crossplane-system
-      name: localstack-credentials
-      key: ""
+      name: aws-creds
+      key: credentials
   endpoint:
+    source: Custom
+    hostnameImmutable: true
+    signingRegion: us-west-2
+    partitionId: aws
     url:
       type: Static
-      static: http://host.docker.internal:4566
-    source: Custom
+      static: http://172.17.0.1:4566
+
+      # going to gateway of dns and going outside on the port that is exposed on host
+
