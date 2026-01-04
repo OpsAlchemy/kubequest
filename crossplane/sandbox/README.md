@@ -93,9 +93,7 @@ kubectl get providers.pkg.crossplane.io
 kubectl get providerrevisions.pkg.crossplane.io
 ```
 
-### 6. Deploy Resources (managed by Crossplane)
-
-#### S3 Bucket
+### 6. Deploy S3 bucket (managed by Crossplane)
 
 ```bash
 kubectl apply -f manifests/s3-bucket.yaml
@@ -103,27 +101,6 @@ kubectl apply -f manifests/s3-bucket.yaml
 # Watch it sync
 kubectl get buckets -A -w
 kubectl describe bucket localstack-crossplane-bucket
-```
-
-#### EC2 Instance
-
-```bash
-kubectl apply -f manifests/ec2.yaml
-
-# Watch EC2 instance creation
-kubectl get instances -A -w
-kubectl describe instance localstack-ec2 -A
-
-# Check EC2 instance schema
-kubectl explain instance \
-  --api-version=ec2.aws.crossplane.io/v1alpha1 \
-  --recursive
-```
-
-#### Other Resources
-
-```bash
-kubectl apply -f manifests/secretsmanager.yaml
 ```
 
 ### 7. Verify in LocalStack
@@ -167,36 +144,6 @@ cd localstack && docker compose down
 
 # Delete kind cluster
 kind delete cluster --name crossplane
-```
-
----
-
-## Testing EC2 Instance with LocalStack
-
-After deploying the EC2 instance via Crossplane, you can verify it in LocalStack:
-
-```bash
-# Set LocalStack credentials
-export AWS_ACCESS_KEY_ID=test
-export AWS_SECRET_ACCESS_KEY=test
-export AWS_DEFAULT_REGION=us-east-1
-export AWS_EC2_METADATA_DISABLED=true
-
-# Describe EC2 instances
-aws --endpoint-url=http://localhost:4566 ec2 describe-instances
-
-# Get instance details (JSON format for parsing)
-aws --endpoint-url=http://localhost:4566 ec2 describe-instances \
-  --query 'Reservations[*].Instances[*].[InstanceId,InstanceType,State.Name,Tags[?Key==`Name`].Value|[0]]' \
-  --output table
-
-# Get a specific instance's details
-INSTANCE_ID=$(aws --endpoint-url=http://localhost:4566 ec2 describe-instances \
-  --filters "Name=tag:Name,Values=localstack-ec2" \
-  --query 'Reservations[0].Instances[0].InstanceId' \
-  --output text)
-
-echo "Instance ID: $INSTANCE_ID"
 ```
 
 ---
