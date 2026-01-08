@@ -10,5 +10,11 @@
     "mkdocs_config": "cka/mkdocs.compose.yml",
     "output_folder": "compose",
     "requirements_file": "cka/requirements.txt"
+  },
+  {
+    "name": "git",
+    "mkdocs_config": "git/mkdocs.yml",
+    "output_folder": "git",
+    "requirements_file": "git/requirements.txt"
   }
 ]
