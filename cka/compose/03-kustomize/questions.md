@@ -1,28 +1,31 @@
 # Kustomize Practice Questions
 
+## Dependent Question Set (1-5) – Build a Complete Multi-Environment Application
+
+These questions build progressively. Complete them in order.
+
 ---
 
-## Question 1 – Base Application Setup
+## Question 1 – Base Application with ConfigMap & Redis
 
-**Task**: Create a base Kustomize directory with a simple Node.js API deployment.
+**Task**: Create a production-ready base Kustomize directory with Node.js API, ConfigMap, and Redis services.
 
-**Steps**:
+**Requirements**:
 
-1. Create directory structure: `base/`
-2. Create `base/deployment.yaml` with:
-   - Image: `node:18-alpine`
-   - Container port: `3000`
-   - Replicas: `1`
-3. Create `base/service.yaml` with:
-   - Service type: `ClusterIP`
-   - Port: `80` → `3000`
-4. Create `base/kustomization.yaml` referencing both resources
+1. Create `base/` directory with:
+   - `deployment.yaml`: Node.js API (image: `node:18-alpine`, port: `3000`, replicas: `1`)
+   - `service.yaml`: ClusterIP service (port `80` → `3000`)
+   - `configmap.yaml`: App config with `APP_NAME=myapp`, `LOG_LEVEL=info`, `REDIS_HOST=redis-service`
+   - `redis-deployment.yaml`: Redis (image: `redis:7-alpine`, port: `6379`)
+   - `redis-service.yaml`: Redis ClusterIP service (port `6379`)
+   - `kustomization.yaml`: Reference all 5 resources
+
+2. Verify with: `kubectl kustomize base/` (no errors, all resources present)
 
 **Deliverables**:
-
-- Directory structure created
-- All YAML files in place
-- `kustomize build base/` runs without errors
+- Base directory fully functional
+- All resources render correctly
+- ConfigMap properly referenced in API deployment
 
 ---
 
@@ -87,7 +90,31 @@
    - Add name prefix: `dev-`
 3. Create `overlays/dev/deployment-patch.yaml`:
    - Patch API deployment replicas to `2`
-4. Include patch in kustomization using `patchesStrategicMerge`
+4. Include patch in `kustomization.yaml` using the newer `patches` field (recommended).
+
+    Example (reference file):
+
+    ```yaml
+    patches:
+       - path: deployment-patch.yaml
+          target:
+             kind: Deployment
+             name: myapp-deployment
+    ```
+
+    Or inline patch:
+
+    ```yaml
+    patches:
+       - target:
+             kind: Deployment
+             name: myapp-deployment
+          patch: |-
+             spec:
+                replicas: 2
+    ```
+
+    Note: `patchesStrategicMerge` is deprecated in recent Kustomize versions — prefer `patches`.
 5. Test with `kustomize build overlays/dev/`
 
 **Deliverables**:
@@ -197,9 +224,9 @@
 
 ---
 
-## Question 9 – PatchesStrategicMerge
+## Question 9 – Patches (strategic merge)
 
-**Task**: Apply strategic merge patches to multiple resources.
+**Task**: Apply strategic merge-style patches to multiple resources (use the `patches` field; `patchesStrategicMerge` is deprecated).
 
 **Steps**:
 
@@ -210,8 +237,7 @@
 2. Create `overlays/prod/patches/service-patch.yaml`:
    - Change service type to `LoadBalancer`
 3. In `overlays/prod/kustomization.yaml`:
-   - Use `patchesStrategicMerge` section
-   - Reference both patch files
+   - Use the `patches` section and reference both patch files (with `path` and an optional `target`)
 4. Verify patches apply correctly
 
 **Deliverables**:

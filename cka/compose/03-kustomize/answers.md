@@ -201,8 +201,14 @@ namePrefix: dev-
 commonLabels:
   env: dev
 
-patchesStrategicMerge:
-- patches/deployment-patch.yaml
+# Use the 'patches' field (recommended) instead of the deprecated
+# 'patchesStrategicMerge'. You can reference a patch file or supply an
+# inline patch.
+patches:
+  - path: patches/deployment-patch.yaml
+    target:
+      kind: Deployment
+      name: node-api
 EOF
 
 # overlays/dev/patches/deployment-patch.yaml
@@ -242,9 +248,16 @@ namePrefix: prod-
 commonLabels:
   env: prod
 
-patchesStrategicMerge:
-- patches/deployment-patch.yaml
-- patches/resources-patch.yaml
+# Use 'patches' instead of the deprecated 'patchesStrategicMerge'.
+patches:
+  - path: patches/deployment-patch.yaml
+    target:
+      kind: Deployment
+      name: node-api
+  - path: patches/resources-patch.yaml
+    target:
+      kind: Deployment
+      name: node-api
 EOF
 
 # overlays/prod/patches/deployment-patch.yaml
