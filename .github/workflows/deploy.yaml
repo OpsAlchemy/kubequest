@@ -15,23 +15,13 @@ jobs:
     outputs:
       docs-matrix: ${{ steps.set-matrix.outputs.docs-matrix }}
     steps:
-      - name: Set matrix
+      - uses: actions/checkout@v4
+      
+      - name: Set matrix from config
         id: set-matrix
         run: |
-          DOCS_MATRIX='[
-            {
-              "name": "docs",
-              "mkdocs_config": "cka/mkdocs.yml",
-              "output_folder": "docs",
-              "requirements_file": "cka/requirements.txt"
-            },
-            {
-              "name": "compose",
-              "mkdocs_config": "cka/mkdocs.compose.yml",
-              "output_folder": "compose",
-              "requirements_file": "cka/requirements.txt"
-            }
-          ]'
+          # Read docs configuration from .github/docs-config.json
+          DOCS_MATRIX=$(cat .github/docs-config.json)
           echo "docs-matrix=$(echo "$DOCS_MATRIX" | jq -c .)" >> $GITHUB_OUTPUT
 
   build:
@@ -50,27 +40,43 @@ jobs:
           output-folder: ${{ matrix.doc.output_folder }}
           requirements-file: ${{ matrix.doc.requirements_file }}
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: site-${{ matrix.doc.name }}
-          path: _site/${{ matrix.doc.output_folder }}
+          path: _site/${{ matrix.doc.output_folder }}/
           retention-days: 1
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: artifacts
+
+      - name: Debug - List artifacts
+        run: |
+          echo "Contents of artifacts:"
+          find artifacts -type f | head -20
 
       - name: Combine sites
         run: |
           mkdir -p _site
           for dir in artifacts/site-*/; do
             site=$(basename "$dir" | sed 's/site-//')
-            cp -r "$dir" "_site/$site"
+            # Artifact directory contains the output folder (e.g., site-compose/compose)
+            # We need to move the contents of that subfolder to _site/
+            if [ -d "$dir/$site" ]; then
+              echo "Copying artifacts/$site/$site/* to _site/$site/"
+              mkdir -p "_site/$site"
+              cp -r "$dir/$site/"* "_site/$site/" 2>/dev/null || true
+            else
+              echo "WARNING: Expected $dir/$site but not found"
+              ls -la "$dir" || true
+            fi
           done
+          echo "Final _site structure:"
+          find _site -type f | head -20
 
       - uses: peaceiris/actions-gh-pages@v3
         with:
