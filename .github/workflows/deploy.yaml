@@ -4,27 +4,10 @@ on:
   push:
     branches: [main, master]
     paths:
-      - 'cka/**'
-      - '.github/workflows/deploy.yaml'
-      - '.github/actions/build-mkdocs/**'
+      - "cka/**"
+      - ".github/workflows/deploy.yaml"
+      - ".github/actions/build-mkdocs/**"
   workflow_dispatch:
-
-env:
-  DOCS_CONFIG: |
-    [
-      {
-        "name": "docs",
-        "mkdocs_config": "cka/mkdocs.yml",
-        "output_folder": "docs",
-        "requirements_file": "cka/requirements.txt"
-      },
-      {
-        "name": "compose",
-        "mkdocs_config": "cka/mkdocs.compose.yml",
-        "output_folder": "compose",
-        "requirements_file": "cka/requirements.txt"
-      }
-    ]
 
 jobs:
   setup:
@@ -32,10 +15,27 @@ jobs:
     outputs:
       docs-matrix: ${{ steps.set-matrix.outputs.docs-matrix }}
     steps:
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: Set matrix
         id: set-matrix
         run: |
-          echo 'docs-matrix=${{ env.DOCS_CONFIG }}' >> $GITHUB_OUTPUT
+          DOCS_MATRIX='[
+            {
+              "name": "docs",
+              "mkdocs_config": "cka/mkdocs.yml",
+              "output_folder": "docs",
+              "requirements_file": "cka/requirements.txt"
+            },
+            {
+              "name": "compose",
+              "mkdocs_config": "cka/mkdocs.compose.yml",
+              "output_folder": "compose",
+              "requirements_file": "cka/requirements.txt"
+            }
+          ]'
+          echo "docs-matrix=$(echo "$DOCS_MATRIX" | jq -c .)" >> $GITHUB_OUTPUT
 
   build:
     needs: setup
