@@ -42,12 +42,29 @@ runs:
       CONFIG_DIR=$(dirname "${{ inputs.mkdocs-config }}")
       CONFIG_FILE=$(basename "${{ inputs.mkdocs-config }}")
 
-      # Calculate absolute output path
+      # Handle root-level config (dirname returns ".")
+      if [ "$CONFIG_DIR" = "." ]; then
+        CONFIG_DIR="$PWD"
+      else
+        CONFIG_DIR="$PWD/$CONFIG_DIR"
+      fi
+
+      # Calculate absolute output path (always from repo root)
       OUTPUT_PATH="$PWD/_site/${{ inputs.output-folder }}"
 
-      # Change to config directory and build with absolute path
-      cd "$CONFIG_DIR"
-      mkdocs build -f "$CONFIG_FILE" --site-dir "$OUTPUT_PATH"
+      # Save current directory and change to config directory
+      ORIG_DIR="$PWD"
+      cd "$CONFIG_DIR" || { echo "ERROR: Cannot cd to $CONFIG_DIR"; exit 1; }
+
+      # Build with absolute path
+      mkdocs build -f "$CONFIG_FILE" --site-dir "$OUTPUT_PATH" || {
+        cd "$ORIG_DIR"
+        echo "ERROR: mkdocs build failed"
+        exit 1
+      }
+
+      # Return to original directory
+      cd "$ORIG_DIR"
 
       # Verify the build succeeded
       if [ ! -d "$OUTPUT_PATH" ]; then
