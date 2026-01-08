@@ -5,6 +5,7 @@ on:
     branches: [main, master]
     paths:
       - "cka/**"
+      - "git/**"
       - ".github/workflows/deploy.yaml"
       - ".github/actions/build-mkdocs/**"
   workflow_dispatch:
