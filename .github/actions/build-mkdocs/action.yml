@@ -15,35 +15,65 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.x"
+  - name: Setup Python
+    uses: actions/setup-python@v5
+    with:
+      python-version: "3.x"
 
-    - name: Cache pip
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles(inputs.requirements-file) }}
+  - name: Cache pip
+    uses: actions/cache@v3
+    with:
+      path: ~/.cache/pip
+      key: ${{ runner.os }}-pip-${{ hashFiles(inputs.requirements-file) }}
 
-    - name: Install dependencies
-      shell: bash
-      run: |
-        if [ -f "${{ inputs.requirements-file }}" ]; then
-          pip install -r "${{ inputs.requirements-file }}"
-        else
-          pip install mkdocs mkdocs-material pymdown-extensions
-        fi
+  - name: Install dependencies
+    shell: bash
+    run: |
+      if [ -f "${{ inputs.requirements-file }}" ]; then
+        pip install -r "${{ inputs.requirements-file }}"
+      else
+        pip install mkdocs mkdocs-material pymdown-extensions
+      fi
 
-    - name: Build site
-      shell: bash
-      run: |
-        mkdocs build -f "${{ inputs.mkdocs-config }}" --site-dir "./_site/${{ inputs.output-folder }}"
+  - name: Build site
+    shell: bash
+    run: |
+      # Get the directory containing the mkdocs config
+      CONFIG_DIR=$(dirname "${{ inputs.mkdocs-config }}")
+      CONFIG_FILE=$(basename "${{ inputs.mkdocs-config }}")
 
-    - name: Verify build
-      shell: bash
-      run: |
-        if [ ! -f "_site/${{ inputs.output-folder }}/index.html" ]; then
-          echo "Build failed"
-          exit 1
-        fi
+      # Handle root-level config (dirname returns ".")
+      if [ "$CONFIG_DIR" = "." ]; then
+        CONFIG_DIR="$PWD"
+      else
+        CONFIG_DIR="$PWD/$CONFIG_DIR"
+      fi
+
+      # Calculate absolute output path (always from repo root)
+      OUTPUT_PATH="$PWD/_site/${{ inputs.output-folder }}"
+
+      # Save current directory and change to config directory
+      ORIG_DIR="$PWD"
+      cd "$CONFIG_DIR" || { echo "ERROR: Cannot cd to $CONFIG_DIR"; exit 1; }
+
+      # Build with absolute path
+      mkdocs build -f "$CONFIG_FILE" --site-dir "$OUTPUT_PATH" || {
+        cd "$ORIG_DIR"
+        echo "ERROR: mkdocs build failed"
+        exit 1
+      }
+
+      # Return to original directory
+      cd "$ORIG_DIR"
+
+      # Verify the build succeeded
+      if [ ! -d "$OUTPUT_PATH" ]; then
+        echo "ERROR: $OUTPUT_PATH directory not created"
+        exit 1
+      fi
+      if [ ! -f "$OUTPUT_PATH/index.html" ]; then
+        echo "ERROR: index.html not found in $OUTPUT_PATH"
+        ls -la "$OUTPUT_PATH" || echo "Directory listing failed"
+        exit 1
+      fi
+      echo "✓ Build successful: $OUTPUT_PATH/index.html exists"
