@@ -53,13 +53,6 @@ jobs:
           output-folder: ${{ matrix.doc.output_folder }}
           requirements-file: ${{ matrix.doc.requirements_file }}
 
-      - name: Debug - List _site contents
-        run: |
-          echo "Contents of _site:"
-          ls -la _site/ || echo "_site directory not found"
-          echo "Contents of _site/${{ matrix.doc.output_folder }}:"
-          ls -la "_site/${{ matrix.doc.output_folder }}" || echo "Subdirectory not found"
-
       - uses: actions/upload-artifact@v4
         with:
           name: site-${{ matrix.doc.name }}
