@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Vikash Kumar">
+    <link rel="canonical" href="https://opsalchemy.github.io/kubequest/compose/02%20helm/questions/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Helm Practice Questions - CKA Exam Mastery</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <link href="../../stylesheets/extra.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Helm Practice Questions", url: "#_top", children: [
+              {title: "Question 1 \u2013 MinIO Helm Install", url: "#question-1-minio-helm-install" },
+              {title: "Question 2 \u2013 PostgreSQL Helm Install", url: "#question-2-postgresql-helm-install" },
+              {title: "Question 3 \u2013 Redis Helm Upgrade", url: "#question-3-redis-helm-upgrade" },
+              {title: "Question 4 \u2013 Create and Use a Simple Helm Chart", url: "#question-4-create-and-use-a-simple-helm-chart" },
+              {title: "Question 5 \u2013 Multi-Environment Helm Deployment", url: "#question-5-multi-environment-helm-deployment" },
+              {title: "Question 6 \u2013 Helm Search and Show Commands", url: "#question-6-helm-search-and-show-commands" },
+              {title: "Question 7 \u2013 Helm Template Rendering", url: "#question-7-helm-template-rendering" },
+              {title: "Question 8 \u2013 Helm Rollback", url: "#question-8-helm-rollback" },
+              {title: "Question 9 \u2013 Helm Uninstall and Cleanup", url: "#question-9-helm-uninstall-and-cleanup" },
+              {title: "Question 10 \u2013 Helm Repository Management", url: "#question-10-helm-repository-management" },
+              {title: "Question 11 \u2013 Helm Get Commands", url: "#question-11-helm-get-commands" },
+              {title: "Question 12 \u2013 Multi-Value Files Deployment", url: "#question-12-multi-value-files-deployment" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="../../javascripts/extra.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../../03-kustomize/answers/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../../03-kustomize/answers/" class="btn btn-xs btn-link">
+        Kustomize Practice Answers (Compressed 3 Questions)
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../helm/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../helm/" class="btn btn-xs btn-link">
+        Helm
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="helm-practice-questions">Helm Practice Questions</h1>
+<hr />
+<h2 id="question-1-minio-helm-install">Question 1 – MinIO Helm Install</h2>
+<p><strong>Task</strong>: Install MinIO on namespace <code>storage</code> with credentials and 10Gi storage.</p>
+<p><strong>Steps</strong>:</p>
+<ol>
+<li>Add Bitnami repo: <code>https://charts.bitnami.com/bitnami</code></li>
+<li>Create namespace <code>storage</code></li>
+<li>Install chart <code>bitnami/minio</code> as release <code>minio-app</code></li>
+</ol>
+<p><strong>Value keys to override</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth.rootUser</code></td>
+<td><code>minioadmin</code></td>
+</tr>
+<tr>
+<td><code>auth.rootPassword</code></td>
+<td><code>miniosecret</code></td>
+</tr>
+<tr>
+<td><code>persistence.enabled</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>persistence.size</code></td>
+<td><code>10Gi</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="question-2-postgresql-helm-install">Question 2 – PostgreSQL Helm Install</h2>
+<p><strong>Task</strong>: Install PostgreSQL on namespace <code>databases</code> with user <code>appuser</code>, password <code>apppass</code>, database <code>appdb</code>, and 5Gi storage.</p>
+<p><strong>Steps</strong>:</p>
+<ol>
+<li>Add Bitnami repo: <code>https://charts.bitnami.com/bitnami</code></li>
+<li>Create namespace <code>databases</code></li>
+<li>Install chart <code>bitnami/postgresql</code> as release <code>pg-app</code></li>
+</ol>
+<p><strong>Value keys to override</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth.username</code></td>
+<td><code>appuser</code></td>
+</tr>
+<tr>
+<td><code>auth.password</code></td>
+<td><code>apppass</code></td>
+</tr>
+<tr>
+<td><code>auth.database</code></td>
+<td><code>appdb</code></td>
+</tr>
+<tr>
+<td><code>primary.persistence.size</code></td>
+<td><code>5Gi</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="question-3-redis-helm-upgrade">Question 3 – Redis Helm Upgrade</h2>
+<p><strong>Task</strong>: Upgrade existing <code>redis-app</code> release to enable authentication with password <code>redispass</code> and increase storage to 8Gi.</p>
+<p><strong>Steps</strong>:</p>
+<ol>
+<li>Assume <code>redis-app</code> is already installed in namespace <code>databases</code> from <code>bitnami/redis</code></li>
+<li>Use <code>helm upgrade</code> to update the release</li>
+<li>Make sure authentication is enabled</li>
+</ol>
+<p><strong>Value keys to change</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth.enabled</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>auth.password</code></td>
+<td><code>redispass</code></td>
+</tr>
+<tr>
+<td><code>primary.persistence.size</code></td>
+<td><code>8Gi</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="question-4-create-and-use-a-simple-helm-chart">Question 4 – Create and Use a Simple Helm Chart</h2>
+<p><strong>Task</strong>: Create a Helm chart named <code>simple-app</code>, install to namespace <code>demo</code> with 2 replicas, image tag <code>1.0.0</code>, then upgrade to tag <code>1.1.0</code>.</p>
+<p><strong>Steps</strong>:</p>
+<ol>
+<li>Create new chart using <code>helm create</code></li>
+<li>Create namespace <code>demo</code></li>
+<li>Install the chart as release <code>simple-release</code></li>
+<li>Then upgrade the release to new image tag</li>
+</ol>
+<p><strong>Value keys to set</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>replicaCount</code></td>
+<td><code>2</code></td>
+</tr>
+<tr>
+<td><code>image.repository</code></td>
+<td><code>myorg/simple-app</code></td>
+</tr>
+<tr>
+<td><code>image.tag</code></td>
+<td><code>1.0.0</code> → upgrade to <code>1.1.0</code></td>
+</tr>
+<tr>
+<td><code>service.port</code></td>
+<td><code>8080</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="question-5-multi-environment-helm-deployment">Question 5 – Multi-Environment Helm Deployment</h2>
+<p><strong>Task</strong>: Deploy MinIO Operator v4.3.7 to three environments (dev, staging, prod) with different replica counts and tenant configurations.</p>
+<p><strong>Steps</strong>:</p>
+<ol>
+<li>Add MinIO Operator repo: <code>https://operator.min.io</code></li>
+<li>Create three namespaces: <code>minio-dev</code>, <code>minio-staging</code>, <code>minio-prod</code></li>
+<li>Install same chart to each namespace with different configurations</li>
+</ol>
+<p><strong>Environment-specific values</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th style="text-align: center;"><code>operator.replicaCount</code></th>
+<th style="text-align: center;"><code>tenants[0].pools[0].servers</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dev</td>
+<td style="text-align: center;"><code>1</code></td>
+<td style="text-align: center;"><code>1</code></td>
+</tr>
+<tr>
+<td>Staging</td>
+<td style="text-align: center;"><code>2</code></td>
+<td style="text-align: center;"><code>2</code></td>
+</tr>
+<tr>
+<td>Prod</td>
+<td style="text-align: center;"><code>3</code></td>
+<td style="text-align: center;"><code>4</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Also set for all environments</strong>:</p>
+<ul>
+<li><code>tenants[0].secrets.accessKey</code></li>
+<li><code>tenants[0].secrets.secretKey</code></li>
+</ul>
+<hr />
+<h2 id="question-6-helm-search-and-show-commands">Question 6 – Helm Search and Show Commands</h2>
+<p><strong>Task</strong>: Search for Helm charts and inspect their values.</p>
+<p><strong>Practice</strong>:</p>
+<ol>
+<li>Search for <code>nginx</code> chart in Bitnami repo</li>
+<li>Search for all PostgreSQL versions available</li>
+<li>Show the values for <code>redis</code> chart</li>
+<li>Show the README for <code>postgresql</code> chart</li>
+<li>Show chart metadata for <code>nginx</code></li>
+</ol>
+<hr />
+<h2 id="question-7-helm-template-rendering">Question 7 – Helm Template Rendering</h2>
+<p><strong>Task</strong>: Render Helm templates locally without installing.</p>
+<p><strong>Practice</strong>:</p>
+<ol>
+<li>Render <code>nginx</code> template with 3 replicas locally</li>
+<li>Render <code>postgresql</code> template and save output to a file</li>
+<li>Render <code>redis</code> template with custom namespace</li>
+<li>Run <code>helm lint</code> on chart directory to check syntax</li>
+</ol>
+<hr />
+<h2 id="question-8-helm-rollback">Question 8 – Helm Rollback</h2>
+<p><strong>Task</strong>: Rollback a release to previous version.</p>
+<p><strong>Scenario</strong>: Release <code>simple-release</code> has been upgraded and something broke.</p>
+<p><strong>Practice</strong>:</p>
+<ol>
+<li>View release history of <code>simple-release</code></li>
+<li>Rollback to previous revision</li>
+<li>Rollback to specific revision number</li>
+<li>Verify current values after rollback</li>
+</ol>
+<hr />
+<h2 id="question-9-helm-uninstall-and-cleanup">Question 9 – Helm Uninstall and Cleanup</h2>
+<p><strong>Task</strong>: Uninstall releases and clean up resources.</p>
+<p><strong>Practice</strong>:</p>
+<ol>
+<li>Uninstall <code>minio-app</code> from namespace <code>storage</code></li>
+<li>Uninstall <code>pg-app</code> but keep release history</li>
+<li>List all releases including uninstalled ones</li>
+<li>Delete the namespace</li>
+</ol>
+<hr />
+<h2 id="question-10-helm-repository-management">Question 10 – Helm Repository Management</h2>
+<p><strong>Task</strong>: Manage Helm repositories.</p>
+<p><strong>Practice</strong>:</p>
+<ol>
+<li>Add Bitnami repo</li>
+<li>Add MinIO Operator repo</li>
+<li>Add Stable repo</li>
+<li>List all repos</li>
+<li>Update repos to get latest versions</li>
+<li>Search in specific repo</li>
+<li>Remove a repo</li>
+</ol>
+<hr />
+<h2 id="question-11-helm-get-commands">Question 11 – Helm Get Commands</h2>
+<p><strong>Task</strong>: Retrieve information about installed releases.</p>
+<p><strong>Scenario</strong>: Get details about installed releases</p>
+<p><strong>Practice</strong>:</p>
+<ol>
+<li>Get current values of <code>minio-app</code> release</li>
+<li>Get all Kubernetes manifests created by <code>pg-app</code></li>
+<li>Get hooks from <code>pg-app</code> (if any)</li>
+<li>Get release notes from <code>simple-release</code></li>
+<li>Get all information about a release</li>
+</ol>
+<hr />
+<h2 id="question-12-multi-value-files-deployment">Question 12 – Multi-Value Files Deployment</h2>
+<p><strong>Task</strong>: Deploy using multiple values files with layering.</p>
+<p><strong>Scenario</strong>: Base values + environment-specific overrides</p>
+<p><strong>Practice</strong>:</p>
+<ol>
+<li>Create <code>values.yaml</code> with base configuration</li>
+<li>Create <code>values-dev.yaml</code> with dev overrides</li>
+<li>Create <code>values-prod.yaml</code> with prod overrides</li>
+<li>Install chart using multiple <code>--values</code> files (base + prod)</li>
+<li>Understand value precedence (later files override earlier ones)</li>
+</ol>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../../03-kustomize/answers/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../../03-kustomize/answers/" class="btn btn-xs btn-link">
+        Kustomize Practice Answers (Compressed 3 Questions)
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../helm/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../helm/" class="btn btn-xs btn-link">
+        Helm
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>

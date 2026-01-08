@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Vikash Kumar">
+    <link rel="canonical" href="https://opsalchemy.github.io/kubequest/compose/03-kustomize/questions/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Kustomize Practice Questions (Compressed) - CKA Exam Mastery</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <link href="../../stylesheets/extra.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Kustomize Practice Questions (Compressed)", url: "#_top", children: [
+              {title: "Question 1 \u2013 Multi-Environment Base + Overlays with Patches", url: "#question-1-multi-environment-base-overlays-with-patches" },
+              {title: "Question 2 \u2013 ConfigMap/Secret Generators + Image Patching (Dependent on Q1)", url: "#question-2-configmapsecret-generators-image-patching-dependent-on-q1" },
+              {title: "Question 3 \u2013 Advanced: Composable Multi-Base + JSON Patches (Independent)", url: "#question-3-advanced-composable-multi-base-json-patches-independent" },
+              {title: "How to Approach:", url: "#how-to-approach" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="../../javascripts/extra.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../../04-admission-webhook/commands/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../../04-admission-webhook/commands/" class="btn btn-xs btn-link">
+        Commands
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../notes/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../notes/" class="btn btn-xs btn-link">
+        Kustomize Master Guide: Advanced Patterns &amp; Modern Practices
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="kustomize-practice-questions-compressed">Kustomize Practice Questions (Compressed)</h1>
+<hr />
+<h2 id="question-1-multi-environment-base-overlays-with-patches">Question 1 – Multi-Environment Base + Overlays with Patches</h2>
+<p><strong>Task</strong>: Build a complete base application with dev/prod overlays using patches and ConfigMap generators. This is a <strong>dependent</strong> question—your solution here becomes the foundation for Q2 and Q3.</p>
+<p><strong>Steps</strong>:</p>
+<ol>
+<li>
+<p><strong>Create base structure:</strong>
+   <div class="highlight"><pre><span></span><code>base/
+  deployment.yaml       # API server: node:18-alpine, port 3000, 1 replica
+  service.yaml          # ClusterIP service on port 80→3000
+  configmap.yaml        # APP_NAME, LOG_LEVEL, REDIS_HOST
+  redis-deployment.yaml # Redis: redis:7-alpine, port 6379
+  redis-service.yaml    # Redis ClusterIP service
+  kustomization.yaml    # resources: [all above]
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Create dev overlay with patches:</strong>
+   <div class="highlight"><pre><span></span><code>overlays/dev/
+  kustomization.yaml    # resources: ../../base, namespace: dev, namePrefix: dev-, patches: [deployment-patch.yaml]
+  patches/
+    deployment-patch.yaml    # Patch replicas: 2
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Create prod overlay with patches + resource limits:</strong>
+   <div class="highlight"><pre><span></span><code>overlays/prod/
+  kustomization.yaml    # resources: ../../base, namespace: prod, namePrefix: prod-, patches: [deployment-patch.yaml, resources-patch.yaml]
+  patches/
+    deployment-patch.yaml    # Patch replicas: 4
+    resources-patch.yaml     # CPU: 100m→500m, Memory: 128Mi→512Mi
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Add labels to both overlays using <code>labels</code> field (no deprecation warnings)</strong></p>
+</li>
+<li>
+<p><strong>Test:</strong>
+   <div class="highlight"><pre><span></span><code>kustomize<span class="w"> </span>build<span class="w"> </span>overlays/dev/
+kustomize<span class="w"> </span>build<span class="w"> </span>overlays/prod/
+</code></pre></div></p>
+</li>
+</ol>
+<p><strong>Deliverables</strong>:</p>
+<ul>
+<li>✅ Base with 5 resources (2 deployments, 2 services, 1 configmap)</li>
+<li>✅ Dev overlay: 2 replicas, dev namespace, dev- prefix, labels applied</li>
+<li>✅ Prod overlay: 4 replicas, prod namespace, prod- prefix, resource limits, labels applied</li>
+<li>✅ Both build cleanly with no warnings</li>
+</ul>
+<hr />
+<h2 id="question-2-configmapsecret-generators-image-patching-dependent-on-q1">Question 2 – ConfigMap/Secret Generators + Image Patching (Dependent on Q1)</h2>
+<p><strong>Task</strong>: Extend your Q1 solution to replace static ConfigMaps with generators and manage image tags per environment.</p>
+<p><strong>Steps</strong>:</p>
+<ol>
+<li>
+<p><strong>Create environment config files:</strong>
+   <div class="highlight"><pre><span></span><code>overlays/dev/.env.config      # APP_NAME=myapp-dev, LOG_LEVEL=debug, REDIS_HOST=redis-service
+overlays/prod/.env.config     # APP_NAME=myapp-prod, LOG_LEVEL=info, REDIS_HOST=redis-service
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Create secret files:</strong>
+   <div class="highlight"><pre><span></span><code>overlays/dev/.env.secrets     # DB_PASSWORD=devpass123, DB_USER=dev
+overlays/prod/.env.secrets    # DB_PASSWORD=prod-secure-xyz, DB_USER=prod
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Update overlays/dev/kustomization.yaml:</strong></p>
+</li>
+<li>Add <code>configMapGenerator:</code> with <code>.env.config</code> file</li>
+<li>Add <code>secretGenerator:</code> with <code>.env.secrets</code> file</li>
+<li>Add <code>images:</code> section: change <code>node</code> tag to <code>18-alpine</code></li>
+<li>
+<p>Update deployment to reference generated ConfigMap name (with hash)</p>
+</li>
+<li>
+<p><strong>Update overlays/prod/kustomization.yaml:</strong></p>
+</li>
+<li>Same generators as dev (but different .env files)</li>
+<li><code>images:</code> change <code>node</code> tag to <code>18.20.0-alpine</code></li>
+<li>
+<p>Add <code>kustomization</code> flag to <strong>not</strong> add hash suffix (optional, for stable names)</p>
+</li>
+<li>
+<p><strong>Test:</strong>
+   <div class="highlight"><pre><span></span><code>kustomize<span class="w"> </span>build<span class="w"> </span>overlays/dev/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ConfigMap
+kustomize<span class="w"> </span>build<span class="w"> </span>overlays/prod/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ConfigMap
+kustomize<span class="w"> </span>build<span class="w"> </span>overlays/dev/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>image:
+kustomize<span class="w"> </span>build<span class="w"> </span>overlays/prod/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>image:
+</code></pre></div></p>
+</li>
+</ol>
+<p><strong>Deliverables</strong>:</p>
+<ul>
+<li>✅ ConfigMaps generated from files (show hash suffix)</li>
+<li>✅ Secrets generated from files  </li>
+<li>✅ Image tags differ: dev uses <code>18-alpine</code>, prod uses <code>18.20.0-alpine</code></li>
+<li>✅ Deployment references generated ConfigMap correctly</li>
+<li>✅ Both build successfully</li>
+</ul>
+<hr />
+<h2 id="question-3-advanced-composable-multi-base-json-patches-independent">Question 3 – Advanced: Composable Multi-Base + JSON Patches (Independent)</h2>
+<p><strong>Task</strong>: Build a <strong>separate</strong> advanced project that demonstrates multi-base composition, JSON patches (RFC 6902), and cross-cutting concerns (monitoring, security policies).</p>
+<p><strong>Steps</strong>:</p>
+<ol>
+<li>
+<p><strong>Create separate project structure:</strong>
+   <div class="highlight"><pre><span></span><code>advanced/
+  bases/
+    core/
+      deployment.yaml    # Generic stateless app (no image hardcoded)
+      service.yaml
+      kustomization.yaml
+    monitoring/
+      servicemonitor.yaml (Prometheus)
+      kustomization.yaml
+    security/
+      networkpolicy.yaml
+      podsecuritypolicy.yaml
+      kustomization.yaml
+  overlays/
+    staging/
+      kustomization.yaml  # bases: [../../bases/core, ../../bases/monitoring], patches: [security-patch.json]
+    prod/
+      kustomization.yaml  # bases: [../../bases/core, ../../bases/monitoring, ../../bases/security]
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Create JSON patches for staging (RFC 6902):</strong></p>
+</li>
+<li>Add annotation <code>monitoring: "true"</code> to all Pods</li>
+<li>Add label <code>env: staging</code> to Deployments</li>
+<li>
+<p>Patch service type to <code>LoadBalancer</code> (optional, for staging only)</p>
+</li>
+<li>
+<p><strong>Use <code>patchesJson6902</code> in overlays/staging/kustomization.yaml to apply JSON patches</strong></p>
+</li>
+<li>
+<p><strong>Prod overlay combines all bases directly (no JSON patches needed)</strong></p>
+</li>
+<li>
+<p><strong>Test:</strong>
+   <div class="highlight"><pre><span></span><code>kustomize<span class="w"> </span>build<span class="w"> </span>overlays/staging/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>annotation
+kustomize<span class="w"> </span>build<span class="w"> </span>overlays/prod/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>NetworkPolicy
+</code></pre></div></p>
+</li>
+</ol>
+<p><strong>Deliverables</strong>:</p>
+<ul>
+<li>✅ Multi-base composition working (core + monitoring + security)</li>
+<li>✅ Staging applies JSON patches correctly</li>
+<li>✅ Prod includes all security bases</li>
+<li>✅ Both build without errors</li>
+<li>✅ Clear separation of concerns: core app / monitoring / security</li>
+</ul>
+<hr />
+<h2 id="how-to-approach">How to Approach:</h2>
+<ol>
+<li><strong>Q1 (Foundation)</strong>: Build everything from scratch. Learn base → overlay → patches workflow.</li>
+<li><strong>Q2 (Extend Q1)</strong>: Use your Q1 solution as base. Add generators and image management.</li>
+<li><strong>Q3 (Standalone Deep Dive)</strong>: Start fresh. Focus on advanced patterns: multi-base, JSON patches, composition.</li>
+</ol>
+<p><strong>Time estimate</strong>: Q1: 30min, Q2: 20min (extending Q1), Q3: 25min (independent exploration)</p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../../04-admission-webhook/commands/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../../04-admission-webhook/commands/" class="btn btn-xs btn-link">
+        Commands
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../notes/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../notes/" class="btn btn-xs btn-link">
+        Kustomize Master Guide: Advanced Patterns &amp; Modern Practices
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>

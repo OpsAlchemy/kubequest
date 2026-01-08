@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Vikash Kumar">
+    <link rel="canonical" href="https://opsalchemy.github.io/kubequest/compose/02%20helm/helm/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Helm - CKA Exam Mastery</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <link href="../../stylesheets/extra.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Helm", url: "#_top", children: [
+              {title: "TABLE OF CONTENTS", url: "#table-of-contents" },
+              {title: "1. HELM FUNDAMENTALS", url: "#1-helm-fundamentals" },
+              {title: "2. REPOSITORY MANAGEMENT", url: "#2-repository-management" },
+              {title: "3. RELEASE LIFECYCLE", url: "#3-release-lifecycle" },
+              {title: "4. CONFIGURATION MANAGEMENT", url: "#4-configuration-management" },
+              {title: "5. ADVANCED OPERATIONS", url: "#5-advanced-operations" },
+              {title: "6. DEBUGGING \u0026amp; TROUBLESHOOTING", url: "#6-debugging-troubleshooting" },
+              {title: "7. BEST PRACTICES", url: "#7-best-practices" },
+              {title: "8. REAL-WORLD EXAMPLES", url: "#8-real-world-examples" },
+              {title: "QUICK REFERENCE CHEAT SHEET", url: "#quick-reference-cheat-sheet" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="../../javascripts/extra.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../questions/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../questions/" class="btn btn-xs btn-link">
+        Helm Practice Questions
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../answers/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../answers/" class="btn btn-xs btn-link">
+        Helm Practice - Answers
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="helm"><strong>Helm</strong></h1>
+<h2 id="table-of-contents"><strong>TABLE OF CONTENTS</strong></h2>
+<ol>
+<li><a href="#1-helm-fundamentals">Helm Fundamentals</a></li>
+<li><a href="#2-repository-management">Repository Management</a></li>
+<li><a href="#3-release-lifecycle">Release Lifecycle</a></li>
+<li><a href="#4-configuration-management">Configuration Management</a></li>
+<li><a href="#5-advanced-operations">Advanced Operations</a></li>
+<li><a href="#6-debugging--troubleshooting">Debugging &amp; Troubleshooting</a></li>
+<li><a href="#7-best-practices">Best Practices</a></li>
+<li><a href="#8-real-world-examples">Real-world Examples</a></li>
+</ol>
+<hr />
+<h2 id="1-helm-fundamentals"><strong>1. HELM FUNDAMENTALS</strong></h2>
+<h3 id="what-is-helm"><strong>What is Helm?</strong></h3>
+<p>Helm is the <strong>package manager for Kubernetes</strong>, allowing you to:
+- Define, install, and upgrade Kubernetes applications
+- Package applications as charts
+- Manage dependencies between applications
+- Share applications through repositories</p>
+<h3 id="key-concepts"><strong>Key Concepts</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Chart</strong></td>
+<td>Package containing all resource definitions</td>
+<td><code>bitnami/mysql</code>, <code>nginx-ingress</code></td>
+</tr>
+<tr>
+<td><strong>Release</strong></td>
+<td>Instance of a chart running in Kubernetes</td>
+<td><code>mysql-release</code>, <code>webapp-prod</code></td>
+</tr>
+<tr>
+<td><strong>Repository</strong></td>
+<td>Collection of charts</td>
+<td><code>bitnami</code>, <code>stable</code>, <code>jetstack</code></td>
+</tr>
+<tr>
+<td><strong>Values</strong></td>
+<td>Configurable parameters for a chart</td>
+<td>Database passwords, replica counts</td>
+</tr>
+</tbody>
+</table>
+<h3 id="version-types"><strong>Version Types</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Chart outputs show both versions:</span>
+CHART<span class="w"> </span>NAME:<span class="w"> </span>tomcat
+CHART<span class="w"> </span>VERSION:<span class="w"> </span><span class="m">13</span>.3.0<span class="w">    </span><span class="c1"># ← Helm chart version (templates/config)</span>
+APP<span class="w"> </span>VERSION:<span class="w"> </span><span class="m">11</span>.0.15<span class="w">     </span><span class="c1"># ← Application version (actual software)</span>
+</code></pre></div>
+<p><strong>Key Difference:</strong>
+- <strong>Chart Version</strong>: Changes when Helm templates, dependencies, or configurations change
+- <strong>App Version</strong>: Changes when the actual application software version changes</p>
+<hr />
+<h2 id="2-repository-management"><strong>2. REPOSITORY MANAGEMENT</strong></h2>
+<h3 id="core-commands"><strong>Core Commands</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Add a repository</span>
+helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>bitnami<span class="w"> </span>https://charts.bitnami.com/bitnami
+
+<span class="c1"># List all repositories</span>
+helm<span class="w"> </span>repo<span class="w"> </span>list
+
+<span class="c1"># Update repository index</span>
+helm<span class="w"> </span>repo<span class="w"> </span>update
+
+<span class="c1"># Search for charts</span>
+helm<span class="w"> </span>search<span class="w"> </span>repo<span class="w"> </span>apache<span class="w">                   </span><span class="c1"># Stable releases</span>
+helm<span class="w"> </span>search<span class="w"> </span>repo<span class="w"> </span>mysql<span class="w"> </span>--devel<span class="w">            </span><span class="c1"># Include development versions</span>
+helm<span class="w"> </span>search<span class="w"> </span>repo<span class="w"> </span>--versions<span class="w"> </span>nginx<span class="w">         </span><span class="c1"># Show all versions</span>
+
+<span class="c1"># Remove a repository</span>
+helm<span class="w"> </span>repo<span class="w"> </span>remove<span class="w"> </span>bitnami
+</code></pre></div>
+<h3 id="bitnami-repository-specifics"><strong>Bitnami Repository Specifics</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Since August 2025, Bitnami requires subscription for latest images</span>
+<span class="c1"># Free tier workaround:</span>
+helm<span class="w"> </span>install<span class="w"> </span>mydb<span class="w"> </span>bitnami/mysql<span class="w"> </span>--set<span class="w"> </span>image.repository<span class="o">=</span>bitnamilegacy/mysql
+
+<span class="c1"># Warnings you&#39;ll see:</span>
+<span class="c1"># 1. Limited free tier images available</span>
+<span class="c1"># 2. Rolling tags (:latest) not recommended for production</span>
+<span class="c1"># 3. Resources should be explicitly set</span>
+</code></pre></div>
+<hr />
+<h2 id="3-release-lifecycle"><strong>3. RELEASE LIFECYCLE</strong></h2>
+<h3 id="installation"><strong>Installation</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Basic installation</span>
+helm<span class="w"> </span>install<span class="w"> </span>mysql<span class="w"> </span>wso2/mysql
+
+<span class="c1"># With custom name</span>
+helm<span class="w"> </span>install<span class="w"> </span>my-database<span class="w"> </span>bitnami/mysql
+
+<span class="c1"># Generate random name</span>
+helm<span class="w"> </span>install<span class="w"> </span>bitnami/apache<span class="w"> </span>--generate-name
+
+<span class="c1"># Custom naming template</span>
+helm<span class="w"> </span>install<span class="w"> </span>bitnami/apache<span class="w"> </span>--generate-name<span class="w"> </span>--name-template<span class="w"> </span><span class="s2">&quot;web-{{randAlpha 5 | lower}}&quot;</span>
+</code></pre></div>
+<h3 id="upgrade-rollback"><strong>Upgrade &amp; Rollback</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Upgrade with new values</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>mysql<span class="w"> </span>wso2/mysql<span class="w"> </span>--set<span class="w"> </span>testFramework.enabled<span class="o">=</span><span class="nb">false</span>
+
+<span class="c1"># Upgrade with values file</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>mysql<span class="w"> </span>bitnami/mysql<span class="w"> </span>-f<span class="w"> </span>mysql-values.yaml
+
+<span class="c1"># Reuse previous values (dangerous - may use defaults for missing values)</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>mydb<span class="w"> </span>bitnami/mysql<span class="w"> </span>--reuse-values
+
+<span class="c1"># Force upgrade (deletes and recreates resources - causes downtime)</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>myapp<span class="w"> </span>bitnami/tomcat<span class="w"> </span>--force
+
+<span class="c1"># Check upgrade history</span>
+helm<span class="w"> </span><span class="nb">history</span><span class="w"> </span>mysql
+
+<span class="c1"># Rollback to specific revision</span>
+helm<span class="w"> </span>rollback<span class="w"> </span>mysql<span class="w"> </span><span class="m">1</span>
+</code></pre></div>
+<h3 id="uninstallation"><strong>Uninstallation</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Complete removal</span>
+helm<span class="w"> </span>uninstall<span class="w"> </span>mysql
+
+<span class="c1"># Keep history (resources remain, only Helm metadata removed)</span>
+helm<span class="w"> </span>uninstall<span class="w"> </span>server<span class="w"> </span>--keep-history
+</code></pre></div>
+<h3 id="status-inspection"><strong>Status &amp; Inspection</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># List all releases</span>
+helm<span class="w"> </span>ls
+helm<span class="w"> </span>list
+helm<span class="w"> </span>list<span class="w"> </span>--all-namespaces
+
+<span class="c1"># Get release information</span>
+helm<span class="w"> </span>status<span class="w"> </span>mysql
+helm<span class="w"> </span>get<span class="w"> </span>notes<span class="w"> </span>mysql<span class="w">                    </span><span class="c1"># Show NOTES.txt</span>
+helm<span class="w"> </span>get<span class="w"> </span>values<span class="w"> </span>mysql<span class="w">                   </span><span class="c1"># Show user-supplied values</span>
+helm<span class="w"> </span>get<span class="w"> </span>values<span class="w"> </span>mysql<span class="w"> </span>--all<span class="w">            </span><span class="c1"># Show all values (including defaults)</span>
+helm<span class="w"> </span>get<span class="w"> </span>values<span class="w"> </span>mysql<span class="w"> </span>--revision<span class="w"> </span><span class="m">2</span><span class="w">     </span><span class="c1"># Show values for specific revision</span>
+
+<span class="c1"># Get manifest</span>
+helm<span class="w"> </span>get<span class="w"> </span>manifest<span class="w"> </span>mysql
+</code></pre></div>
+<hr />
+<h2 id="4-configuration-management"><strong>4. CONFIGURATION MANAGEMENT</strong></h2>
+<h3 id="setting-values"><strong>Setting Values</strong></h3>
+<h4 id="method-1-command-line-set"><strong>Method 1: Command Line (--set)</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Single value</span>
+helm<span class="w"> </span>install<span class="w"> </span>mysql<span class="w"> </span>bitnami/mysql<span class="w"> </span>--set<span class="w"> </span>auth.rootPassword<span class="o">=</span>Secret123
+
+<span class="c1"># Nested values</span>
+helm<span class="w"> </span>install<span class="w"> </span>mysql<span class="w"> </span>bitnami/mysql<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>auth.rootPassword<span class="o">=</span>Secret123<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>auth.database<span class="o">=</span>appdb<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>primary.persistence.size<span class="o">=</span>10Gi
+
+<span class="c1"># Arrays/lists</span>
+helm<span class="w"> </span>install<span class="w"> </span>myapp<span class="w"> </span>bitnami/app<span class="w"> </span>--set<span class="w"> </span><span class="s2">&quot;podAnnotations.key=value&quot;</span>
+</code></pre></div>
+<h4 id="method-2-values-file-recommended"><strong>Method 2: Values File (Recommended)</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># mysql-values.yaml</span>
+<span class="nt">auth</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rootPassword</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StrongRootPass123</span>
+<span class="w">  </span><span class="nt">database</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">appdb</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">appuser</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AppUserPass123</span>
+
+<span class="nt">primary</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">persistence</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10Gi</span>
+<span class="w">    </span><span class="nt">storageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">standard</span>
+
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">250m</span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">512Mi</span>
+<span class="w">    </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500m</span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1Gi</span>
+
+<span class="nt">service</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIP</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># Install with values file</span>
+helm<span class="w"> </span>install<span class="w"> </span>mysql<span class="w"> </span>bitnami/mysql<span class="w"> </span>-f<span class="w"> </span>mysql-values.yaml
+
+<span class="c1"># Override values file with command line</span>
+helm<span class="w"> </span>install<span class="w"> </span>mysql<span class="w"> </span>bitnami/mysql<span class="w"> </span>-f<span class="w"> </span>mysql-values.yaml<span class="w"> </span>--set<span class="w"> </span><span class="nv">replicaCount</span><span class="o">=</span><span class="m">3</span>
+</code></pre></div>
+<h4 id="method-3-multiple-values-files"><strong>Method 3: Multiple Values Files</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Base values + environment-specific overrides</span>
+helm<span class="w"> </span>install<span class="w"> </span>myapp<span class="w"> </span>bitnami/app<span class="w"> </span>-f<span class="w"> </span>values.yaml<span class="w"> </span>-f<span class="w"> </span>production.yaml
+</code></pre></div>
+<h3 id="template-rendering-validation"><strong>Template Rendering &amp; Validation</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Dry run (see what would be deployed)</span>
+helm<span class="w"> </span>install<span class="w"> </span>server<span class="w"> </span>bitnami/tomcat<span class="w"> </span>--dry-run<span class="o">=</span>client
+
+<span class="c1"># Render templates locally</span>
+helm<span class="w"> </span>template<span class="w"> </span>server<span class="w"> </span>bitnami/tomcat
+
+<span class="c1"># Debug template rendering</span>
+helm<span class="w"> </span>template<span class="w"> </span>server<span class="w"> </span>bitnami/tomcat<span class="w"> </span>--debug
+
+<span class="c1"># Lint chart (validate)</span>
+helm<span class="w"> </span>lint<span class="w"> </span>./mychart
+</code></pre></div>
+<hr />
+<h2 id="5-advanced-operations"><strong>5. ADVANCED OPERATIONS</strong></h2>
+<h3 id="installation-options"><strong>Installation Options</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Wait for resources to be ready</span>
+helm<span class="w"> </span>install<span class="w"> </span>myapp<span class="w"> </span>bitnami/nginx<span class="w"> </span>--wait
+helm<span class="w"> </span>install<span class="w"> </span>myapp<span class="w"> </span>bitnami/nginx<span class="w"> </span>--wait<span class="w"> </span>--timeout<span class="w"> </span>60s<span class="w">  </span><span class="c1"># Custom timeout</span>
+
+<span class="c1"># Atomic installation (auto-rollback on failure)</span>
+helm<span class="w"> </span>install<span class="w"> </span>myapp<span class="w"> </span>bitnami/nginx<span class="w"> </span>--atomic
+
+<span class="c1"># Create namespace if it doesn&#39;t exist</span>
+helm<span class="w"> </span>install<span class="w"> </span>myapp<span class="w"> </span>bitnami/nginx<span class="w"> </span>--namespace<span class="w"> </span>myns<span class="w"> </span>--create-namespace
+
+<span class="c1"># Skip CRDs</span>
+helm<span class="w"> </span>install<span class="w"> </span>myapp<span class="w"> </span>bitnami/app<span class="w"> </span>--skip-crds
+
+<span class="c1"># Wait for jobs to complete</span>
+helm<span class="w"> </span>install<span class="w"> </span>myapp<span class="w"> </span>bitnami/app<span class="w"> </span>--wait-for-jobs
+</code></pre></div>
+<h3 id="namespace-management"><strong>Namespace Management</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Set namespace context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>--current<span class="w"> </span>--namespace<span class="w"> </span>tomcat
+
+<span class="c1"># Install in specific namespace</span>
+helm<span class="w"> </span>install<span class="w"> </span>tomcat<span class="w"> </span>bitnami/tomcat<span class="w"> </span>--namespace<span class="w"> </span>tomcat
+
+<span class="c1"># List releases across all namespaces</span>
+helm<span class="w"> </span>list<span class="w"> </span>--all-namespaces
+
+<span class="c1"># Get values from specific namespace</span>
+helm<span class="w"> </span>get<span class="w"> </span>values<span class="w"> </span>mysql<span class="w"> </span>--namespace<span class="w"> </span>production
+</code></pre></div>
+<h3 id="upgrade-strategies"><strong>Upgrade Strategies</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Combined install/upgrade</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>--install<span class="w"> </span>myapp<span class="w"> </span>bitnami/nginx
+
+<span class="c1"># Three-way merge strategy (Helm 3)</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>myapp<span class="w"> </span>bitnami/nginx<span class="w"> </span>--three-way-merge
+
+<span class="c1"># Force resource update</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>myapp<span class="w"> </span>bitnami/nginx<span class="w"> </span>--force
+
+<span class="c1"># Reset values to defaults</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>myapp<span class="w"> </span>bitnami/nginx<span class="w"> </span>--reset-values
+</code></pre></div>
+<hr />
+<h2 id="6-debugging-troubleshooting"><strong>6. DEBUGGING &amp; TROUBLESHOOTING</strong></h2>
+<h3 id="common-issues-solutions"><strong>Common Issues &amp; Solutions</strong></h3>
+<h4 id="issue-1-image-pull-errors-bitnami-free-tier"><strong>Issue 1: Image Pull Errors (Bitnami Free Tier)</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Error: Image not available in free tier</span>
+<span class="c1"># Solution: Use legacy images</span>
+helm<span class="w"> </span>install<span class="w"> </span>mysql<span class="w"> </span>bitnami/mysql<span class="w"> </span>--set<span class="w"> </span>image.repository<span class="o">=</span>bitnamilegacy/mysql
+</code></pre></div>
+<h4 id="issue-2-readiness-probe-failures"><strong>Issue 2: Readiness Probe Failures</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check pod status</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>&lt;pod-name&gt;
+
+<span class="c1"># Check logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>&lt;pod-name&gt;
+
+<span class="c1"># Common fix: Increase initial delay</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>app<span class="w"> </span>bitnami/app<span class="w"> </span>--set<span class="w"> </span>readinessProbe.initialDelaySeconds<span class="o">=</span><span class="m">60</span>
+</code></pre></div>
+<h4 id="issue-3-persistent-volume-claims-pending"><strong>Issue 3: Persistent Volume Claims Pending</strong></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check PVC status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pvc
+
+<span class="c1"># Check storage class</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>storageclass
+
+<span class="c1"># Fix: Specify storage class or reduce size</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>mysql<span class="w"> </span>bitnami/mysql<span class="w"> </span>--set<span class="w"> </span>primary.persistence.storageClass<span class="o">=</span>standard
+</code></pre></div>
+<h3 id="diagnostic-commands"><strong>Diagnostic Commands</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check Kubernetes resources created by Helm</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>all<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/instance<span class="o">=</span>mysql
+
+<span class="c1"># View Helm release secrets</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secrets<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>helm.release
+
+<span class="c1"># Decode secret values</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>mysql<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;{.data.mysql-root-password}&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>--decode
+
+<span class="c1"># Test database connection (example)</span>
+<span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>mysql<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;{.data.mysql-root-password}&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>--decode<span class="k">)</span>
+mysql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-P<span class="w"> </span><span class="m">3306</span><span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="nv">$MYSQL_ROOT_PASSWORD</span>
+</code></pre></div>
+<h3 id="port-forwarding-for-testing"><strong>Port Forwarding for Testing</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Forward service port locally</span>
+kubectl<span class="w"> </span>port-forward<span class="w"> </span>svc/mysql<span class="w"> </span><span class="m">3306</span>:3306
+
+<span class="c1"># Connect to forwarded service</span>
+mysql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-P<span class="w"> </span><span class="m">3306</span><span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>mysql<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;{.data.mysql-root-password}&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>--decode<span class="k">)</span>
+</code></pre></div>
+<hr />
+<h2 id="7-best-practices"><strong>7. BEST PRACTICES</strong></h2>
+<h3 id="configuration-management"><strong>Configuration Management</strong></h3>
+<p>✅ <strong>DO:</strong>
+- Use values files for production deployments
+- Version control your values files
+- Use separate values files per environment
+- Set explicit resource limits</p>
+<p>❌ <strong>DON'T:</strong>
+- Use <code>:latest</code> tags in production
+- Store secrets in values files (use Kubernetes Secrets)
+- Use <code>--reuse-values</code> without understanding implications</p>
+<h3 id="release-management"><strong>Release Management</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Good: Version-controlled values</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>myapp<span class="w"> </span>./chart<span class="w"> </span>-f<span class="w"> </span>values/production.yaml
+
+<span class="c1"># Good: Atomic deployments</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>myapp<span class="w"> </span>./chart<span class="w"> </span>--atomic<span class="w"> </span>--wait
+
+<span class="c1"># Good: Test before applying</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>myapp<span class="w"> </span>./chart<span class="w"> </span>--dry-run
+
+<span class="c1"># Bad: Unreproducible</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>myapp<span class="w"> </span>./chart<span class="w"> </span>--set<span class="w"> </span><span class="nv">key1</span><span class="o">=</span>val1<span class="w"> </span>--set<span class="w"> </span><span class="nv">key2</span><span class="o">=</span>val2
+</code></pre></div>
+<h3 id="security-practices"><strong>Security Practices</strong></h3>
+<ol>
+<li>
+<p><strong>Use Secrets for sensitive data</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># Instead of:</span>
+<span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PlainTextPassword</span>
+
+<span class="c1"># Use:</span>
+<span class="nt">existingSecret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql-secret</span>
+<span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">password</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Enable security contexts</strong>
+   <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>app<span class="w"> </span>bitnami/app<span class="w"> </span>--set<span class="w"> </span>securityContext.enabled<span class="o">=</span><span class="nb">true</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Regular updates</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># Check for updates</span>
+helm<span class="w"> </span>search<span class="w"> </span>repo<span class="w"> </span>bitnami/mysql<span class="w"> </span>--versions
+
+<span class="c1"># Update dependencies</span>
+helm<span class="w"> </span>dependency<span class="w"> </span>update<span class="w"> </span>./mychart
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="performance-optimization"><strong>Performance Optimization</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Set appropriate resource limits</span>
+helm<span class="w"> </span>install<span class="w"> </span>app<span class="w"> </span>bitnami/app<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>resources.requests.cpu<span class="o">=</span>100m<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>resources.requests.memory<span class="o">=</span>256Mi<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>resources.limits.cpu<span class="o">=</span>500m<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>resources.limits.memory<span class="o">=</span>512Mi
+
+<span class="c1"># Configure probes</span>
+helm<span class="w"> </span>install<span class="w"> </span>app<span class="w"> </span>bitnami/app<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>livenessProbe.initialDelaySeconds<span class="o">=</span><span class="m">30</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>readinessProbe.initialDelaySeconds<span class="o">=</span><span class="m">5</span>
+</code></pre></div>
+<hr />
+<h2 id="8-real-world-examples"><strong>8. REAL-WORLD EXAMPLES</strong></h2>
+<h3 id="complete-mysql-deployment"><strong>Complete MySQL Deployment</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Step 1: Add repository</span>
+helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>bitnami<span class="w"> </span>https://charts.bitnami.com/bitnami
+helm<span class="w"> </span>repo<span class="w"> </span>update
+
+<span class="c1"># Step 2: Create values file</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>mysql-prod.yaml<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">auth:</span>
+<span class="s">  rootPassword: &quot;$(openssl rand -base64 16)&quot;</span>
+<span class="s">  database: appdb</span>
+<span class="s">  username: appuser</span>
+<span class="s">  password: &quot;$(openssl rand -base64 16)&quot;</span>
+
+<span class="s">primary:</span>
+<span class="s">  persistence:</span>
+<span class="s">    enabled: true</span>
+<span class="s">    size: 20Gi</span>
+<span class="s">    storageClass: gp2</span>
+<span class="s">  resources:</span>
+<span class="s">    requests:</span>
+<span class="s">      cpu: 500m</span>
+<span class="s">      memory: 1Gi</span>
+<span class="s">    limits:</span>
+<span class="s">      cpu: 1</span>
+<span class="s">      memory: 2Gi</span>
+
+<span class="s">service:</span>
+<span class="s">  type: ClusterIP</span>
+
+<span class="s">metrics:</span>
+<span class="s">  enabled: true</span>
+<span class="s">EOF</span>
+
+<span class="c1"># Step 3: Install</span>
+helm<span class="w"> </span>install<span class="w"> </span>mysql-prod<span class="w"> </span>bitnami/mysql<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-f<span class="w"> </span>mysql-prod.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--namespace<span class="w"> </span>database<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--create-namespace<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--wait<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--timeout<span class="w"> </span>5m
+
+<span class="c1"># Step 4: Verify</span>
+helm<span class="w"> </span>status<span class="w"> </span>mysql-prod<span class="w"> </span>--namespace<span class="w"> </span>database
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>database
+</code></pre></div>
+<h3 id="tomcat-with-custom-configuration"><strong>Tomcat with Custom Configuration</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create values file</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>tomcat-custom.yaml<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">image:</span>
+<span class="s">  repository: bitnamilegacy/tomcat</span>
+<span class="s">  tag: &quot;11.0&quot;</span>
+
+<span class="s">service:</span>
+<span class="s">  type: LoadBalancer</span>
+<span class="s">  port: 80</span>
+
+<span class="s">tomcat:</span>
+<span class="s">  username: admin</span>
+<span class="s">  password: &quot;$(openssl rand -base64 12)&quot;</span>
+
+<span class="s">persistence:</span>
+<span class="s">  enabled: true</span>
+<span class="s">  size: 10Gi</span>
+
+<span class="s">resources:</span>
+<span class="s">  requests:</span>
+<span class="s">    cpu: 200m</span>
+<span class="s">    memory: 512Mi</span>
+<span class="s">  limits:</span>
+<span class="s">    cpu: 500m</span>
+<span class="s">    memory: 1Gi</span>
+
+<span class="s">readinessProbe:</span>
+<span class="s">  initialDelaySeconds: 60</span>
+<span class="s">  periodSeconds: 10</span>
+
+<span class="s">livenessProbe:</span>
+<span class="s">  initialDelaySeconds: 120</span>
+<span class="s">  periodSeconds: 20</span>
+<span class="s">EOF</span>
+
+<span class="c1"># Install</span>
+helm<span class="w"> </span>install<span class="w"> </span>tomcat-app<span class="w"> </span>bitnami/tomcat<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-f<span class="w"> </span>tomcat-custom.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--wait<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--atomic
+</code></pre></div>
+<h3 id="application-stack-multi-chart"><strong>Application Stack (Multi-chart)</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Deploy database</span>
+helm<span class="w"> </span>install<span class="w"> </span>postgresql<span class="w"> </span>bitnami/postgresql<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>auth.database<span class="o">=</span>myapp<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>auth.username<span class="o">=</span>myuser<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>primary.persistence.size<span class="o">=</span>10Gi
+
+<span class="c1"># Deploy Redis cache</span>
+helm<span class="w"> </span>install<span class="w"> </span>redis<span class="w"> </span>bitnami/redis<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span><span class="nv">architecture</span><span class="o">=</span>standalone<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>master.persistence.size<span class="o">=</span>5Gi
+
+<span class="c1"># Deploy application</span>
+helm<span class="w"> </span>install<span class="w"> </span>myapp<span class="w"> </span>./myapp-chart<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>database.host<span class="o">=</span>postgresql<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>redis.host<span class="o">=</span>redis
+</code></pre></div>
+<hr />
+<h2 id="quick-reference-cheat-sheet"><strong>QUICK REFERENCE CHEAT SHEET</strong></h2>
+<h3 id="essential-commands"><strong>Essential Commands</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Repository</span>
+helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>&lt;name&gt;<span class="w"> </span>&lt;url&gt;
+helm<span class="w"> </span>repo<span class="w"> </span>update
+helm<span class="w"> </span>search<span class="w"> </span>repo<span class="w"> </span>&lt;term&gt;
+
+<span class="c1"># Installation</span>
+helm<span class="w"> </span>install<span class="w"> </span>&lt;name&gt;<span class="w"> </span>&lt;chart&gt;<span class="w"> </span><span class="o">[</span>flags<span class="o">]</span>
+helm<span class="w"> </span>install<span class="w"> </span>&lt;name&gt;<span class="w"> </span>&lt;chart&gt;<span class="w"> </span>-f<span class="w"> </span>values.yaml
+helm<span class="w"> </span>upgrade<span class="w"> </span>--install<span class="w"> </span>&lt;name&gt;<span class="w"> </span>&lt;chart&gt;
+
+<span class="c1"># Management</span>
+helm<span class="w"> </span>ls
+helm<span class="w"> </span>status<span class="w"> </span>&lt;release&gt;
+helm<span class="w"> </span><span class="nb">history</span><span class="w"> </span>&lt;release&gt;
+helm<span class="w"> </span>rollback<span class="w"> </span>&lt;release&gt;<span class="w"> </span>&lt;revision&gt;
+helm<span class="w"> </span>uninstall<span class="w"> </span>&lt;release&gt;
+
+<span class="c1"># Configuration</span>
+helm<span class="w"> </span>get<span class="w"> </span>values<span class="w"> </span>&lt;release&gt;
+helm<span class="w"> </span>get<span class="w"> </span>manifest<span class="w"> </span>&lt;release&gt;
+helm<span class="w"> </span>template<span class="w"> </span>&lt;chart&gt;
+</code></pre></div>
+<h3 id="common-flags"><strong>Common Flags</strong></h3>
+<div class="highlight"><pre><span></span><code>--namespace<span class="w"> </span>&lt;ns&gt;<span class="w">           </span><span class="c1"># Deploy to specific namespace</span>
+--create-namespace<span class="w">         </span><span class="c1"># Create namespace if needed</span>
+--wait<span class="w">                     </span><span class="c1"># Wait for resources ready</span>
+--timeout<span class="w"> </span>&lt;duration&gt;<span class="w">       </span><span class="c1"># Wait timeout (e.g., 5m)</span>
+--atomic<span class="w">                   </span><span class="c1"># Rollback on failure</span>
+--dry-run<span class="w">                  </span><span class="c1"># Simulate installation</span>
+--debug<span class="w">                    </span><span class="c1"># Enable debug output</span>
+--set<span class="w"> </span><span class="nv">key</span><span class="o">=</span>value<span class="w">            </span><span class="c1"># Set individual values</span>
+-f<span class="w"> </span>values.yaml<span class="w">            </span><span class="c1"># Use values file</span>
+--values<span class="w"> </span>values.yaml<span class="w">      </span><span class="c1"># Alias for -f</span>
+--version<span class="w"> </span>&lt;version&gt;<span class="w">       </span><span class="c1"># Specific chart version</span>
+</code></pre></div>
+<h3 id="troubleshooting-flow"><strong>Troubleshooting Flow</strong></h3>
+<div class="highlight"><pre><span></span><code>1. helm status &lt;release&gt;           # Check release status
+2. kubectl get pods                # Check pod status
+3. kubectl describe pod &lt;pod&gt;      # Get pod details
+4. kubectl logs &lt;pod&gt;              # Check logs
+5. helm get values &lt;release&gt;       # Check configuration
+6. helm history &lt;release&gt;          # Check revision history
+7. helm rollback &lt;release&gt; &lt;rev&gt;   # Rollback if needed
+</code></pre></div>
+<p>This comprehensive guide covers Helm from basic to advanced usage, with practical examples and best practices for production deployments.</p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../questions/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../questions/" class="btn btn-xs btn-link">
+        Helm Practice Questions
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../answers/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../answers/" class="btn btn-xs btn-link">
+        Helm Practice - Answers
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
