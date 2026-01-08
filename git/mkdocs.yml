@@ -10,7 +10,7 @@ theme:
   features:
   - navigation.instant
   - navigation.tracking
-  - navigation.tabs
+  - navigation.expand
   - navigation.sections
   - toc.follow
   - content.code.copy
@@ -28,7 +28,5 @@ markdown_extensions:
 
 nav:
 - Home: index.md
-- Commands: docs/GIT_COMMANDS.md
-- Usecases: docs/GIT_USECASES.md
 - Commands: docs/GIT_COMMANDS.md
 - Usecases: docs/GIT_USECASES.md
