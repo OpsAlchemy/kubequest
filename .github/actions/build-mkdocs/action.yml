@@ -38,15 +38,25 @@ runs:
   - name: Build site
     shell: bash
     run: |
-      mkdocs build -f "${{ inputs.mkdocs-config }}" --site-dir "./_site/${{ inputs.output-folder }}"
+      # Get the directory containing the mkdocs config
+      CONFIG_DIR=$(dirname "${{ inputs.mkdocs-config }}")
+      CONFIG_FILE=$(basename "${{ inputs.mkdocs-config }}")
+
+      # Calculate absolute output path
+      OUTPUT_PATH="$PWD/_site/${{ inputs.output-folder }}"
+
+      # Change to config directory and build with absolute path
+      cd "$CONFIG_DIR"
+      mkdocs build -f "$CONFIG_FILE" --site-dir "$OUTPUT_PATH"
+
       # Verify the build succeeded
-      if [ ! -d "_site/${{ inputs.output-folder }}" ]; then
-        echo "ERROR: _site/${{ inputs.output-folder }} directory not created"
+      if [ ! -d "$OUTPUT_PATH" ]; then
+        echo "ERROR: $OUTPUT_PATH directory not created"
         exit 1
       fi
-      if [ ! -f "_site/${{ inputs.output-folder }}/index.html" ]; then
-        echo "ERROR: index.html not found in _site/${{ inputs.output-folder }}"
-        ls -la "_site/${{ inputs.output-folder }}" || echo "Directory listing failed"
+      if [ ! -f "$OUTPUT_PATH/index.html" ]; then
+        echo "ERROR: index.html not found in $OUTPUT_PATH"
+        ls -la "$OUTPUT_PATH" || echo "Directory listing failed"
         exit 1
       fi
-      echo "✓ Build successful: _site/${{ inputs.output-folder }}/index.html exists"
+      echo "✓ Build successful: $OUTPUT_PATH/index.html exists"
