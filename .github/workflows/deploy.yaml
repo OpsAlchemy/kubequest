@@ -65,19 +65,31 @@ jobs:
           mkdir -p _site
           for dir in artifacts/site-*/; do
             site=$(basename "$dir" | sed 's/site-//')
-            # Artifact directory contains the output folder (e.g., site-compose/compose)
-            # We need to move the contents of that subfolder to _site/
+            echo "Processing artifact: $site from $dir"
+            
+            # Check if nested structure exists (e.g., site-git/git/)
             if [ -d "$dir/$site" ]; then
-              echo "Copying artifacts/$site/$site/* to _site/$site/"
+              echo "Found nested structure: $dir/$site"
               mkdir -p "_site/$site"
               cp -r "$dir/$site/"* "_site/$site/" 2>/dev/null || true
+            # Otherwise copy everything from artifact root
             else
-              echo "WARNING: Expected $dir/$site but not found"
-              ls -la "$dir" || true
+              echo "Copying from root of $dir to _site/$site"
+              mkdir -p "_site/$site"
+              cp -r "$dir"* "_site/$site/" 2>/dev/null || true
+            fi
+            
+            # Verify the copy worked
+            if [ -d "_site/$site" ] && [ -f "_site/$site/index.html" ]; then
+              echo "✓ Site $site copied successfully"
+            else
+              echo "WARNING: Site $site may not have copied correctly"
+              ls -la "_site/$site" 2>/dev/null || echo "Directory not found"
             fi
           done
+          echo ""
           echo "Final _site structure:"
-          find _site -type f | head -20
+          find _site -type f -name "index.html" | sort
 
       - uses: peaceiris/actions-gh-pages@v3
         with:
