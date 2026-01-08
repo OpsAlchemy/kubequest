@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  template:
+    spec:
+      containers:
+        - name: monitor
+          image: busybox:latest
+          command:
+            [
+              "sh",
+              "-c",
+              "while true; do echo 'Monitoring API...'; sleep 30; done",
+            ]
+          resources:
+            requests:
+              memory: "16Mi"
+              cpu: "10m"
+            limits:
+              memory: "32Mi"
+              cpu: "20m"
