@@ -7,6 +7,7 @@ on:
       - "cka/**"
       - ".github/workflows/deploy.yaml"
       - ".github/actions/build-mkdocs/**"
+      - "git/**"
   workflow_dispatch:
 
 jobs:
@@ -16,7 +17,7 @@ jobs:
       docs-matrix: ${{ steps.set-matrix.outputs.docs-matrix }}
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set matrix from config
         id: set-matrix
         run: |
