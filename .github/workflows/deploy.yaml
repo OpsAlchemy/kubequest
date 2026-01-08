@@ -53,7 +53,7 @@ jobs:
           output-folder: ${{ matrix.doc.output_folder }}
           requirements-file: ${{ matrix.doc.requirements_file }}
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: site-${{ matrix.doc.name }}
           path: _site/${{ matrix.doc.output_folder }}
@@ -63,7 +63,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: artifacts
 
