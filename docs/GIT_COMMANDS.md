@@ -82,8 +82,26 @@ git rebase origin/main
 git merge --squash feature/branch
 git commit -m "Message"
 
+# ⭐ ADVANCED: Reset to any commit, keep all changes staged
+git reset --soft <commit-hash>
+git commit -m "Squashed message"
+
+# Examples:
+git reset --soft HEAD~3        # Last 3 commits
+git reset --soft c2562b4       # Specific commit
+git reset --soft origin/main   # Match remote exactly
+
 # Safe force push after history rewrite
 git push origin branch --force-with-lease
+```
+
+**Why `reset --soft` is powerful:**
+- Rewrites history (removes messy commits)
+- Preserves all your code changes
+- Lets you reorganize commits however you want
+- Perfect for linearizing complex histories
+
+See `GIT_USECASES.md` → Usecase #3 for a complete example of squashing complex merge histories.
 ```
 
 ---
