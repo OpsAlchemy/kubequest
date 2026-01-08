@@ -15,26 +15,13 @@ jobs:
     outputs:
       docs-matrix: ${{ steps.set-matrix.outputs.docs-matrix }}
     steps:
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-      - name: Set matrix
+      - uses: actions/checkout@v4
+      
+      - name: Set matrix from config
         id: set-matrix
         run: |
-          DOCS_MATRIX='[
-            {
-              "name": "docs",
-              "mkdocs_config": "cka/mkdocs.yml",
-              "output_folder": "docs",
-              "requirements_file": "cka/requirements.txt"
-            },
-            {
-              "name": "compose",
-              "mkdocs_config": "cka/mkdocs.compose.yml",
-              "output_folder": "compose",
-              "requirements_file": "cka/requirements.txt"
-            }
-          ]'
+          # Read docs configuration from .github/docs-config.json
+          DOCS_MATRIX=$(cat .github/docs-config.json)
           echo "docs-matrix=$(echo "$DOCS_MATRIX" | jq -c .)" >> $GITHUB_OUTPUT
 
   build:
