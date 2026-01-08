@@ -251,6 +251,150 @@ Via Web UI:
 
 ---
 
+## Usecase #3: Linearizing Messy History with Multiple Branches & Merges
+
+**Date:** 2026-01-09  
+**Status:** ✅ RESOLVED  
+**Branch:** `main`  
+**Category:** History Management
+
+### Scenario
+
+After multiple feature branches were merged into main with nested merges and branch-backs, the commit history became non-linear and confusing. Multiple GitHub Actions fix branches (PR #11, #13, #14) created a complex branching pattern with merge commits instead of a clean linear history.
+
+### Problem Statement
+
+- Expected: Clean linear history on main
+- Actual: Complex branching with nested merge commits and back-merges
+- Graph pattern showed: `|\`, `|/`, `/|` patterns (branches diverging and rejoining)
+- Impact: Difficult to understand what actually changed, hard to review history
+- Root: Multiple parallel fixes merged in sequence without squashing or rebasing
+
+### Solution
+
+**Key Insight:** Use `git reset --soft` to rewind history while keeping all changes, then create a single clean commit.
+
+**Step 1:** Identify the base commit (where the mess started)
+```bash
+git log --oneline --graph -15  # Find where branches started
+```
+
+**Step 2:** Create a backup branch (safety)
+```bash
+git branch backup-before-squash
+```
+
+**Step 3:** Reset to base commit, keeping all changes
+```bash
+git reset --soft <base-commit-hash>
+```
+In our case: `git reset --soft c2562b4`
+
+This is the magic: 
+- `--soft` rewinds your branch pointer
+- All your changes stay staged and ready to commit
+- All the messy merge commits disappear
+- No code is lost
+
+**Step 4:** Create one clean commit with all changes
+```bash
+git commit -m "fix: consolidate all GitHub Actions improvements and fixes"
+```
+
+**Step 5:** Force push the linearized history
+```bash
+git push origin main --force-with-lease
+```
+
+The `--force-with-lease` flag is safe because it:
+- Allows rewriting local history
+- Prevents overwriting others' work
+- Only force-pushes if remote hasn't changed
+
+### Result
+
+- ✅ Linear history: All commits in a straight line
+- ✅ No merge commits: Cleaner graph
+- ✅ All changes preserved: Nothing lost
+- ✅ Remote updated: Pushed to GitHub successfully
+- ✅ Backup available: Can always revert if needed
+
+**Before:**
+```
+*   189650d Merge pull request #11
+|\  
+| * 1eab8af Merge branch 'main' into fix/github-actions-deploy
+| |\  
+| |/  
+|/|   
+* | 50ab2d0 Fix GitHub Actions workflows
+```
+
+**After:**
+```
+* 8c1656e fix: consolidate all GitHub Actions improvements and fixes
+* addf2e8 Add Kustomize and Helm practice files
+* 321eca8 feat: refactor deploy workflow
+```
+
+### Key Lessons
+
+1. **`git reset --soft <commit>`** is your friend for squashing history
+   - Goes back to any commit
+   - Keeps all changes
+   - Lets you rewrite commits however you want
+
+2. **Three types of reset:**
+   - `--soft`: Keep changes staged (ready to commit)
+   - `--mixed`: Keep changes unstaged (in working directory)
+   - `--hard`: Delete changes completely (⚠️ dangerous)
+
+3. **`--force-with-lease` is safe:**
+   - Always use instead of `--force`
+   - Prevents accidentally overwriting others' work
+   - Default for rewriting pushed history
+
+4. **Create backups before major rewrites:**
+   ```bash
+   git branch backup-before-squash
+   ```
+   If something goes wrong: `git reset --hard backup-before-squash`
+
+5. **You can reset to any point:**
+   ```bash
+   git reset --soft HEAD~3        # Last 3 commits
+   git reset --soft c2562b4       # Specific commit
+   git reset --soft origin/main   # Match remote exactly
+   ```
+
+### Common Use Cases for This Technique
+
+- **Squash messy feature branch commits** before merging to main
+- **Linearize complex merge histories** (like we just did)
+- **Reorganize commits** in any way you want
+- **Undo multiple commits** but keep the work
+- **Combine parallel work** from multiple branches
+
+### Related Commands
+
+```bash
+# See what commits you'll lose/gain
+git log --oneline origin/main..HEAD
+
+# After reset, before commit - review staged changes
+git diff --cached
+
+# View the reflog to recover anything
+git reflog
+```
+
+### References
+
+- [Git Reset Documentation](https://git-scm.com/docs/git-reset)
+- [Force Push Best Practices](https://git-scm.com/docs/git-push#Documentation/git-push.txt--force-with-lease)
+
+---
+
 ## How to Log a New Usecase
 
 When you encounter a new Git scenario:
