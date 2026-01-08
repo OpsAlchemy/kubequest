@@ -1,0 +1,1786 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Comprehensive Git guide with real-world scenarios, commands, and best practices">
+      
+      
+        <meta name="author" content="OpsAlchemy">
+      
+      
+        <link rel="canonical" href="https://opsalchemy.github.io/kubequest/git/docs/GIT_USECASES/">
+      
+      
+        <link rel="prev" href="../GIT_COMMANDS/">
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.14">
+    
+    
+      
+        <title>Usecases - Git Learning & Reference</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.fad675c6.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#git-usecases-scenarios" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Git Learning &amp; Reference" class="md-header__button md-logo" aria-label="Git Learning & Reference" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Git Learning & Reference
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Usecases
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../GIT_COMMANDS/" class="md-tabs__link">
+        
+  
+    
+  
+  Commands
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="./" class="md-tabs__link">
+        
+  
+    
+  
+  Usecases
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../GIT_COMMANDS/" class="md-tabs__link">
+        
+  
+    
+  
+  Commands
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+    
+  
+  Usecases
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Git Learning &amp; Reference" class="md-nav__button md-logo" aria-label="Git Learning & Reference" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Git Learning & Reference
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../GIT_COMMANDS/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Commands
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Usecases
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Usecases
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usecase-1-non-linear-branch-history-unwanted-merge-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usecase #1: Non-Linear Branch History (Unwanted Merge Commit)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usecase #1: Non-Linear Branch History (Unwanted Merge Commit)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem Statement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result" class="md-nav__link">
+    <span class="md-ellipsis">
+      Result
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-lessons" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Lessons
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Commands
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usecase-2-creating-pull-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usecase #2: Creating Pull Requests
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usecase #2: Creating Pull Requests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-statement_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem Statement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solution
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-1-github-web-ui-most-visual" class="md-nav__link">
+    <span class="md-ellipsis">
+      Method 1: GitHub Web UI (Most Visual)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-2-github-cli-faster-for-terminal-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      Method 2: GitHub CLI (Faster for Terminal Users)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pr-template-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      PR Template Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checklist-before-submitting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Checklist Before Submitting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-pr-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      After PR Creation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Result
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-lessons_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Lessons
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Resources
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usecase-3-linearizing-messy-history-with-multiple-branches-merges" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usecase #3: Linearizing Messy History with Multiple Branches &amp; Merges
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usecase #3: Linearizing Messy History with Multiple Branches & Merges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-statement_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem Statement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Result
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-lessons_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Lessons
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-use-cases-for-this-technique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Use Cases for This Technique
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-commands_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      References
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-log-a-new-usecase" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to Log a New Usecase
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Categories
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../GIT_COMMANDS/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Commands
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Usecases
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Usecases
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usecase-1-non-linear-branch-history-unwanted-merge-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usecase #1: Non-Linear Branch History (Unwanted Merge Commit)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usecase #1: Non-Linear Branch History (Unwanted Merge Commit)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem Statement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result" class="md-nav__link">
+    <span class="md-ellipsis">
+      Result
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-lessons" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Lessons
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Commands
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usecase-2-creating-pull-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usecase #2: Creating Pull Requests
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usecase #2: Creating Pull Requests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-statement_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem Statement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solution
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-1-github-web-ui-most-visual" class="md-nav__link">
+    <span class="md-ellipsis">
+      Method 1: GitHub Web UI (Most Visual)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-2-github-cli-faster-for-terminal-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      Method 2: GitHub CLI (Faster for Terminal Users)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pr-template-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      PR Template Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checklist-before-submitting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Checklist Before Submitting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-pr-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      After PR Creation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Result
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-lessons_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Lessons
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Resources
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usecase-3-linearizing-messy-history-with-multiple-branches-merges" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usecase #3: Linearizing Messy History with Multiple Branches &amp; Merges
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usecase #3: Linearizing Messy History with Multiple Branches & Merges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-statement_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem Statement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Result
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-lessons_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Lessons
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-use-cases-for-this-technique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Use Cases for This Technique
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-commands_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      References
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-log-a-new-usecase" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to Log a New Usecase
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Categories
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usecase-1-non-linear-branch-history-unwanted-merge-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usecase #1: Non-Linear Branch History (Unwanted Merge Commit)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usecase #1: Non-Linear Branch History (Unwanted Merge Commit)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem Statement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result" class="md-nav__link">
+    <span class="md-ellipsis">
+      Result
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-lessons" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Lessons
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Commands
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usecase-2-creating-pull-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usecase #2: Creating Pull Requests
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usecase #2: Creating Pull Requests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-statement_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem Statement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solution
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-1-github-web-ui-most-visual" class="md-nav__link">
+    <span class="md-ellipsis">
+      Method 1: GitHub Web UI (Most Visual)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-2-github-cli-faster-for-terminal-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      Method 2: GitHub CLI (Faster for Terminal Users)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pr-template-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      PR Template Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checklist-before-submitting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Checklist Before Submitting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-pr-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      After PR Creation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Result
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-lessons_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Lessons
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Resources
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usecase-3-linearizing-messy-history-with-multiple-branches-merges" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usecase #3: Linearizing Messy History with Multiple Branches &amp; Merges
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usecase #3: Linearizing Messy History with Multiple Branches & Merges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-statement_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem Statement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Result
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-lessons_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Lessons
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-use-cases-for-this-technique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Use Cases for This Technique
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-commands_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      References
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-log-a-new-usecase" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to Log a New Usecase
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Categories
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="git-usecases-scenarios">Git Usecases &amp; Scenarios</h1>
+<p>Real situations encountered in this repository with documented solutions. Future scenarios will be logged here.</p>
+<hr />
+<h2 id="usecase-1-non-linear-branch-history-unwanted-merge-commit">Usecase #1: Non-Linear Branch History (Unwanted Merge Commit)</h2>
+<p><strong>Date:</strong> 2026-01-05<br />
+<strong>Status:</strong> ✅ RESOLVED<br />
+<strong>Branch:</strong> <code>feature/localstack-crossplane</code><br />
+<strong>Category:</strong> Branch Management</p>
+<h3 id="scenario">Scenario</h3>
+<p>Feature branch had a merge commit from <code>main</code>, creating non-linear history. When attempting to push and create a PR, the history looked messy with unnecessary merge commits instead of a clean linear progression.</p>
+<h3 id="problem-statement">Problem Statement</h3>
+<ul>
+<li>Expected: Clean linear commits on top of main</li>
+<li>Actual: Merge commit created history with branching</li>
+<li>Impact: PR merge to main would preserve merge commit unnecessarily</li>
+<li>Root: Used <code>git merge origin/main</code> instead of <code>git rebase</code></li>
+</ul>
+<h3 id="solution">Solution</h3>
+<p><strong>Step 1:</strong> Create clean temporary branch from <code>origin/main</code>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>temp/feature-clean<span class="w"> </span>origin/main
+</code></pre></div></p>
+<p><strong>Step 2:</strong> Squash all feature changes into one commit
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>merge<span class="w"> </span>--squash<span class="w"> </span>feature/localstack-crossplane
+</code></pre></div></p>
+<p><strong>Step 3:</strong> Commit squashed changes
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;feat(crossplane): add EC2 instance support and update documentation (squashed)&quot;</span>
+</code></pre></div></p>
+<p><strong>Step 4:</strong> Delete old remote branch
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>--delete<span class="w"> </span>feature/localstack-crossplane
+</code></pre></div></p>
+<p><strong>Step 5:</strong> Push clean branch to origin
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>HEAD:feature/localstack-crossplane<span class="w"> </span>-u
+</code></pre></div></p>
+<p><strong>Step 6:</strong> Replace local branch
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </span>feature/localstack-crossplane
+git<span class="w"> </span>branch<span class="w"> </span>-m<span class="w"> </span>feature/localstack-crossplane
+</code></pre></div></p>
+<h3 id="result">Result</h3>
+<ul>
+<li>✅ Linear history: Single commit on top of main</li>
+<li>✅ No merge commits</li>
+<li>✅ Clean repository ready for PR and merge</li>
+</ul>
+<h3 id="key-lessons">Key Lessons</h3>
+<ol>
+<li>Use <code>git merge --squash</code> for combining all changes into one commit</li>
+<li>Use <code>git rebase</code> for replaying commits on top of main (linear history)</li>
+<li>Avoid <code>git merge</code> when you want linear history</li>
+<li>Safe force push: Always use <code>--force-with-lease</code> instead of <code>--force</code></li>
+</ol>
+<h3 id="related-commands">Related Commands</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># View commits on your branch but not in main</span>
+git<span class="w"> </span>log<span class="w"> </span>--oneline<span class="w"> </span>origin/main..HEAD
+
+<span class="c1"># Safe force push after history rewrite</span>
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>branch<span class="w"> </span>--force-with-lease
+</code></pre></div>
+<hr />
+<h2 id="usecase-2-creating-pull-requests">Usecase #2: Creating Pull Requests</h2>
+<p><strong>Date:</strong> 2026-01-05<br />
+<strong>Status:</strong> ✅ DOCUMENTED<br />
+<strong>Category:</strong> GitHub Workflow</p>
+<h3 id="scenario_1">Scenario</h3>
+<p>After completing feature work with clean commits, need to create a Pull Request to propose changes for review and eventual merge into main. This usecase covers both Web UI and CLI approaches.</p>
+<h3 id="problem-statement_1">Problem Statement</h3>
+<ul>
+<li>Need: Consistent way to create PRs</li>
+<li>Options: GitHub Web UI or GitHub CLI</li>
+<li>Goal: Fast, documented PR creation process</li>
+</ul>
+<h3 id="solution_1">Solution</h3>
+<h4 id="method-1-github-web-ui-most-visual">Method 1: GitHub Web UI (Most Visual)</h4>
+<p><strong>Step 1:</strong> Navigate to Pull Requests
+- Go to: https://github.com/OpsAlchemy/kubequest
+- Click <strong>"Pull Requests"</strong> tab
+- Click <strong>"New Pull Request"</strong></p>
+<p><strong>Step 2:</strong> Select Branches
+- <strong>Base:</strong> <code>main</code> (destination branch)
+- <strong>Compare:</strong> Your feature branch (e.g., <code>feature/git-management-and-workflows</code>)</p>
+<p><strong>Step 3:</strong> Review Diff
+- Check all changes are correct
+- Ensure only intended files are modified</p>
+<p><strong>Step 4:</strong> Fill PR Details
+- <strong>Title:</strong> Follow convention (feat:, fix:, docs:, chore:)
+- <strong>Description:</strong> Explain what changed and why
+- <strong>Reviewers:</strong> Add team members
+- <strong>Labels:</strong> Add if needed (bug, feature, documentation)</p>
+<p><strong>Step 5:</strong> Create PR
+- Click <strong>"Create Pull Request"</strong></p>
+<h4 id="method-2-github-cli-faster-for-terminal-users">Method 2: GitHub CLI (Faster for Terminal Users)</h4>
+<p><strong>Setup (first time):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Install gh</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>gh
+
+<span class="c1"># Authenticate</span>
+gh<span class="w"> </span>auth<span class="w"> </span>login
+</code></pre></div></p>
+<p><strong>Create PR:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Simple PR</span>
+gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;feat: add feature&quot;</span><span class="w"> </span>--body<span class="w"> </span><span class="s2">&quot;Description&quot;</span>
+
+<span class="c1"># With options</span>
+gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--title<span class="w"> </span><span class="s2">&quot;feat: add git management docs and refactor deploy workflow&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--body<span class="w"> </span><span class="s2">&quot;Adds incident tracking, command reference, and dynamic reusable workflow&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--base<span class="w"> </span>main
+
+<span class="c1"># Create as draft (not ready for review yet)</span>
+gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;WIP: feature&quot;</span><span class="w"> </span>--body<span class="w"> </span><span class="s2">&quot;Draft for feedback&quot;</span><span class="w"> </span>--draft
+
+<span class="c1"># Open in browser after creation</span>
+gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;My PR&quot;</span><span class="w"> </span>--body<span class="w"> </span><span class="s2">&quot;Details&quot;</span><span class="w"> </span>--web
+</code></pre></div></p>
+<h3 id="pr-template-example">PR Template Example</h3>
+<p><strong>Title Format:</strong>
+<div class="highlight"><pre><span></span><code>feat: add git management docs and refactor deploy workflow
+</code></pre></div></p>
+<p><strong>Description Template:</strong>
+<div class="highlight"><pre><span></span><code><span class="gu">## Changes</span>
+<span class="k">-</span><span class="w"> </span>Added Git usecases tracking system
+<span class="k">-</span><span class="w"> </span>Added command reference guide
+<span class="k">-</span><span class="w"> </span>Refactored deploy workflow with reusable actions
+
+<span class="gu">## Why</span>
+<span class="k">-</span><span class="w"> </span>Team needs centralized Git problem-solving documentation
+<span class="k">-</span><span class="w"> </span>Deploy workflow was duplicating code
+<span class="k">-</span><span class="w"> </span>Easier to add new docs in future
+
+<span class="gu">## Related</span>
+<span class="k">-</span><span class="w"> </span>Fixes: Non-linear branch history issue
+<span class="k">-</span><span class="w"> </span>Closes: <span class="ni">#XX</span> (if applicable)
+</code></pre></div></p>
+<h3 id="checklist-before-submitting">Checklist Before Submitting</h3>
+<ul>
+<li>✅ Branch has clean, linear history</li>
+<li>✅ All commits are pushed to origin</li>
+<li>✅ Branch is up-to-date with main (no conflicts)</li>
+<li>✅ Code follows project conventions</li>
+<li>✅ Documentation updated if needed</li>
+<li>✅ Related scenarios logged in this file</li>
+<li>✅ PR title follows convention (feat:, fix:, docs:)</li>
+<li>✅ Description is clear and concise</li>
+<li>✅ All related issues mentioned</li>
+</ul>
+<h3 id="after-pr-creation">After PR Creation</h3>
+<p><strong>Monitor PR Status:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># View your PR</span>
+gh<span class="w"> </span>pr<span class="w"> </span>view
+
+<span class="c1"># View in browser</span>
+gh<span class="w"> </span>pr<span class="w"> </span>view<span class="w"> </span>--web
+
+<span class="c1"># List all open PRs</span>
+gh<span class="w"> </span>pr<span class="w"> </span>list
+
+<span class="c1"># Check comments</span>
+gh<span class="w"> </span>pr<span class="w"> </span>view<span class="w"> </span>--comments
+</code></pre></div></p>
+<p><strong>Responding to Reviews:</strong>
+1. Make changes in local branch
+2. Commit: <code>git add . &amp;&amp; git commit -m "address review feedback"</code>
+3. Push: <code>git push origin feature-branch</code>
+4. PR auto-updates with new commits
+5. Reply to review comments on GitHub
+6. Request re-review when ready</p>
+<p><strong>Merge PR:</strong></p>
+<p>Via CLI (recommended for squash + linear history):
+<div class="highlight"><pre><span></span><code><span class="c1"># Squash merge (combines all commits into one)</span>
+gh<span class="w"> </span>pr<span class="w"> </span>merge<span class="w"> </span>--squash
+
+<span class="c1"># Merge and delete branch automatically</span>
+gh<span class="w"> </span>pr<span class="w"> </span>merge<span class="w"> </span>--squash<span class="w"> </span>--delete-branch
+</code></pre></div></p>
+<p>Via Web UI:
+1. Click "Merge pull request"
+2. Choose "Squash and merge" strategy
+3. Click "Confirm merge"
+4. Delete branch</p>
+<h3 id="result_1">Result</h3>
+<ul>
+<li>✅ PR created and visible on GitHub</li>
+<li>✅ Team can review and comment</li>
+<li>✅ Clear documentation of changes</li>
+<li>✅ Ready for merge after approval</li>
+</ul>
+<h3 id="key-lessons_1">Key Lessons</h3>
+<ol>
+<li>Use descriptive PR titles following conventions</li>
+<li>Write clear, concise descriptions</li>
+<li>Squash merge preserves linear history</li>
+<li>Always use <code>--delete-branch</code> to clean up after merge</li>
+<li>GitHub CLI is faster for repetitive PR creation</li>
+</ol>
+<h3 id="related-resources">Related Resources</h3>
+<ul>
+<li><a href="https://docs.github.com/en/pull-requests">GitHub PR Documentation</a></li>
+<li><a href="https://cli.github.com/manual/">GitHub CLI Manual</a></li>
+</ul>
+<hr />
+<h2 id="usecase-3-linearizing-messy-history-with-multiple-branches-merges">Usecase #3: Linearizing Messy History with Multiple Branches &amp; Merges</h2>
+<p><strong>Date:</strong> 2026-01-09<br />
+<strong>Status:</strong> ✅ RESOLVED<br />
+<strong>Branch:</strong> <code>main</code><br />
+<strong>Category:</strong> History Management</p>
+<h3 id="scenario_2">Scenario</h3>
+<p>After multiple feature branches were merged into main with nested merges and branch-backs, the commit history became non-linear and confusing. Multiple GitHub Actions fix branches (PR #11, #13, #14) created a complex branching pattern with merge commits instead of a clean linear history.</p>
+<h3 id="problem-statement_2">Problem Statement</h3>
+<ul>
+<li>Expected: Clean linear history on main</li>
+<li>Actual: Complex branching with nested merge commits and back-merges</li>
+<li>Graph pattern showed: <code>|\</code>, <code>|/</code>, <code>/|</code> patterns (branches diverging and rejoining)</li>
+<li>Impact: Difficult to understand what actually changed, hard to review history</li>
+<li>Root: Multiple parallel fixes merged in sequence without squashing or rebasing</li>
+</ul>
+<h3 id="solution_2">Solution</h3>
+<p><strong>Key Insight:</strong> Use <code>git reset --soft</code> to rewind history while keeping all changes, then create a single clean commit.</p>
+<p><strong>Step 1:</strong> Identify the base commit (where the mess started)
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>log<span class="w"> </span>--oneline<span class="w"> </span>--graph<span class="w"> </span>-15<span class="w">  </span><span class="c1"># Find where branches started</span>
+</code></pre></div></p>
+<p><strong>Step 2:</strong> Create a backup branch (safety)
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>branch<span class="w"> </span>backup-before-squash
+</code></pre></div></p>
+<p><strong>Step 3:</strong> Reset to base commit, keeping all changes
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>reset<span class="w"> </span>--soft<span class="w"> </span>&lt;base-commit-hash&gt;
+</code></pre></div>
+In our case: <code>git reset --soft c2562b4</code></p>
+<p>This is the magic: 
+- <code>--soft</code> rewinds your branch pointer
+- All your changes stay staged and ready to commit
+- All the messy merge commits disappear
+- No code is lost</p>
+<p><strong>Step 4:</strong> Create one clean commit with all changes
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;fix: consolidate all GitHub Actions improvements and fixes&quot;</span>
+</code></pre></div></p>
+<p><strong>Step 5:</strong> Force push the linearized history
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main<span class="w"> </span>--force-with-lease
+</code></pre></div></p>
+<p>The <code>--force-with-lease</code> flag is safe because it:
+- Allows rewriting local history
+- Prevents overwriting others' work
+- Only force-pushes if remote hasn't changed</p>
+<h3 id="result_2">Result</h3>
+<ul>
+<li>✅ Linear history: All commits in a straight line</li>
+<li>✅ No merge commits: Cleaner graph</li>
+<li>✅ All changes preserved: Nothing lost</li>
+<li>✅ Remote updated: Pushed to GitHub successfully</li>
+<li>✅ Backup available: Can always revert if needed</li>
+</ul>
+<p><strong>Before:</strong>
+<div class="highlight"><pre><span></span><code>*   189650d Merge pull request #11
+|\  
+| * 1eab8af Merge branch &#39;main&#39; into fix/github-actions-deploy
+| |\  
+| |/  
+|/|   
+* | 50ab2d0 Fix GitHub Actions workflows
+</code></pre></div></p>
+<p><strong>After:</strong>
+<div class="highlight"><pre><span></span><code>* 8c1656e fix: consolidate all GitHub Actions improvements and fixes
+* addf2e8 Add Kustomize and Helm practice files
+* 321eca8 feat: refactor deploy workflow
+</code></pre></div></p>
+<h3 id="key-lessons_2">Key Lessons</h3>
+<ol>
+<li><strong><code>git reset --soft &lt;commit&gt;</code></strong> is your friend for squashing history</li>
+<li>Goes back to any commit</li>
+<li>Keeps all changes</li>
+<li>
+<p>Lets you rewrite commits however you want</p>
+</li>
+<li>
+<p><strong>Three types of reset:</strong></p>
+</li>
+<li><code>--soft</code>: Keep changes staged (ready to commit)</li>
+<li><code>--mixed</code>: Keep changes unstaged (in working directory)</li>
+<li>
+<p><code>--hard</code>: Delete changes completely (⚠️ dangerous)</p>
+</li>
+<li>
+<p><strong><code>--force-with-lease</code> is safe:</strong></p>
+</li>
+<li>Always use instead of <code>--force</code></li>
+<li>Prevents accidentally overwriting others' work</li>
+<li>
+<p>Default for rewriting pushed history</p>
+</li>
+<li>
+<p><strong>Create backups before major rewrites:</strong>
+   <div class="highlight"><pre><span></span><code>git<span class="w"> </span>branch<span class="w"> </span>backup-before-squash
+</code></pre></div>
+   If something goes wrong: <code>git reset --hard backup-before-squash</code></p>
+</li>
+<li>
+<p><strong>You can reset to any point:</strong>
+   <div class="highlight"><pre><span></span><code>git<span class="w"> </span>reset<span class="w"> </span>--soft<span class="w"> </span>HEAD~3<span class="w">        </span><span class="c1"># Last 3 commits</span>
+git<span class="w"> </span>reset<span class="w"> </span>--soft<span class="w"> </span>c2562b4<span class="w">       </span><span class="c1"># Specific commit</span>
+git<span class="w"> </span>reset<span class="w"> </span>--soft<span class="w"> </span>origin/main<span class="w">   </span><span class="c1"># Match remote exactly</span>
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="common-use-cases-for-this-technique">Common Use Cases for This Technique</h3>
+<ul>
+<li><strong>Squash messy feature branch commits</strong> before merging to main</li>
+<li><strong>Linearize complex merge histories</strong> (like we just did)</li>
+<li><strong>Reorganize commits</strong> in any way you want</li>
+<li><strong>Undo multiple commits</strong> but keep the work</li>
+<li><strong>Combine parallel work</strong> from multiple branches</li>
+</ul>
+<h3 id="related-commands_1">Related Commands</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># See what commits you&#39;ll lose/gain</span>
+git<span class="w"> </span>log<span class="w"> </span>--oneline<span class="w"> </span>origin/main..HEAD
+
+<span class="c1"># After reset, before commit - review staged changes</span>
+git<span class="w"> </span>diff<span class="w"> </span>--cached
+
+<span class="c1"># View the reflog to recover anything</span>
+git<span class="w"> </span>reflog
+</code></pre></div>
+<h3 id="references">References</h3>
+<ul>
+<li><a href="https://git-scm.com/docs/git-reset">Git Reset Documentation</a></li>
+<li><a href="https://git-scm.com/docs/git-push#Documentation/git-push.txt--force-with-lease">Force Push Best Practices</a></li>
+</ul>
+<hr />
+<h2 id="how-to-log-a-new-usecase">How to Log a New Usecase</h2>
+<p>When you encounter a new Git scenario:</p>
+<ol>
+<li>Add a new section: <code>## Usecase #N: [Title]</code></li>
+<li>Fill in: Date, Status, Category</li>
+<li>Include these subsections:</li>
+<li><strong>Scenario:</strong> What happened</li>
+<li><strong>Problem Statement:</strong> What was wrong/unexpected</li>
+<li><strong>Solution:</strong> Step-by-step fix with code blocks</li>
+<li><strong>Result:</strong> What changed/improved</li>
+<li><strong>Key Lessons:</strong> Takeaways for future</li>
+<li>
+<p><strong>Related Commands/Resources:</strong> Links to other docs</p>
+</li>
+<li>
+<p>Commit and create a PR to promote to main</p>
+</li>
+</ol>
+<hr />
+<h2 id="categories">Categories</h2>
+<ul>
+<li><strong>Branch Management:</strong> Creating, switching, deleting branches</li>
+<li><strong>History Management:</strong> Rebase, squash, merge strategies</li>
+<li><strong>GitHub Workflow:</strong> PRs, reviews, merges</li>
+<li><strong>Conflict Resolution:</strong> Handling merge conflicts</li>
+<li><strong>Remote Sync:</strong> Fetch, pull, push issues</li>
+<li><strong>Undo/Recovery:</strong> Reverting commits, recovering deleted code</li>
+</ul>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "toc.follow", "content.code.copy"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.cd18aaf1.min.js"></script>
+      
+    
+  </body>
+</html>

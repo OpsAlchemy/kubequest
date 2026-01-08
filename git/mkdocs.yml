@@ -1,0 +1,34 @@
+site_name: Git Learning & Reference
+site_description: "Comprehensive Git guide with real-world scenarios, commands, and best practices"
+site_author: OpsAlchemy
+site_url: https://opsalchemy.github.io/kubequest/git/
+docs_dir: .
+site_dir: ../../_site/git
+
+theme:
+  name: material
+  features:
+  - navigation.instant
+  - navigation.tracking
+  - navigation.tabs
+  - navigation.sections
+  - toc.follow
+  - content.code.copy
+
+plugins:
+- search
+
+markdown_extensions:
+- admonition
+- pymdownx.details
+- pymdownx.superfences
+- pymdownx.highlight:
+    use_pygments: true
+- tables
+
+nav:
+- Home: index.md
+- Commands: docs/GIT_COMMANDS.md
+- Usecases: docs/GIT_USECASES.md
+- Commands: docs/GIT_COMMANDS.md
+- Usecases: docs/GIT_USECASES.md
