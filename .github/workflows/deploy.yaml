@@ -53,10 +53,17 @@ jobs:
           output-folder: ${{ matrix.doc.output_folder }}
           requirements-file: ${{ matrix.doc.requirements_file }}
 
+      - name: Debug - List _site contents
+        run: |
+          echo "Contents of _site:"
+          ls -la _site/ || echo "_site directory not found"
+          echo "Contents of _site/${{ matrix.doc.output_folder }}:"
+          ls -la "_site/${{ matrix.doc.output_folder }}" || echo "Subdirectory not found"
+
       - uses: actions/upload-artifact@v4
         with:
           name: site-${{ matrix.doc.name }}
-          path: _site/${{ matrix.doc.output_folder }}
+          path: _site/${{ matrix.doc.output_folder }}/
           retention-days: 1
 
   deploy:
@@ -67,13 +74,21 @@ jobs:
         with:
           path: artifacts
 
+      - name: Debug - List artifacts
+        run: |
+          echo "Contents of artifacts:"
+          find artifacts -type f | head -20
+
       - name: Combine sites
         run: |
           mkdir -p _site
           for dir in artifacts/site-*/; do
             site=$(basename "$dir" | sed 's/site-//')
+            echo "Copying $dir to _site/$site"
             cp -r "$dir" "_site/$site"
           done
+          echo "Final _site structure:"
+          find _site -type f | head -20
 
       - uses: peaceiris/actions-gh-pages@v3
         with:
