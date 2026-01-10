@@ -1,127 +1,151 @@
-# Terragrunt Demo Project
+# Terragrunt Hardened Infrastructure Project
 
-This is a working Terragrunt project that demonstrates best practices for organizing infrastructure as code.
+A production-ready Terragrunt project demonstrating best practices for organizing infrastructure as code with centralized configuration management.
 
 ## Project Structure
 
 ```
 terragrunt-01/
-├── terragrunt.hcl              # Root configuration (inherited by all modules)
-├── modules/                     # Reusable Terraform modules
-│   └── app/                    # Example application module
-│       ├── main.tf
-│       └── versions.tf
-├── environments/               # Environment-specific configurations
+├── root.hcl                           # Root configuration (Azure provider, backend)
+├── modules/                            # Reusable Terraform modules
+│   ├── app/                           # Basic application module
+│   ├── network/                       # VNet, Subnets, NSGs, Route Tables
+│   ├── storage/                       # Storage Accounts, Key Vault, Encryption
+│   ├── compute/                       # VMs, NICs, Managed Disks, Backups
+│   ├── database/                      # SQL Server, TDE, Threat Detection
+│   └── monitoring/                    # Log Analytics, Alerts, Azure Policy
+├── environments/
 │   ├── dev/
-│   │   └── app/
-│   │       └── terragrunt.hcl
+│   │   ├── env.hcl                   # ⭐ Centralized dev configuration
+│   │   ├── app/
+│   │   ├── network/
+│   │   ├── storage/
+│   │   ├── compute/
+│   │   ├── database/
+│   │   └── monitoring/
 │   ├── staging/
+│   │   ├── env.hcl                   # ⭐ Centralized staging configuration
 │   │   └── app/
-│   │       └── terragrunt.hcl
 │   └── prod/
-│       └── app/
-│           └── terragrunt.hcl
-└── README.md
+│       ├── env.hcl                   # ⭐ Centralized prod configuration
+│       ├── app/
+│       ├── network/
+│       ├── storage/
+│       ├── compute/
+│       ├── database/
+│       └── monitoring/
+├── README.md                          # This file
+├── README-HARDENED.md                 # Security & architecture guide
+├── HARDENING-SUMMARY.md               # Quick security summary
+├── QUICKSTART.md                      # Quick start guide
+└── terraform.tfvars.example           # Variable template
 ```
 
 ## Prerequisites
 
 - [Terraform](https://www.terraform.io/downloads) >= 1.0
-- [Terragrunt](https://terragrunt.gruntwork.io/docs/getting-started/install/) >= 0.38
+- [Terragrunt](https://terragrunt.gruntwork.io/docs/getting-started/install/) >= 0.97.0
 
-### Install Terragrunt (if not already installed)
+### Install Terragrunt v0.97.2
 
 ```bash
-# On Linux
-wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.54.8/terragrunt_linux_amd64
+# Download Terragrunt
+wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.97.2/terragrunt_linux_amd64
 chmod +x terragrunt_linux_amd64
 sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
 
-# Or using package manager
-# Ubuntu/Debian
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get update && sudo apt-get install terragrunt
+# Verify installation
+terragrunt --version
 ```
 
-## How to Use
+## Quick Start
 
-### 1. Initialize and Apply a Single Environment
+### Deploy Entire Environment at Once
 
 ```bash
-# Navigate to the dev environment
-cd environments/dev/app
+# Navigate to environment directory
+cd environments/dev
 
-# Initialize Terragrunt (downloads modules and providers)
+# Initialize ALL modules
+terragrunt run --all init
+
+# Apply ALL modules (non-interactive)
+terragrunt run --all --non-interactive -- apply -auto-approve
+
+# Destroy ALL modules
+terragrunt run --all --non-interactive -- destroy -auto-approve
+```
+
+### Deploy Individual Module
+
+```bash
+cd environments/dev/network
 terragrunt init
-
-# Plan the changes
 terragrunt plan
-
-# Apply the changes
-terragrunt apply
-```
-
-### 2. Work with Multiple Environments
-
-```bash
-# From the root directory, run commands for all environments
-cd /home/vagabond/dev/terragrunt-01
-
-# Plan all environments
-terragrunt run-all plan
-
-# Apply changes to all environments
-terragrunt run-all apply
-
-# Destroy all environments
-terragrunt run-all destroy
-```
-
-### 3. Work with Specific Environment
-
-```bash
-# Dev environment
-cd environments/dev/app
-terragrunt apply
-
-# Staging environment
-cd environments/staging/app
-terragrunt apply
-
-# Production environment
-cd environments/prod/app
 terragrunt apply
 ```
 
 ## Key Features
 
-### DRY Configuration
-- **Root terragrunt.hcl**: Contains common configuration inherited by all environments
-- **Module reuse**: The same Terraform module is used across environments
-- **Environment-specific inputs**: Each environment can override variables
+### ⭐ Centralized Configuration (env.hcl)
+
+Each environment has a single `env.hcl` file that defines ALL configuration for that environment:
+
+```hcl
+# environments/dev/env.hcl
+locals {
+  environment         = "dev"
+  resource_group_name = "terragrunt-hardened-dev-rg"
+  location            = "East US"
+  vm_size             = "Standard_B2s"
+  instance_count      = 2
+  storage_tier        = "Standard"
+  database_tier       = "Standard"
+  # ... all other configuration
+}
+```
+
+**Benefits:**
+- **Single Source of Truth**: Change configuration in ONE file
+- **DRY Principle**: No repeated values across modules
+- **Easy Environment Promotion**: Copy env.hcl and adjust values
+- **Consistency**: All modules use the same configuration
+
+### How Submodules Consume env.hcl
+
+Each submodule's `terragrunt.hcl` reads from the parent `env.hcl`:
+
+```hcl
+locals {
+  env_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+}
+
+inputs = {
+  environment         = local.env_vars.locals.environment
+  resource_group_name = local.env_vars.locals.resource_group_name
+  # ... automatically inherited from env.hcl
+}
+```
+
+### DRY Configuration Hierarchy
+
+```
+root.hcl                    # Provider configuration, backend
+  └── env.hcl               # Environment-specific variables (dev/staging/prod)
+       └── terragrunt.hcl   # Module-specific configuration (consumes from env.hcl)
+```
 
 ### Remote State Management
-- Configured for local backend (can be easily changed to S3, GCS, etc.)
+
+- Local backend by default (easily changed to S3/Azure Blob)
 - Automatic state file organization by environment
 - State isolation between environments
 
-### Benefits of This Structure
-
-1. **Don't Repeat Yourself (DRY)**: Common configuration is defined once
-2. **Environment Isolation**: Each environment has its own state file
-3. **Scalability**: Easy to add new environments or modules
-4. **Consistency**: Same module code runs everywhere with different inputs
-5. **Safety**: Can test changes in dev before promoting to prod
-
-## Common Commands
+## Common Commands (Terragrunt v0.97+)
 
 ```bash
-# Initialize
+# Initialize single module
 terragrunt init
-
-# Validate configuration
-terragrunt validate
 
 # Plan changes
 terragrunt plan
@@ -129,36 +153,129 @@ terragrunt plan
 # Apply changes
 terragrunt apply
 
-# Show current state
-terragrunt show
+# Show outputs
+terragrunt output
 
 # Destroy resources
 terragrunt destroy
 
-# Run command in all subdirectories
-terragrunt run-all [command]
+# Run command on ALL modules in environment
+terragrunt run --all init
+terragrunt run --all plan
+terragrunt run --all --non-interactive -- apply -auto-approve
+terragrunt run --all --non-interactive -- destroy -auto-approve
 
 # Format HCL files
 terragrunt hclfmt
+
+# Validate configuration
+terragrunt validate
 ```
+
+> **Note:** Terragrunt v0.97+ uses `terragrunt run --all` instead of the older `terragrunt run-all` syntax.
+
+## Environment Configuration
+
+### Development (dev)
+| Setting | Value |
+|---------|-------|
+| VM Size | Standard_B2s |
+| Instance Count | 2 |
+| Storage Tier | Standard |
+| Database Tier | Standard |
+| Backup Retention | 7 days |
+| Log Retention | 30 days |
+| Public IPs | Enabled |
+
+### Staging (staging)
+| Setting | Value |
+|---------|-------|
+| VM Size | Standard_B2s |
+| Instance Count | 2 |
+| Storage Tier | Standard |
+| Database Tier | Standard |
+| Backup Retention | 14 days |
+| Log Retention | 45 days |
+
+### Production (prod)
+| Setting | Value |
+|---------|-------|
+| VM Size | Standard_D2s_v3 |
+| Instance Count | 4 |
+| Storage Tier | Premium |
+| Database Tier | Premium |
+| Backup Retention | 35 days |
+| Log Retention | 90 days |
+| Public IPs | Disabled |
+| Geo-Replication | Enabled |
 
 ## Customization
 
+### Modify Environment Configuration
+
+Edit the centralized `env.hcl` file:
+
+```bash
+# Edit dev configuration
+vim environments/dev/env.hcl
+
+# Changes automatically apply to ALL modules in dev
+cd environments/dev
+terragrunt run --all --non-interactive -- apply -auto-approve
+```
+
 ### Add a New Environment
 
-1. Create a new directory under `environments/`
-2. Copy an existing `terragrunt.hcl` file
-3. Update the `environment` input variable
+1. Copy an existing environment:
+   ```bash
+   cp -r environments/dev environments/qa
+   ```
+
+2. Update `environments/qa/env.hcl` with QA-specific values
+
+3. Deploy:
+   ```bash
+   cd environments/qa
+   terragrunt run --all --non-interactive -- apply -auto-approve
+   ```
 
 ### Add a New Module
 
-1. Create a new directory under `modules/`
-2. Write your Terraform code
-3. Reference it from environment-specific `terragrunt.hcl` files
+1. Create module in `modules/`:
+   ```bash
+   mkdir -p modules/newmodule
+   # Add main.tf, variables.tf, outputs.tf
+   ```
+
+2. Create environment directories:
+   ```bash
+   mkdir -p environments/dev/newmodule
+   mkdir -p environments/prod/newmodule
+   ```
+
+3. Create `terragrunt.hcl` that consumes from `env.hcl`:
+   ```hcl
+   include "root" {
+     path = find_in_parent_folders("root.hcl")
+   }
+
+   locals {
+     env_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+   }
+
+   terraform {
+     source = "${get_parent_terragrunt_dir()}/modules/newmodule"
+   }
+
+   inputs = {
+     environment = local.env_vars.locals.environment
+     # ... other inputs from env.hcl
+   }
+   ```
 
 ### Change Backend to S3
 
-Update the root `terragrunt.hcl` file:
+Update `root.hcl`:
 
 ```hcl
 remote_state {
@@ -177,22 +294,40 @@ remote_state {
 }
 ```
 
-## Next Steps
-
-1. Install Terragrunt if you haven't already
-2. Navigate to `environments/dev/app`
-3. Run `terragrunt init` then `terragrunt apply`
-4. Explore the outputs and state files
-5. Customize the modules for your use case
-
 ## Troubleshooting
 
-- **Module not found**: Run `terragrunt init` to download the module
-- **State locked**: Another process may be running; wait or remove the lock
-- **Version mismatch**: Ensure Terraform and Terragrunt versions meet requirements
+### Module Not Found
+```bash
+terragrunt init
+```
+
+### State Lock Issues
+```bash
+rm -rf .terragrunt-cache/
+terragrunt init
+```
+
+### Provider Issues
+```bash
+terragrunt providers lock
+terragrunt validate
+```
+
+### View Debug Output
+```bash
+TG_LOG=debug terragrunt plan
+```
 
 ## Learn More
 
 - [Terragrunt Documentation](https://terragrunt.gruntwork.io/docs/)
 - [Terraform Documentation](https://www.terraform.io/docs/)
-- [Best Practices](https://terragrunt.gruntwork.io/docs/getting-started/quick-start/)
+- [Azure Security Best Practices](https://docs.microsoft.com/azure/security/)
+- [README-HARDENED.md](./README-HARDENED.md) - Detailed security guide
+- [QUICKSTART.md](./QUICKSTART.md) - Quick start instructions
+
+---
+
+**Version:** 2.0 - Centralized Configuration with env.hcl  
+**Terragrunt:** v0.97.2  
+**Last Updated:** January 2026
