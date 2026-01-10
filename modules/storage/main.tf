@@ -147,6 +147,29 @@ output "storage_account_name" {
   value       = null_resource.storage_account.triggers.name
 }
 
+output "storage_account_ids" {
+  description = "Map of storage account names to IDs"
+  value = {
+    data = "storage-data-${var.environment}-${random_string.storage_suffix.result}"
+    diag = "storage-diag-${var.environment}-${random_string.storage_suffix.result}"
+  }
+}
+
+output "diagnostics_storage_endpoint" {
+  description = "Diagnostics storage blob endpoint"
+  value       = "https://stdiag${var.environment}${random_string.storage_suffix.result}.blob.core.windows.net"
+}
+
+output "diagnostics_storage_id" {
+  description = "Diagnostics storage account ID"
+  value       = "storage-diag-${var.environment}-${random_string.storage_suffix.result}"
+}
+
+output "backup_container_url" {
+  description = "Backup container URL"
+  value       = "https://stdata${var.environment}${random_string.storage_suffix.result}.blob.core.windows.net/backups"
+}
+
 output "blob_container_names" {
   description = "Blob Container names"
   value       = [for container in null_resource.blob_container : container.triggers.name]
@@ -169,5 +192,6 @@ output "storage_info" {
     backup_retention    = null_resource.storage_account.triggers.backup_retention_days
     containers_count    = length(null_resource.blob_container)
     key_vault_protected = true
+    environment         = var.environment
   }
 }

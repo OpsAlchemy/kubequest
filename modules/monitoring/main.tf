@@ -37,6 +37,13 @@ variable "common_tags" {
   default     = {}
 }
 
+# Generate unique suffix for resource names
+resource "random_string" "monitoring_suffix" {
+  length  = 6
+  special = false
+  upper   = false
+}
+
 # Simulate Log Analytics Workspace
 resource "null_resource" "log_analytics_workspace" {
   triggers = {
@@ -177,9 +184,33 @@ output "log_analytics_workspace_name" {
   value       = null_resource.log_analytics_workspace.triggers.name
 }
 
+output "log_analytics_workspace_id" {
+  description = "Log Analytics Workspace ID"
+  value       = "log-${var.environment}-${random_string.monitoring_suffix.result}"
+}
+
 output "application_insights_name" {
   description = "Application Insights name"
   value       = null_resource.application_insights.triggers.name
+}
+
+output "application_insights_id" {
+  description = "Application Insights ID"
+  value       = "appi-${var.environment}-${random_string.monitoring_suffix.result}"
+}
+
+output "application_insights_key" {
+  description = "Application Insights Instrumentation Key"
+  value       = "00000000-0000-0000-0000-${random_string.monitoring_suffix.result}"
+  sensitive   = true
+}
+
+output "action_group_ids" {
+  description = "Map of action group names to IDs"
+  value = {
+    critical = "ag-critical-${var.environment}-${random_string.monitoring_suffix.result}"
+    warning  = "ag-warning-${var.environment}-${random_string.monitoring_suffix.result}"
+  }
 }
 
 output "action_group_names" {
@@ -195,6 +226,11 @@ output "alert_names" {
   )
 }
 
+output "dashboard_url" {
+  description = "Azure Portal Dashboard URL"
+  value       = "https://portal.azure.com/#dashboard/${var.environment}"
+}
+
 output "monitoring_info" {
   description = "Monitoring infrastructure information"
   value = {
@@ -207,5 +243,6 @@ output "monitoring_info" {
     azure_policies_enabled   = true
     auto_remediation         = true
     security_monitoring      = true
+    environment              = var.environment
   }
 }

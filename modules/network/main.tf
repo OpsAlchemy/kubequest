@@ -129,19 +129,48 @@ output "virtual_network_id" {
   value       = null_resource.virtual_network.triggers.name
 }
 
+output "vnet_id" {
+  description = "Virtual Network ID"
+  value       = "${var.project_name}-vnet-${var.environment}-${random_string.network_suffix.result}"
+}
+
+output "vnet_name" {
+  description = "Virtual Network name"
+  value       = "${var.project_name}-vnet-${var.environment}"
+}
+
 output "virtual_network_cidr" {
   description = "Virtual Network CIDR"
   value       = null_resource.virtual_network.triggers.cidr
 }
 
 output "subnet_ids" {
-  description = "Subnet IDs"
-  value       = [for subnet in null_resource.subnets : subnet.triggers.name]
+  description = "Map of subnet names to IDs"
+  value = {
+    web  = "${var.project_name}-snet-web-${var.environment}-${random_string.network_suffix.result}"
+    app  = "${var.project_name}-snet-app-${var.environment}-${random_string.network_suffix.result}"
+    data = "${var.project_name}-snet-data-${var.environment}-${random_string.network_suffix.result}"
+    mgmt = "${var.project_name}-snet-mgmt-${var.environment}-${random_string.network_suffix.result}"
+  }
 }
 
 output "nsg_ids" {
-  description = "Network Security Group IDs"
-  value       = [for nsg in null_resource.network_security_group : nsg.triggers.name]
+  description = "Map of NSG names to IDs"
+  value = {
+    web  = "${var.project_name}-nsg-web-${var.environment}-${random_string.network_suffix.result}"
+    app  = "${var.project_name}-nsg-app-${var.environment}-${random_string.network_suffix.result}"
+    data = "${var.project_name}-nsg-data-${var.environment}-${random_string.network_suffix.result}"
+  }
+}
+
+output "resource_group_name" {
+  description = "Resource Group Name"
+  value       = var.resource_group_name
+}
+
+output "location" {
+  description = "Azure Region"
+  value       = var.location
 }
 
 output "network_info" {
@@ -152,5 +181,6 @@ output "network_info" {
     nsgs_count         = length(null_resource.network_security_group)
     encryption_enabled = var.enable_encryption
     ddos_protected     = true
+    environment        = var.environment
   }
 }

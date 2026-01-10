@@ -55,6 +55,13 @@ variable "common_tags" {
   default     = {}
 }
 
+# Generate unique suffix for resource names
+resource "random_string" "compute_suffix" {
+  length  = 6
+  special = false
+  upper   = false
+}
+
 # Simulate Network Interfaces
 resource "null_resource" "network_interfaces" {
   count = var.instance_count
@@ -170,6 +177,37 @@ output "vm_ids" {
   value       = [for vm in null_resource.virtual_machines : vm.triggers.name]
 }
 
+output "vmss_ids" {
+  description = "Map of VMSS names to IDs"
+  value = {
+    web = "vmss-web-${var.environment}-${random_string.compute_suffix.result}"
+    app = "vmss-app-${var.environment}-${random_string.compute_suffix.result}"
+  }
+}
+
+output "vmss_resource_ids" {
+  description = "List of VMSS resource IDs"
+  value = [
+    "vmss-web-${var.environment}-${random_string.compute_suffix.result}",
+    "vmss-app-${var.environment}-${random_string.compute_suffix.result}"
+  ]
+}
+
+output "aks_cluster_id" {
+  description = "AKS cluster ID (null if not enabled)"
+  value       = var.environment == "prod" ? "aks-${var.environment}-${random_string.compute_suffix.result}" : null
+}
+
+output "compute_identity_id" {
+  description = "Managed identity ID for compute resources"
+  value       = "identity-compute-${var.environment}-${random_string.compute_suffix.result}"
+}
+
+output "app_subnet_id" {
+  description = "App tier subnet ID"
+  value       = "subnet-app-${var.environment}"
+}
+
 output "nic_ids" {
   description = "Network Interface IDs"
   value       = [for nic in null_resource.network_interfaces : nic.triggers.name]
@@ -193,5 +231,6 @@ output "compute_info" {
     automatic_updates     = true
     backup_retention_days = var.environment == "prod" ? 30 : 7
     disk_encryption_set   = "${var.project_name}-des-${var.environment}"
+    environment           = var.environment
   }
 }

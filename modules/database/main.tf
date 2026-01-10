@@ -173,6 +173,29 @@ output "sql_server_name" {
   value       = null_resource.sql_server.triggers.name
 }
 
+output "sql_server_id" {
+  description = "SQL Server ID"
+  value       = "sql-server-${var.environment}-${random_string.sql_suffix.result}"
+}
+
+output "sql_database_ids" {
+  description = "Map of database names to IDs"
+  value = {
+    app   = "sqldb-app-${var.environment}-${random_string.sql_suffix.result}"
+    audit = "sqldb-audit-${var.environment}-${random_string.sql_suffix.result}"
+  }
+}
+
+output "cosmosdb_id" {
+  description = "Cosmos DB account ID (null if not enabled)"
+  value       = var.environment != "dev" ? "cosmos-${var.environment}-${random_string.sql_suffix.result}" : null
+}
+
+output "redis_id" {
+  description = "Redis Cache ID"
+  value       = "redis-${var.environment}-${random_string.sql_suffix.result}"
+}
+
 output "database_names" {
   description = "Database names"
   value       = [for db in null_resource.sql_database : db.triggers.name]
@@ -197,5 +220,6 @@ output "database_info" {
     threat_detection        = true
     vulnerability_scanning  = true
     audit_logging_days      = var.environment == "prod" ? 90 : 30
+    environment             = var.environment
   }
 }
