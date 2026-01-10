@@ -1,4 +1,4 @@
-# Dev Environment - Compute Deployment
+# Staging Environment - Database Deployment
 # Consumes shared configuration from env.hcl
 
 include "root" {
@@ -11,7 +11,7 @@ locals {
 }
 
 terraform {
-  source = "${get_parent_terragrunt_dir()}/modules/compute"
+  source = "${get_parent_terragrunt_dir()}/modules/database"
 }
 
 # All inputs come from env.hcl - DRY!
@@ -20,8 +20,8 @@ inputs = {
   resource_group_name = local.env_vars.locals.resource_group_name
   location            = local.env_vars.locals.location
   project_name        = local.env_vars.locals.project_name
-  vm_size             = local.env_vars.locals.vm_size
-  instance_count      = local.env_vars.locals.instance_count
-  enable_monitoring   = local.env_vars.locals.enable_monitoring
+  database_tier       = local.env_vars.locals.database_tier
+  enable_encryption   = local.env_vars.locals.enable_encryption
+  enable_backup       = local.env_vars.locals.enable_backup
   common_tags         = local.env_vars.locals.common_tags
 }

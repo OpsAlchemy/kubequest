@@ -1,4 +1,4 @@
-# Dev Environment - Compute Deployment
+# Staging Environment - Compute Deployment
 # Consumes shared configuration from env.hcl
 
 include "root" {

@@ -103,7 +103,7 @@ resource "null_resource" "action_group" {
     resource_group      = var.resource_group_name
     location            = var.location
     short_name          = "ag${count.index}"
-    email_notifications = ["ops-team@example.com", "security-team@example.com"]
+    email_notifications = "ops-team@example.com,security-team@example.com"
     webhook_url         = "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
   }
 
