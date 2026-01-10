@@ -1,0 +1,47 @@
+# Example Terraform Variables File
+# DO NOT commit sensitive values to git!
+# Use environment variables or CI/CD secret management instead
+
+# Azure Authentication (use environment variables instead)
+# export AZURE_SUBSCRIPTION_ID="your-subscription-id"
+# export AZURE_TENANT_ID="your-tenant-id"
+# export ARM_CLIENT_ID="your-service-principal-id"
+# export ARM_CLIENT_SECRET="your-service-principal-secret"
+# export ARM_ACCESS_KEY="your-storage-account-key"
+
+# Resource Configuration
+resource_group_name = "terragrunt-hardened-dev-rg"
+location            = "East US"
+project_name        = "tg-hardened"
+
+# Security Configuration
+enable_encryption = true
+enable_backup     = true
+enable_monitoring = true
+
+# Network Configuration
+network_cidr = "10.0.0.0/16"
+
+# Compute Configuration
+vm_size        = "Standard_B2s"
+instance_count = 2
+
+# Database Configuration
+database_tier = "Standard"
+
+# Storage Configuration
+storage_tier = "Standard"
+
+# Monitoring Configuration
+log_retention_days     = 30
+enable_threat_detection = true
+enable_vulnerability_scanning = true
+
+# Common Tags
+common_tags = {
+  managed_by  = "terraform"
+  environment = "dev"
+  cost_center = "engineering"
+  owner       = "platform-team"
+  project     = "infrastructure"
+}
