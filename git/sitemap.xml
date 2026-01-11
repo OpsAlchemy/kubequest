@@ -15,4 +15,9 @@
          <lastmod>2026-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
+    <url>
+         <loc>https://opsalchemy.github.io/kubequest/git/docs/TERRAGRUNT_IMPORT_AND_CLEANUP/</loc>
+         <lastmod>2026-01-11</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
 </urlset>

@@ -1,0 +1,851 @@
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git remote -v        
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git log --oneline          
+6fa041b (HEAD -> master) chore: make hooks non-failing (comment error hooks); unify module inputs; add hollow passthrough outputs; fix terragrunt configs/tests
+d320eb3 Update all documentation for centralized env.hcl configuration and Terragrunt v0.97+ CLI syntax
+34a73e0 Add centralized env.hcl per environment for DRY configuration
+6b77d56 Add comprehensive hardening summary and project overview
+7f40b08 Add hardened Azure infrastructure modules with security best practices
+810ccbd Fix module paths and root config naming - rename terragrunt.hcl to root.hcl and use absolute paths
+3c25979 Remove installation files from commit
+50b8a4a Initial commit: Add Terragrunt project structure with dev, staging, and prod environments
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git remote -v    
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ pwd
+/home/vagabond/dev/terragrunt-01/regions/eastus/dev
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/peak/kubequest/cka/solutions/05-kubeconfig status --porcelain
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/dev/terragrunt-01 branch --show-current || git -C /home/vagabond/dev/terragrunt-01 rev-parse --abbrev-ref HEAD
+master
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/peak/kubequest/cka/solutions/05-kubeconfig remote -v
+origin  https://github.com/OpsAlchemy/kubequest.git (fetch)
+origin  https://github.com/OpsAlchemy/kubequest.git (push)
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/peak/kubequest status --porcelain
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/peak/kubequest remote add terragurn /home/vagabond/dev/terragrunt-01 || true && git -C /home/vagabond/peak/kubequest 
+fetch terragurn --no-tags
+remote: Enumerating objects: 184, done.
+remote: Counting objects: 100% (184/184), done.
+remote: Compressing objects: 100% (149/149), done.
+remote: Total 184 (delta 51), reused 0 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (184/184), 23.37 MiB | 4.01 MiB/s, done.
+Resolving deltas: 100% (51/51), done.
+From /home/vagabond/dev/terragrunt-01
+ * [new branch]      master     -> terragurn/master
+
+vagabond@vagabond in …/eastus/dev on 🌱 master ⏱ 6s 
+➜ git -C /home/vagabond/peak/kubequest remote rename terragurn terragurnt || true && git -C /home/vagabond/peak/kubequest remote -v
+Renaming remote references: 100% (3/3), done.
+origin  https://github.com/OpsAlchemy/kubequest.git (fetch)
+origin  https://github.com/OpsAlchemy/kubequest.git (push)
+terragurnt      /home/vagabond/dev/terragrunt-01 (fetch)
+terragurnt      /home/vagabond/dev/terragrunt-01 (push)
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/peak/kubequest fetch terragurnt --no-tags
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/peak/kubequest subtree add --prefix=terragrunt/base terragurnt master
+git fetch terragurnt master
+From /home/vagabond/dev/terragrunt-01
+ * branch            master     -> FETCH_HEAD
+Added dir 'terragrunt'
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/peak/kubequest status --porcelain
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/peak/kubequest log --oneline --graph --decorate --all | sed -n '1,120p'
+*   ebcec48 (HEAD -> main) Add 'terragrunt/' from commit '6fa041b10651045dcffa1450ca6f7703a91a7106'
+|\  
+| * 6fa041b (terragurnt/master, terragurnt/HEAD) chore: make hooks non-failing (comment error hooks); unify module inputs; add hollow passthrough outputs; fix terragrunt configs/tests
+| * d320eb3 Update all documentation for centralized env.hcl configuration and Terragrunt v0.97+ CLI syntax
+| * 34a73e0 Add centralized env.hcl per environment for DRY configuration
+| * 6b77d56 Add comprehensive hardening summary and project overview
+| * 7f40b08 Add hardened Azure infrastructure modules with security best practices
+| * 810ccbd Fix module paths and root config naming - rename terragrunt.hcl to root.hcl and use absolute paths
+| * 3c25979 Remove installation files from commit
+| * 50b8a4a Initial commit: Add Terragrunt project structure with dev, staging, and prod environments
+* 1c95ca3 (origin/main, origin/HEAD) Add Kubernetes user certificates and kubeconfig management scripts
+* 0354c1f docs: add comprehensive git documentation with mkdocs integration
+| * 8cc817c (origin/gh-pages) deploy: 0354c1fbb6bae8fc4b0499e5fe21a39303ed3147
+| * f65e84d deploy: 7d6f8280558067f56baefdb0d3718b034e0a233d
+| * 6d6dd11 deploy: 28aefcf568bd0eb5581329447b4ff2fa903fd1d3
+| * dc3f0ed deploy: 0dbc0eb6ffc4cc494908b083fbb1b9204ea59846
+| * 1724ffa Deploy MkDocs sites: 417e3c19bf3dcb0e800928d1b8e8ccb0b40f77d0 417e3c19bf3dcb0e800928d1b8e8ccb0b40f77d0
+| * e37ceea Deploy MkDocs sites: 08d1ea068e66a6c96e244cb724840f52379f4db9 08d1ea068e66a6c96e244cb724840f52379f4db9
+| * fbbf158 Deploy MkDocs sites: bb63cf6c1a803b93117cde1e749017c8d2ab5bce bb63cf6c1a803b93117cde1e749017c8d2ab5bce
+| * 7d6f828 (backup-before-soft-reset) fix(git-docs): remove duplicate usecases navigation entry
+| * 28aefcf fix(deploy): improve artifact combining to handle all site structures
+| * 05dbb7b docs: add git documentation site with automatic deployment
+| * 44b29d9 docs(git): organize markdown files in docs/ subfolder (#16)
+| | * 8476897 (origin/docs/git-documentation, docs/git-documentation) ci: add git documentation to GitHub Actions deployment trigger
+| | * adfe855 docs(git): organize markdown files in docs/ subfolder
+| |/  
+| * 724afd0 docs: add usecase #3 - linearizing messy git history with reset --soft
+|/  
+| * d7d9d60 (origin/docs/git-usecases-update, docs/git-usecases-update) docs: add usecase #3 - linearizing messy git history with reset --soft
+|/  
+* 636055c fix: consolidate all GitHub Actions improvements and fixes
+| * 8c1656e (backup-main-before-linearize, backup-before-squash) fix(deploy): correct artifact combination logic for nested directories
+| * 0dbc0eb Fix/mkdocs-build-path (#14)
+| * de7b368 (feature/kubeconfig-practice) Fix/github-actions-deploy (#13)
+| * 6317558 fix(build-mkdocs): consolidate and improve build verification (#12)
+| *   189650d Merge pull request #11 from OpsAlchemy:fix/github-actions-deploy
+| |\  
+| | *   1eab8af Merge branch 'main' into fix/github-actions-deploy
+| | |\  
+| | |/  
+| |/|   
+| * | 50ab2d0 Fix GitHub Actions workflows and upgrade artifact actions (#10)
+| * | 8fb9c32 Fix GITHUB_OUTPUT format for matrix setup in GitHub Actions (#9)
+| | * baa6ffc fix(github-actions): add debugging and improve artifact handling
+| | * 1f94b29 fix(github-actions): upgrade artifact actions from v3 to v4
+| | * f8c0470 fix: add jq installation step in deploy workflow
+| |/  
+|/|   
+* | c2562b4 fix(github-actions): correct GITHUB_OUTPUT format for matrix setup
+|/  
+* addf2e8 Add Kustomize and Helm practice files (#8)
+* 321eca8 feat: refactor deploy workflow with reusable composite action
+* aeffee2 docs: add git incidents tracking and command reference
+* 7e9f8a0 feat(crossplane): add EC2 instance support and update documentation (squashed)
+* e9430b4 docs: reorganize crossplane sandbox README and fix install-deps.sh
+* c80fb15 chore(tools): add installation tools and scripts
+* 9949345 feat(crossplane/localstack): add sandbox README, manifests and troubleshooting guide
+| * df4f70a (origin/feature/tools-installation) chore(tools): add installation tools and scripts
+|/  
+* d020e2e (origin/backup/040126) Initial commit
+| * 4547e08 (origin/killercoda) lots of changes
+| * d95eab8 bahut sare changes bhaiii
+| * 7da9e97 completed one kustomize
+| * 9a8d090 correct-working things
+| * 5846ecf patching
+| * fa7248f secret patching generating
+| * e39d3dc configmap patches
+| * 3583221 update patch replicase
+| * 648d3f8 checkpoint-3-fix-kustiomiation lables
+| * c283760 checkpoint-2-kustomize-training
+| * 924c4f5 added gitkeeps and base transformer-01
+| * 55135d0 big pull
+| * 9d94c55 commit man
+| * 7fee4e0 added stuffs man i don't know this github copilot messaing is not workign it sucks man
+| * 2cb163f completed solution 2
+| * c3f0aff Added webapp templates in the solution
+| * 35078dc webapp added
+| * a2f36b4 feat: Add initial Helm chart for simple-app with deployment, service, and configmap
+| * b8142ac Refactor code structure for improved readability and maintainability
+| * dd53831 feat: refactor deployment labels and add helper template for simple-app
+| * d7788f7 feat: enhance Helm chart with deployment, service, and configmap templates; add environment and team labels
+| * 4586940 feat: add initial Helm chart for simple-app deployment
+| * b1097d0 feat: helm practicing
+| * 8e60b4e Add comprehensive documentation for Kubernetes storage concepts and usage
+| * cf9a35f Add RBAC gotchas, role and cluster role documentation, kubeadm certificate management, and troubleshooting control plane issues
+| * c46b928 Add comprehensive documentation for Ingress, NetworkPolicies, ConfigMaps, DaemonSets, and Pod scheduling issues
+| * 76ef773 (origin/empty) Remove outdated storage solutions and related configurations from the repository
+| * c9d41b3 (origin/k8s-dev2-synced) Add persistent volume, claim, and deployment examples for static storage
+| * eda0219 Add comprehensive storage-related questions and tasks to questions.md
+| * cd5ec79 Reshuffle folders and project
+| * f528523 chore: update submodule pointer for ingress-nginx
+|/  
+* ca5ff3f first commit
+* 8c8ebd8 (origin/k8s-originmal) feat
+* 6a15f42 (origin/vagrant-based-labs) Initial commit for vagrant-based-labs
+* 716d0ea (origin/playground) feat: everythign
+* 12888f2 feat: k8s yaml manifests
+* 302d756 (origin/features/k8s) feat: tons of udpate
+* 634c64c feat: updated tons of things
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/peak/kubequest status --porcelain
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ mkdir -p /home/vagabond/peak/kubequest/terragrunt/base && git -C /home/vagabond/peak/kubequest mv terragrunt/* /home/vagabond/peak/kubeques
+t/terragrunt/base/ 2>/dev/null || true; git -C /home/vagabond/peak/kubequest mv terragrunt/.[!.]* /home/vagabond/peak/kubequest/terragrunt/ba
+se/ 2>/dev/null || true; git -C /home/vagabond/peak/kubequest add -A && git -C /home/vagabond/peak/kubequest commit -m "chore: move terragrunt subtree into terragrunt/base"
+zsh: event not found: .]
+Exit code: 1                                                                                                                                 
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ mkdir -p /home/vagabond/peak/kubequest/terragrunt/base
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/peak/kubequest mv terragrunt/* terragrunt/base/ || true
+zsh: no matches found: terragrunt/*
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ ls -la /home/vagabond/peak/kubequest/terragrunt | sed -n '1,200p'
+total 100
+drwxrwxr-x  9 vagabond vagabond  4096 Jan 11 10:27 .
+drwxrwxr-x 23 vagabond vagabond  4096 Jan 11 10:24 ..
+-rw-rw-r--  1 vagabond vagabond   588 Jan 11 10:24 .gitignore
+-rw-rw-r--  1 vagabond vagabond  8905 Jan 11 10:24 HARDENING-SUMMARY.md
+-rw-rw-r--  1 vagabond vagabond  3491 Jan 11 10:24 QUICKSTART.md
+-rw-rw-r--  1 vagabond vagabond 10076 Jan 11 10:24 README-HARDENED.md
+-rw-rw-r--  1 vagabond vagabond  8444 Jan 11 10:24 README.md
+drwxrwxr-x  2 vagabond vagabond  4096 Jan 11 10:27 base
+drwxrwxr-x  5 vagabond vagabond  4096 Jan 11 10:24 environments
+drwxrwxr-x  8 vagabond vagabond  4096 Jan 11 10:24 modules
+drwxrwxr-x  4 vagabond vagabond  4096 Jan 11 10:24 regions
+-rw-rw-r--  1 vagabond vagabond  8855 Jan 11 10:24 root.hcl
+drwxrwxr-x  2 vagabond vagabond  4096 Jan 11 10:24 scripts
+drwxrwxr-x  2 vagabond vagabond  4096 Jan 11 10:24 templates
+-rw-rw-r--  1 vagabond vagabond  1238 Jan 11 10:24 terraform.tfvars.example
+-rw-rw-r--  1 vagabond vagabond   796 Jan 11 10:24 terragrunt.hcl
+drwxrwxr-x  5 vagabond vagabond  4096 Jan 11 10:24 tiers
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/peak/kubequest mv terragrunt/.gitignore terragrunt/HARDENING-SUMMARY.md terragrunt/QUICKSTART.md terragrunt/README-HA
+RDENED.md terragrunt/README.md terragrunt/environments terragrunt/modules terragrunt/regions terragrunt/root.hcl terragrunt/scripts terragrun
+t/templates terragrunt/terraform.tfvars.example terragrunt/terragrunt.hcl terragrunt/tiers terragrunt/base/
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/peak/kubequest add -A && git -C /home/vagabond/peak/kubequest commit -m "chore: move terragrunt subtree into terragrunt/base"
+[main 44a89f5] chore: move terragrunt subtree into terragrunt/base
+ 72 files changed, 0 insertions(+), 0 deletions(-)
+ rename terragrunt/{ => base}/.gitignore (100%)
+ rename terragrunt/{ => base}/HARDENING-SUMMARY.md (100%)
+ rename terragrunt/{ => base}/QUICKSTART.md (100%)
+ rename terragrunt/{ => base}/README-HARDENED.md (100%)
+ rename terragrunt/{ => base}/README.md (100%)
+ rename terragrunt/{ => base}/environments/dev/app/.terraform.lock.hcl (100%)
+ rename terragrunt/{ => base}/environments/dev/app/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/dev/compute/.terraform.lock.hcl (100%)
+ rename terragrunt/{ => base}/environments/dev/compute/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/dev/database/.terraform.lock.hcl (100%)
+ rename terragrunt/{ => base}/environments/dev/database/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/dev/env.hcl (100%)
+ rename terragrunt/{ => base}/environments/dev/monitoring/.terraform.lock.hcl (100%)
+ rename terragrunt/{ => base}/environments/dev/monitoring/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/dev/network/.terraform.lock.hcl (100%)
+ rename terragrunt/{ => base}/environments/dev/network/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/dev/storage/.terraform.lock.hcl (100%)
+ rename terragrunt/{ => base}/environments/dev/storage/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/prod/app/.terraform.lock.hcl (100%)
+ rename terragrunt/{ => base}/environments/prod/app/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/prod/compute/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/prod/database/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/prod/env.hcl (100%)
+ rename terragrunt/{ => base}/environments/prod/monitoring/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/prod/network/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/prod/storage/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/staging/app/.terraform.lock.hcl (100%)
+ rename terragrunt/{ => base}/environments/staging/app/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/staging/compute/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/staging/database/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/staging/env.hcl (100%)
+ rename terragrunt/{ => base}/environments/staging/monitoring/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/staging/network/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/environments/staging/storage/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/modules/app/main.tf (100%)
+ rename terragrunt/{ => base}/modules/app/versions.tf (100%)
+ rename terragrunt/{ => base}/modules/compute/main.tf (100%)
+ rename terragrunt/{ => base}/modules/compute/versions.tf (100%)
+ rename terragrunt/{ => base}/modules/database/main.tf (100%)
+ rename terragrunt/{ => base}/modules/database/versions.tf (100%)
+ rename terragrunt/{ => base}/modules/monitoring/main.tf (100%)
+ rename terragrunt/{ => base}/modules/monitoring/versions.tf (100%)
+ rename terragrunt/{ => base}/modules/network/main.tf (100%)
+ rename terragrunt/{ => base}/modules/network/versions.tf (100%)
+ rename terragrunt/{ => base}/modules/storage/main.tf (100%)
+ rename terragrunt/{ => base}/modules/storage/versions.tf (100%)
+ rename terragrunt/{ => base}/regions/eastus/dev/compute/.terraform.lock.hcl (100%)
+ rename terragrunt/{ => base}/regions/eastus/dev/compute/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/regions/eastus/dev/database/.terraform.lock.hcl (100%)
+ rename terragrunt/{ => base}/regions/eastus/dev/database/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/regions/eastus/dev/env.hcl (100%)
+ rename terragrunt/{ => base}/regions/eastus/dev/monitoring/.terraform.lock.hcl (100%)
+ rename terragrunt/{ => base}/regions/eastus/dev/monitoring/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/regions/eastus/dev/network/.terraform.lock.hcl (100%)
+ rename terragrunt/{ => base}/regions/eastus/dev/network/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/regions/eastus/dev/storage/.terraform.lock.hcl (100%)
+ rename terragrunt/{ => base}/regions/eastus/dev/storage/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/regions/eastus/prod/env.hcl (100%)
+ rename terragrunt/{ => base}/regions/eastus/region.hcl (100%)
+ rename terragrunt/{ => base}/regions/westeurope/region.hcl (100%)
+ rename terragrunt/{ => base}/root.hcl (100%)
+ rename terragrunt/{ => base}/scripts/generate_config.sh (100%)
+ rename terragrunt/{ => base}/scripts/notify.sh (100%)
+ rename terragrunt/{ => base}/scripts/security_scan.sh (100%)
+ rename terragrunt/{ => base}/templates/backend.tf.tpl (100%)
+ rename terragrunt/{ => base}/templates/provider.tf.tpl (100%)
+ rename terragrunt/{ => base}/templates/variables.tf.tpl (100%)
+ rename terragrunt/{ => base}/terraform.tfvars.example (100%)
+ rename terragrunt/{ => base}/terragrunt.hcl (100%)
+ rename terragrunt/{ => base}/tiers/app/tier.hcl (100%)
+ rename terragrunt/{ => base}/tiers/data/tier.hcl (100%)
+ rename terragrunt/{ => base}/tiers/web/tier.hcl (100%)
+
+vagabond@vagabond in …/eastus/dev on 🌱 master 
+➜ git -C /home/vagabond/peak/kubequest push origin main
+Enumerating objects: 190, done.
+Counting objects: 100% (190/190), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (102/102), done.
+Writing objects: 100% (189/189), 23.37 MiB | 13.50 MiB/s, done.
+Total 189 (delta 53), reused 184 (delta 51), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (53/53), completed with 1 local object.
+remote: warning: See https://gh.io/lfs for more information.
+remote: warning: File environments/dev/app/terragrunt_linux_amd64 is 74.48 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB
+remote: warning: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.
+To https://github.com/OpsAlchemy/kubequest.git
+   1c95ca3..44a89f5  main -> main
+
+vagabond@vagabond in …/eastus/dev on 🌱 master ⏱ 4s 
+➜ cd /home/vagabond/peak/kubequest && git status --porcelain && git rev-parse --abbrev-ref HEAD
+main
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git branch backup-remove-large-file && git checkout -b backup-remove-large-file
+fatal: a branch named 'backup-remove-large-file' already exists
+Exit code: 128                                                                                                                               
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+✗ git checkout backup-remove-large-file || git switch backup-remove-large-file; git checkout main
+Switched to branch 'backup-remove-large-file'
+Switched to branch 'main'
+Your branch is up to date with 'origin/main'.
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git -C /home/vagabond/peak/kubequest help -a | grep filter-repo || true
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git-filter-repo --help >/dev/null 2>&1 || echo 'not-installed'
+not-installed
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git filter-branch --force --index-filter "git rm --cached --ignore-unmatch environments/dev/app/terragrunt_linux_amd64" --prune-empty --tag-name-filter cat -- --all
+WARNING: git-filter-branch has a glut of gotchas generating mangled history
+         rewrites.  Hit Ctrl-C before proceeding to abort, then use an
+         alternative filtering tool such as 'git filter-repo'
+         (https://github.com/newren/git-filter-repo/) instead.  See the
+         filter-branch manual page for more details; to squelch this warning,
+         set FILTER_BRANCH_SQUELCH_WARNING=1.
+Proceeding with filter-branch...
+
+Rewrite 50b8a4ac19502853f0c43feb665ed3c3aa4bb1eb (65/88) (3 seconds passed, remaining 1 predicted)    rm 'environments/dev/app/terragrunt_linux_amd64'
+Rewrite 44a89f5a7efff16f199f0a6ae1f2b910018deb02 (87/88) (4 seconds passed, remaining 0 predicted)    
+Ref 'refs/heads/backup-before-soft-reset' was rewritten
+Ref 'refs/heads/backup-before-squash' was rewritten
+Ref 'refs/heads/backup-main-before-linearize' was rewritten
+Ref 'refs/heads/backup-remove-large-file' was rewritten
+Ref 'refs/heads/docs/git-documentation' was rewritten
+Ref 'refs/heads/docs/git-usecases-update' was rewritten
+Ref 'refs/heads/feature/kubeconfig-practice' was rewritten
+Ref 'refs/heads/main' was rewritten
+Ref 'refs/remotes/origin/main' was rewritten
+WARNING: Ref 'refs/remotes/origin/backup/040126' is unchanged
+Ref 'refs/remotes/origin/docs/git-documentation' was rewritten
+Ref 'refs/remotes/origin/docs/git-usecases-update' was rewritten
+WARNING: Ref 'refs/remotes/origin/empty' is unchanged
+WARNING: Ref 'refs/remotes/origin/feature/tools-installation' is unchanged
+WARNING: Ref 'refs/remotes/origin/features/k8s' is unchanged
+WARNING: Ref 'refs/remotes/origin/gh-pages' is unchanged
+WARNING: Ref 'refs/remotes/origin/k8s-dev2-synced' is unchanged
+WARNING: Ref 'refs/remotes/origin/k8s-originmal' is unchanged
+WARNING: Ref 'refs/remotes/origin/killercoda' is unchanged
+WARNING: Ref 'refs/remotes/origin/main' is unchanged
+WARNING: Ref 'refs/remotes/origin/playground' is unchanged
+WARNING: Ref 'refs/remotes/origin/vagrant-based-labs' is unchanged
+Ref 'refs/remotes/terragurnt/master' was rewritten
+WARNING: Ref 'refs/remotes/terragurnt/master' is unchanged
+
+vagabond@vagabond in …/kubequest on 🌱 main ⏱ 15s 
+➜ rm -rf .git/refs/original/ && git reflog expire --expire=now --all && git gc --prune=now --aggressive
+Enumerating objects: 4527, done.
+Counting objects: 100% (4527/4527), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (3995/3995), done.
+Writing objects: 100% (4527/4527), done.
+Total 4527 (delta 956), reused 3259 (delta 0), pack-reused 0 (from 0)
+
+vagabond@vagabond in …/kubequest on 🌱 main ⏱ 11s 
+➜ git rev-list --all -- environments/dev/app/terragrunt_linux_amd64 || true
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git -C /home/vagabond/peak/kubequest push origin --force --all
+Enumerating objects: 472, done.
+Counting objects: 100% (472/472), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (267/267), done.
+Writing objects: 100% (456/456), 238.08 KiB | 59.52 MiB/s, done.
+Total 456 (delta 133), reused 444 (delta 125), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (133/133), completed with 6 local objects.
+To https://github.com/OpsAlchemy/kubequest.git
+ + 8476897...2ec373d docs/git-documentation -> docs/git-documentation (forced update)
+ + d7d9d60...2201bf5 docs/git-usecases-update -> docs/git-usecases-update (forced update)
+ + 44a89f5...e518ee0 main -> main (forced update)
+ * [new branch]      backup-before-soft-reset -> backup-before-soft-reset
+ * [new branch]      backup-before-squash -> backup-before-squash
+ * [new branch]      backup-main-before-linearize -> backup-main-before-linearize
+ * [new branch]      backup-remove-large-file -> backup-remove-large-file
+ * [new branch]      feature/kubeconfig-practice -> feature/kubeconfig-practice
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git -C /home/vagabond/peak/kubequest push origin --force --tags
+Everything up-to-date
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git -C /home/vagabond/peak/kubequest fetch origin main && git -C /home/vagabond/peak/kubequest rev-list --all -- environments/dev/app/terra
+grunt_linux_amd64 || true
+From https://github.com/OpsAlchemy/kubequest
+ * branch            main       -> FETCH_HEAD
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git -C /home/vagabond/peak/kubequest rev-list --all -- environments/dev/app/terragrunt_linux_amd64 || true
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ ls -la /home/vagabond/peak/kubequest/terragrunt/base/environments/dev/app/terragrunt_linux_amd64 || true
+ls: cannot access '/home/vagabond/peak/kubequest/terragrunt/base/environments/dev/app/terragrunt_linux_amd64': No such file or directory
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ ls -la /home/vagabond/dev/terragrunt-01/environments/dev/app/terragrunt_linux_amd64 || true
+ls: cannot access '/home/vagabond/dev/terragrunt-01/environments/dev/app/terragrunt_linux_amd64': No such file or directory
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git -C /home/vagabond/peak/kubequest grep -n "terragrunt_linux_amd64" || true
+terragrunt/base/README.md:53:wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.97.2/terragrunt_linux_amd64
+terragrunt/base/README.md:54:chmod +x terragrunt_linux_amd64
+terragrunt/base/README.md:55:sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git -C /home/vagabond/peak/kubequest apply -p << 'EOF'
+∙ cat > .gitignore <<GITIGNORE
+∙ # Ignore local Terragrunt binary downloads
+∙ terragrunt_linux_amd64
+∙ terragrunt_windows_amd64.exe
+∙ GITIGNORE
+∙ 
+∙ git add .gitignore && git commit -m "chore: ignore local terragrunt binaries" || true
+∙ EOF
+error: switch `p' requires a value
+Exit code: 129                                                                                                                               
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+✗ git -C /home/vagabond/peak/kubequest status --porcelain; echo 'terragrunt_linux_amd64' >> /home/vagabond/peak/kubequest/.gitignore; echo 'terragrunt_windows_amd64.exe' >> /home/vagabond/peak/kubequest/.gitignore; git -C /home/vagabond/peak/kubequest add .gitignore && git -C /home/vagabond/peak/kubequest commit -m "chore: ignore local terragrunt binaries" || true
+[main a67af7f] chore: ignore local terragrunt binaries
+ 1 file changed, 2 insertions(+)
+ create mode 100644 .gitignore
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git -C /home/vagabond/peak/kubequest push origin main
+Enumerating objects: 4, done.
+Counting objects: 100% (4/4), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 332 bytes | 332.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/OpsAlchemy/kubequest.git
+   e518ee0..a67af7f  main -> main
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ echo "Large files in working tree (>5MB):" && find . -type f -size +5M -exec ls -lh {} \; || true
+Large files in working tree (>5MB):
+-rw-rw-r-- 1 vagabond vagabond 45M Jan  4 21:59 ./cka/compose/04-admission-webhook/controllers/src/webhook
+-r--r--r-- 1 vagabond vagabond 108M Jan 11 10:30 ./.git/objects/pack/pack-90d51a92530ce2ffcfbe7283e2c71e43d795bb39.pack
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git rev-list --objects --all | git cat-file --batch-check='%(objecttype) %(objectsize) %(objectname) %(rest)' | awk '/^blob/ && $2>5000000 { printf("%.1fMB %s\n", $2/1024/1024, substr($0, index($0,$4))) }' | sort -rn -k1
+77.9MB calico-k8s/calicoctl
+52.6MB practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5
+44.4MB cka/compose/04-admission-webhook/controllers/src/webhook
+22.1MB k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0
+16.7MB k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5
+14.7MB k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5
+11.9MB tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so
+6.7MB networking/main
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git fetch origin --prune && for p in "calico-k8s/calicoctl" "practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5" "cka/compose/04-admission-webhook/controllers/src/webhook" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5" "tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so" "networking/main"; do echo "Checking $p";
+ git rev-list --objects origin/main -- "${p}" | sed -n '1,2p' || echo "Not on origin/main"; done
+Checking calico-k8s/calicoctl
+Checking practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5
+Checking cka/compose/04-admission-webhook/controllers/src/webhook
+d020e2e5760d517867179cb601fbfa27ee62e2ee
+cdc50522a0a6f6cce1f1111e1ef4fa94bed12b11 
+Checking k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0
+Checking k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5
+Checking k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5
+Checking tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so
+Checking networking/main
+
+vagabond@vagabond in …/kubequest on 🌱 main ⏱ 2s 
+➜ for p in "calico-k8s/calicoctl" "practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5" "cka/compose/04-admission-webhook/controllers/src/webhook" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5" "tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so" "networking/main"; do echo "Checking remotes for $p"; git rev-list --objects --remotes --all | grep -F "${p}" | sed -n '1,2p' || echo "Not in any remote refs"; done
+Checking remotes for calico-k8s/calicoctl
+18580a2f3af30b572be5f6c551afc91f7d6c9e64 calico-k8s/calicoctl
+Checking remotes for practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5
+a3c37308fdb1ba0cc462007e76d86a829dd16200 practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5
+Checking remotes for cka/compose/04-admission-webhook/controllers/src/webhook
+a5d1a684b5c89965bb3cea1e2f56dce24dab90d8 cka/compose/04-admission-webhook/controllers/src/webhook
+Checking remotes for k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0
+56132a4ca9f22f613ba39caff35704d285639349 k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0
+Checking remotes for k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5
+29efc11bbaf16fbd4e8f91045457c71ab423bb19 k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5
+Checking remotes for k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5
+57927f448556f2b7c6d04ce0f1363e39a1dd4aab k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5
+Checking remotes for tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so
+5e0ecea8ccff5a048338e5138a28337c1e6400da tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so
+Checking remotes for networking/main
+1aab8de7285711d90aa5aa0738011254a89633ae networking/main
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git branch -f backup-remove-large-files-2 main && git rev-parse --abbrev-ref HEAD
+main
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git filter-branch --force --index-filter "git rm --cached --ignore-unmatch calico-k8s/calicoctl practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5 k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0 k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5 k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5 tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so networking/main" --prune-empty --tag-name-filter cat -- --all
+WARNING: git-filter-branch has a glut of gotchas generating mangled history
+         rewrites.  Hit Ctrl-C before proceeding to abort, then use an
+         alternative filtering tool such as 'git filter-repo'
+         (https://github.com/newren/git-filter-repo/) instead.  See the
+         filter-branch manual page for more details; to squelch this warning,
+         set FILTER_BRANCH_SQUELCH_WARNING=1.
+Proceeding with filter-branch...
+
+Rewrite 12888f2983a224b336339ce9ef488013a674f27e (3/90) (0 seconds passed, remaining 0 predicted)    rm 'practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5'
+rm 'tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so'
+Rewrite 716d0eaf747d19e7bd89b99436316fb8ddfd62c7 (4/90) (0 seconds passed, remaining 0 predicted)    rm 'practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5'
+rm 'tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so'
+Rewrite 6a15f42dbc1fb69259ca0d78cf15c049d25d72b6 (5/90) (0 seconds passed, remaining 0 predicted)    rm 'calico-k8s/calicoctl'
+Rewrite 8c8ebd8d6e408bd268c5f261700eea79c4d3ed24 (6/90) (0 seconds passed, remaining 0 predicted)    rm 'k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0'
+rm 'k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5'
+rm 'k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5'
+rm 'networking/main'
+Rewrite a67af7f0625e8d4f3a9be034bb6d6e6e67b5a092 (87/90) (4 seconds passed, remaining 0 predicted)    
+WARNING: Ref 'refs/heads/backup-before-soft-reset' is unchanged
+WARNING: Ref 'refs/heads/backup-before-squash' is unchanged
+WARNING: Ref 'refs/heads/backup-main-before-linearize' is unchanged
+WARNING: Ref 'refs/heads/backup-remove-large-file' is unchanged
+WARNING: Ref 'refs/heads/backup-remove-large-files-2' is unchanged
+WARNING: Ref 'refs/heads/docs/git-documentation' is unchanged
+WARNING: Ref 'refs/heads/docs/git-usecases-update' is unchanged
+WARNING: Ref 'refs/heads/feature/kubeconfig-practice' is unchanged
+WARNING: Ref 'refs/heads/main' is unchanged
+WARNING: Ref 'refs/remotes/origin/main' is unchanged
+WARNING: Ref 'refs/remotes/origin/backup-before-soft-reset' is unchanged
+WARNING: Ref 'refs/remotes/origin/backup-before-squash' is unchanged
+WARNING: Ref 'refs/remotes/origin/backup-main-before-linearize' is unchanged
+WARNING: Ref 'refs/remotes/origin/backup-remove-large-file' is unchanged
+WARNING: Ref 'refs/remotes/origin/backup/040126' is unchanged
+WARNING: Ref 'refs/remotes/origin/docs/git-documentation' is unchanged
+WARNING: Ref 'refs/remotes/origin/docs/git-usecases-update' is unchanged
+WARNING: Ref 'refs/remotes/origin/empty' is unchanged
+WARNING: Ref 'refs/remotes/origin/feature/kubeconfig-practice' is unchanged
+WARNING: Ref 'refs/remotes/origin/feature/tools-installation' is unchanged
+WARNING: Ref 'refs/remotes/origin/features/k8s' is unchanged
+WARNING: Ref 'refs/remotes/origin/gh-pages' is unchanged
+WARNING: Ref 'refs/remotes/origin/k8s-dev2-synced' is unchanged
+Ref 'refs/remotes/origin/k8s-originmal' was rewritten
+WARNING: Ref 'refs/remotes/origin/killercoda' is unchanged
+WARNING: Ref 'refs/remotes/origin/main' is unchanged
+Ref 'refs/remotes/origin/playground' was rewritten
+Ref 'refs/remotes/origin/vagrant-based-labs' was rewritten
+WARNING: Ref 'refs/remotes/terragurnt/master' is unchanged
+WARNING: Ref 'refs/remotes/terragurnt/master' is unchanged
+
+vagabond@vagabond in …/kubequest on 🌱 main ⏱ 16s 
+➜ rm -rf .git/refs/original/ && git reflog expire --expire=now --all && git gc --prune=now --aggressive
+Enumerating objects: 4525, done.
+Counting objects: 100% (4525/4525), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (3994/3994), done.
+Writing objects: 100% (4525/4525), done.
+Total 4525 (delta 960), reused 3517 (delta 0), pack-reused 0 (from 0)
+
+vagabond@vagabond in …/kubequest on 🌱 main ⏱ 7s 
+➜ for p in "calico-k8s/calicoctl" "practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5" "tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so" "networking/main"; do echo "Verifying $p"; git rev-list --all -- "${p}" | sed -n '1,2p' || echo "Gone"; done
+Verifying calico-k8s/calicoctl
+6a15f42dbc1fb69259ca0d78cf15c049d25d72b6
+Verifying practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5
+12888f2983a224b336339ce9ef488013a674f27e
+Verifying k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0
+8c8ebd8d6e408bd268c5f261700eea79c4d3ed24
+Verifying k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5
+8c8ebd8d6e408bd268c5f261700eea79c4d3ed24
+Verifying k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5
+8c8ebd8d6e408bd268c5f261700eea79c4d3ed24
+Verifying tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so
+12888f2983a224b336339ce9ef488013a674f27e
+Verifying networking/main
+8c8ebd8d6e408bd268c5f261700eea79c4d3ed24
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ for p in "calico-k8s/calicoctl" "practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5" "tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so" "networking/main"; do echo "---- $p ----"; git log --all --pretty=format:'%h %D' -- $p | sed -n '1,5p' || echo 'no logs'; done
+---- calico-k8s/calicoctl ----
+6a15f42 origin/vagrant-based-labs---- practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5 ----
+12888f2 ---- k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0 ----
+8c8ebd8 origin/k8s-originmal---- k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5 ----
+8c8ebd8 origin/k8s-originmal---- k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5 ----
+8c8ebd8 origin/k8s-originmal---- tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so ----
+12888f2 ---- networking/main ----
+8c8ebd8 origin/k8s-originmal%                                                                                                                
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git branch --contains 6a15f42 --all || true
+  remotes/origin/vagrant-based-labs
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git branch --contains 12888f2 --all || true
+  remotes/origin/playground
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git branch --contains 8c8ebd8 --all || true
+  remotes/origin/k8s-originmal
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git branch -f backup-vagrant-based-labs remotes/origin/vagrant-based-labs && git branch -f backup-playground remotes/origin/playground && git branch -f backup-k8s-originmal remotes/origin/k8s-originmal && git branch -f vagrant-based-labs remotes/origin/vagrant-based-labs && git b
+ranch -f playground remotes/origin/playground && git branch -f k8s-originmal remotes/origin/k8s-originmal
+branch 'backup-vagrant-based-labs' set up to track 'origin/vagrant-based-labs'.
+branch 'backup-playground' set up to track 'origin/playground'.
+branch 'backup-k8s-originmal' set up to track 'origin/k8s-originmal'.
+branch 'vagrant-based-labs' set up to track 'origin/vagrant-based-labs'.
+branch 'playground' set up to track 'origin/playground'.
+branch 'k8s-originmal' set up to track 'origin/k8s-originmal'.
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git filter-branch --force --index-filter "git rm --cached --ignore-unmatch calico-k8s/calicoctl practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5 k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0 k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5 k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5 tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so networking/main" --prune-empty --tag-name-filter cat -- vagrant-based-labs
+ playground k8s-originmal
+WARNING: git-filter-branch has a glut of gotchas generating mangled history
+         rewrites.  Hit Ctrl-C before proceeding to abort, then use an
+         alternative filtering tool such as 'git filter-repo'
+         (https://github.com/newren/git-filter-repo/) instead.  See the
+         filter-branch manual page for more details; to squelch this warning,
+         set FILTER_BRANCH_SQUELCH_WARNING=1.
+Proceeding with filter-branch...
+
+Rewrite 12888f2983a224b336339ce9ef488013a674f27e (1/4) (0 seconds passed, remaining 0 predicted)    rm 'practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5'
+rm 'tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so'
+Rewrite 716d0eaf747d19e7bd89b99436316fb8ddfd62c7 (2/4) (0 seconds passed, remaining 0 predicted)    rm 'practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5'
+rm 'tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so'
+Rewrite 6a15f42dbc1fb69259ca0d78cf15c049d25d72b6 (3/4) (0 seconds passed, remaining 0 predicted)    rm 'calico-k8s/calicoctl'
+Rewrite 8c8ebd8d6e408bd268c5f261700eea79c4d3ed24 (4/4) (0 seconds passed, remaining 0 predicted)    rm 'k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0'
+rm 'k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5'
+rm 'k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5'
+rm 'networking/main'
+
+Ref 'refs/heads/vagrant-based-labs' was rewritten
+Ref 'refs/heads/playground' was rewritten
+Ref 'refs/heads/k8s-originmal' was rewritten
+
+vagabond@vagabond in …/kubequest on 🌱 main ⏱ 12s 
+➜ rm -rf .git/refs/original/ && git reflog expire --expire=now --all && git gc --prune=now --aggressive
+Enumerating objects: 4576, done.
+Counting objects: 100% (4576/4576), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (4028/4028), done.
+Writing objects: 100% (4576/4576), done.
+Total 4576 (delta 964), reused 3597 (delta 0), pack-reused 0 (from 0)
+
+vagabond@vagabond in …/kubequest on 🌱 main ⏱ 12s 
+➜ for p in "calico-k8s/calicoctl" "practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5" "k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5" "tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so" "networking/main"; do echo "Verifying $p"; git rev-list --all -- "${p}" | sed -n '1,2p' || echo "Gone"; done
+Verifying calico-k8s/calicoctl
+6a15f42dbc1fb69259ca0d78cf15c049d25d72b6
+Verifying practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5
+12888f2983a224b336339ce9ef488013a674f27e
+Verifying k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0
+8c8ebd8d6e408bd268c5f261700eea79c4d3ed24
+Verifying k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5
+8c8ebd8d6e408bd268c5f261700eea79c4d3ed24
+Verifying k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5
+8c8ebd8d6e408bd268c5f261700eea79c4d3ed24
+Verifying tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so
+12888f2983a224b336339ce9ef488013a674f27e
+Verifying networking/main
+8c8ebd8d6e408bd268c5f261700eea79c4d3ed24
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ for c in 6a15f42 12888f2 8c8ebd8; do echo "Refs containing $c:"; git for-each-ref --contains $c --format='%(refname)'; echo; done
+Refs containing 6a15f42:
+refs/heads/backup-vagrant-based-labs
+refs/remotes/origin/vagrant-based-labs
+
+Refs containing 12888f2:
+refs/heads/backup-playground
+refs/remotes/origin/playground
+
+Refs containing 8c8ebd8:
+refs/heads/backup-k8s-originmal
+refs/remotes/origin/k8s-originmal
+
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git push origin vagrant-based-labs --force && git push origin playground --force && git push origin k8s-originmal --force
+Enumerating objects: 68, done.
+Counting objects: 100% (68/68), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (35/35), done.
+Writing objects: 100% (68/68), 24.92 KiB | 24.92 MiB/s, done.
+Total 68 (delta 7), reused 63 (delta 7), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (7/7), done.
+To https://github.com/OpsAlchemy/kubequest.git
+ + 6a15f42...6b8a6c4 vagrant-based-labs -> vagrant-based-labs (forced update)
+Enumerating objects: 1692, done.
+Counting objects: 100% (1692/1692), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (1506/1506), done.
+Writing objects: 100% (1692/1692), 6.74 MiB | 9.81 MiB/s, done.
+Total 1692 (delta 140), reused 1675 (delta 139), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (140/140), done.
+To https://github.com/OpsAlchemy/kubequest.git
+ + 716d0ea...432aebd playground -> playground (forced update)
+Enumerating objects: 282, done.
+Counting objects: 100% (282/282), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (210/210), done.
+Writing objects: 100% (282/282), 131.68 KiB | 43.89 MiB/s, done.
+Total 282 (delta 48), reused 262 (delta 44), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (48/48), done.
+To https://github.com/OpsAlchemy/kubequest.git
+ + 8c8ebd8...b7d8097 k8s-originmal -> k8s-originmal (forced update)
+
+vagabond@vagabond in …/kubequest on 🌱 main ⏱ 7s 
+➜ git for-each-ref --format='%(refname) %(objectname) %(subject)' refs/heads | sed -n '1,200p'
+refs/heads/backup-before-soft-reset b0d2a48582cb1a9c09f94c2a26c0337bbf87e346 fix(git-docs): remove duplicate usecases navigation entry
+refs/heads/backup-before-squash ab821318fe89e4db5d44a1f6e6fed6ed037a7919 fix(deploy): correct artifact combination logic for nested directories
+refs/heads/backup-k8s-originmal 8c8ebd8d6e408bd268c5f261700eea79c4d3ed24 feat
+refs/heads/backup-main-before-linearize ab821318fe89e4db5d44a1f6e6fed6ed037a7919 fix(deploy): correct artifact combination logic for nested directories
+refs/heads/backup-playground 716d0eaf747d19e7bd89b99436316fb8ddfd62c7 feat: everythign
+refs/heads/backup-remove-large-file e518ee0940e0905bbdf1d66fbedb155012696a73 chore: move terragrunt subtree into terragrunt/base
+refs/heads/backup-remove-large-files-2 a67af7f0625e8d4f3a9be034bb6d6e6e67b5a092 chore: ignore local terragrunt binaries
+refs/heads/backup-vagrant-based-labs 6a15f42dbc1fb69259ca0d78cf15c049d25d72b6 Initial commit for vagrant-based-labs
+refs/heads/docs/git-documentation 2ec373db1407705e93e0ded7b3171d61e7d6d96e ci: add git documentation to GitHub Actions deployment trigger
+refs/heads/docs/git-usecases-update 2201bf5a54497a119f4fdd381c4e048b2c92ed2c docs: add usecase #3 - linearizing messy git history with reset --soft
+refs/heads/feature/kubeconfig-practice 888d20c64b5d4e0800f7f016bc103b0b4ca02bfb Fix/github-actions-deploy (#13)
+refs/heads/k8s-originmal b7d8097efcc3215784ea2c1a9c15695cf870d51f feat
+refs/heads/main a67af7f0625e8d4f3a9be034bb6d6e6e67b5a092 chore: ignore local terragrunt binaries
+refs/heads/playground 432aebd9bae0bd23a801d3e3f1b7c18045200752 feat: everythign
+refs/heads/vagrant-based-labs 6b8a6c488adb7a947004758e6a31835c8909c4c5 Initial commit for vagrant-based-labs
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git rev-list --objects --remotes --all | grep -F "calico-k8s/calicoctl" || true
+18580a2f3af30b572be5f6c551afc91f7d6c9e64 calico-k8s/calicoctl
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git -C /home/vagabond/peak/kubequest branch -r | sed -n '1,200p'
+  origin/HEAD -> origin/main
+  origin/backup-before-soft-reset
+  origin/backup-before-squash
+  origin/backup-main-before-linearize
+  origin/backup-remove-large-file
+  origin/backup/040126
+  origin/docs/git-documentation
+  origin/docs/git-usecases-update
+  origin/empty
+  origin/feature/kubeconfig-practice
+  origin/feature/tools-installation
+  origin/features/k8s
+  origin/gh-pages
+  origin/k8s-dev2-synced
+  origin/k8s-originmal
+  origin/killercoda
+  origin/main
+  origin/playground
+  origin/vagrant-based-labs
+  terragurnt/HEAD -> terragurnt/master
+  terragurnt/master
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git -C /home/vagabond/peak/kubequest ls-remote origin | grep -E "6a15f42|12888f2|8c8ebd8" || true
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ cd /home/vagabond/peak/kubequest && cat >> .gitignore <<'EOF'
+∙ # Ignore Terraform provider caches and binaries
+∙ **/.terraform/
+∙ *.so
+∙ *.exe
+∙ *.zip
+∙ # Ignore specific large binaries
+∙ calico-k8s/calicoctl
+∙ networking/main
+∙ # Ignore local terragrunt binaries (already added previously)
+∙ terragrunt_linux_amd64
+∙ terragrunt_windows_amd64.exe
+∙ EOF
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git add .gitignore && git commit -m "chore: ignore terraform provider caches and common binaries" || true && git push origin main
+[main f4225ef] chore: ignore terraform provider caches and common binaries
+ 1 file changed, 11 insertions(+)
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 462 bytes | 462.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/OpsAlchemy/kubequest.git
+   a67af7f..f4225ef  main -> main
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git -C /home/vagabond/peak/kubequest add .gitignore && git -C /home/vagabond/peak/kubequest commit -m "chore: ignore terraform provider caches and common binaries" && git -C /home/vagabond/peak/kubequest push origin main
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+Exit code: 1                                                                                                                                 
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+✗ sed -n '1,200p' /home/vagabond/peak/kubequest/.gitignore
+terragrunt_linux_amd64
+terragrunt_windows_amd64.exe
+# Ignore Terraform provider caches and binaries
+**/.terraform/
+*.so
+*.exe
+*.zip
+# Ignore specific large binaries
+calico-k8s/calicoctl
+networking/main
+# Ignore local terragrunt binaries (already added previously)
+terragrunt_linux_amd64
+terragrunt_windows_amd64.exe
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git rev-list --objects --remotes --all | grep -E "calico-k8s/calicoctl|terraform-provider-kubernetes_v2.37.1|terraform-provider-digitalocean_v2.57.0|terraform-provider-tls_v4.1.0|terraform-provider-local_v2.5.3|_rust.abi3.so|networking/main|cka/compose/04-admission-webhook/controllers/src/webhook" || true
+a5d1a684b5c89965bb3cea1e2f56dce24dab90d8 cka/compose/04-admission-webhook/controllers/src/webhook
+56132a4ca9f22f613ba39caff35704d285639349 k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0
+57927f448556f2b7c6d04ce0f1363e39a1dd4aab k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5
+29efc11bbaf16fbd4e8f91045457c71ab423bb19 k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5
+1aab8de7285711d90aa5aa0738011254a89633ae networking/main
+18580a2f3af30b572be5f6c551afc91f7d6c9e64 calico-k8s/calicoctl
+a3c37308fdb1ba0cc462007e76d86a829dd16200 practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5
+5e0ecea8ccff5a048338e5138a28337c1e6400da tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git -C /home/vagabond/peak/kubequest branch -r | grep backup || true
+  origin/backup-before-soft-reset
+  origin/backup-before-squash
+  origin/backup-main-before-linearize
+  origin/backup-remove-large-file
+  origin/backup/040126
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git -C /home/vagabond/peak/kubequest rev-list --objects origin/main | grep -F "calico-k8s/calicoctl" || true
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ git rev-list --objects --all | git cat-file --batch-check='%(objecttype) %(objectsize) %(objectname) %(rest)' | awk '/^blob/ && $2>5000000 { printf("%.1fMB %s\n", $2/1024/1024, substr($0, index($0,$4))) }' | sort -rn -k1 | sed -n '1,40p'
+77.9MB calico-k8s/calicoctl
+52.6MB practice/k8s-tf/.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.37.1/linux_amd64/terraform-provider-kubernetes_v2.37.1_x5
+44.4MB cka/compose/04-admission-webhook/controllers/src/webhook
+22.1MB k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/digitalocean/digitalocean/2.57.0/linux_amd64/terraform-provider-digitalocean_v2.57.0
+16.7MB k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/tls/4.1.0/linux_amd64/terraform-provider-tls_v4.1.0_x5
+14.7MB k8s-hard-way/digital-ocean-infra/.terraform/providers/registry.terraform.io/hashicorp/local/2.5.3/linux_amd64/terraform-provider-local_v2.5.3_x5
+11.9MB tls-in-k8s/env/lib/python3.12/site-packages/cryptography/hazmat/bindings/_rust.abi3.so
+6.7MB networking/main
+
+vagabond@vagabond in …/kubequest on 🌱 main 
+➜ 
