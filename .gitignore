@@ -1,2 +1,13 @@
 terragrunt_linux_amd64
 terragrunt_windows_amd64.exe
+# Ignore Terraform provider caches and binaries
+**/.terraform/
+*.so
+*.exe
+*.zip
+# Ignore specific large binaries
+calico-k8s/calicoctl
+networking/main
+# Ignore local terragrunt binaries (already added previously)
+terragrunt_linux_amd64
+terragrunt_windows_amd64.exe
