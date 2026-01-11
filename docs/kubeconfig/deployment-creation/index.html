@@ -1,0 +1,3113 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/docs/kubeconfig/deployment-creation/">
+      
+      
+        <link rel="prev" href="../cn/">
+      
+      
+        <link rel="next" href="../generate/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Pod Creation Flow in Deployment - Every Step - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pod-creation-flow-in-deployment-every-step" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Pod Creation Flow in Deployment - Every Step
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KillerCoda Notes – CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Configs that Mimic Kubernetes Ingress Behavior
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Mystery of (/|$): NGINX Ingress Controller's Secret Sauce
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-vs-ingress-compare/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nginx vs ingress compare
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Location Block Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/north-south-traffic-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes NGINX Ingress — Complete Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regex From Absolute Scratch - You WILL Understand This 🎯
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster architecture, installation & configuration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster architecture, installation & configuration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/apiserver-misconfigured-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kube-apiserver Crash (Static Pod)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/apiserver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Control Plane (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/cka-kubernetes-upgrade-complete-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Kubernetes Cluster Upgrade Guide for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/etcd-backup-and-restore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    etcd Snapshot Backup and Restore (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubeadm-certificate-commands-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete kubeadm Certificate Management Command Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubeadm-cluster-init-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Cluster Initialization and Node Join Process Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubelet-misconfigured/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubelet Misconfigured
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/probing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Probes &amp; Health Endpoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/rbac-namespace-scope-with-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespacing ClusterRoles Using RoleBindings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/rbac-pipeline-serviceaccount-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes RBAC: Pipeline ServiceAccount with Cluster-Wide Read and Namespaced Deployment Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/vimsetpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal Vim Configuration for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API: Complete Master Guide 🚀
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API vs Ingress Controller: Deep Dive into Complex Logic 🧠
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/load-of-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubeconfig
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubeconfig
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Yes, Naming Convention is MANDATORY
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pod Creation Flow in Deployment - Every Step
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pod Creation Flow in Deployment - Every Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-user-creates-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: User Creates Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: User Creates Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-user-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: User Command
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-kubectl-api-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: kubectl → API Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-api-server-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: API Server Processing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: API Server Processing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-3-api-server-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: API Server Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-store-in-etcd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Store in etcd
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-deployment-controller-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Deployment Controller Actions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Deployment Controller Actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-5-deployment-controller-watches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Deployment Controller Watches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-create-replicaset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Create ReplicaSet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-replicaset-controller-watches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: ReplicaSet Controller Watches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-8-create-pods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8: Create Pods
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-4-scheduler-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: Scheduler Actions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4: Scheduler Actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-9-scheduler-watches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 9: Scheduler Watches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-10-scheduling-decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 10: Scheduling Decision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-11-bind-pod-to-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 11: Bind Pod to Node
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-12-api-server-updates-pod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 12: API Server Updates Pod
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-5-kubelet-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: Kubelet Actions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5: Kubelet Actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-13-kubelet-watches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 13: Kubelet Watches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-14-pod-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 14: Pod Sync
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-15-update-pod-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 15: Update Pod Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-6-service-network-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: Service &amp; Network Setup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 6: Service &amp; Network Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-16-endpoints-controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 16: Endpoints Controller
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-17-kube-proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 17: Kube-proxy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-7-continuous-reconciliation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: Continuous Reconciliation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 7: Continuous Reconciliation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-18-health-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 18: Health Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-19-scale-updown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 19: Scale Up/Down
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-flow-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Flow Summary:
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../generate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../groups/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Groups in Kubernetes (for permissions)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interactions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Component Interactions - List Only
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kind/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kind
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pki/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pki
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../service-creation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Service creation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services & networking
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services & networking
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/ingress-cli-pathType-and-class/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Ingress via kubectl CLI with Prefix Paths and IngressClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-cross-namespace-egress-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restricting Cross-Namespace Traffic Using NetworkPolicies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-egress-cross-namespace-label-based/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Egress NetworkPolicy for Label-Based Cross-Namespace Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Storage
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/affinity-with-hostPath-and-selector-on-pvc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    affinity with hostPath and selector on pvc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/cheatshett/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cheatshett
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/consumption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Consumption
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/minimal-pv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal pv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/standard-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standard sc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/usage-of-manual-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual StorageClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workload & scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workload & scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/all-possible-way-to-create-secret/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Secrets - Complete Reference Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-env-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using ConfigMaps as Environment Variables and Volumes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-selective/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configmap selective
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/daemonset-troubleshooting-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DaemonSet YAML Troubleshooting Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment-nodeName-scheduling-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment Scheduling Failure Due to Hard-Coded nodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment.strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment.strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/multi-container-port-conflict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CrashLoopBackOff Due to Port Conflict in Multi-Container Pod
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-affinity-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Pod Affinity: Advanced Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-priority-and-priorityclass-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pod Priority Using PriorityClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-user-creates-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: User Creates Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: User Creates Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-user-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: User Command
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-kubectl-api-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: kubectl → API Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-api-server-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: API Server Processing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: API Server Processing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-3-api-server-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: API Server Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-store-in-etcd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Store in etcd
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-deployment-controller-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Deployment Controller Actions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Deployment Controller Actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-5-deployment-controller-watches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Deployment Controller Watches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-create-replicaset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Create ReplicaSet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-replicaset-controller-watches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: ReplicaSet Controller Watches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-8-create-pods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8: Create Pods
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-4-scheduler-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: Scheduler Actions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4: Scheduler Actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-9-scheduler-watches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 9: Scheduler Watches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-10-scheduling-decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 10: Scheduling Decision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-11-bind-pod-to-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 11: Bind Pod to Node
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-12-api-server-updates-pod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 12: API Server Updates Pod
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-5-kubelet-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: Kubelet Actions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5: Kubelet Actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-13-kubelet-watches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 13: Kubelet Watches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-14-pod-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 14: Pod Sync
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-15-update-pod-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 15: Update Pod Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-6-service-network-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: Service &amp; Network Setup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 6: Service &amp; Network Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-16-endpoints-controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 16: Endpoints Controller
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-17-kube-proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 17: Kube-proxy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-7-continuous-reconciliation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: Continuous Reconciliation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 7: Continuous Reconciliation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-18-health-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 18: Health Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-19-scale-updown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 19: Scale Up/Down
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-flow-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Flow Summary:
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="pod-creation-flow-in-deployment-every-step"><strong>Pod Creation Flow in Deployment - Every Step</strong></h1>
+<h2 id="phase-1-user-creates-deployment"><strong>Phase 1: User Creates Deployment</strong></h2>
+<h3 id="step-1-user-command"><strong>Step 1: User Command</strong></h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>deployment.yaml
+<span class="c1"># or</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>deployment<span class="w"> </span>nginx<span class="w"> </span>--image<span class="o">=</span>nginx<span class="w"> </span>--replicas<span class="o">=</span><span class="m">3</span>
+</code></pre></div>
+<h3 id="step-2-kubectl-api-server"><strong>Step 2: kubectl → API Server</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># kubectl sends HTTP request</span>
+POST<span class="w"> </span>/apis/apps/v1/namespaces/default/deployments
+Content-Type:<span class="w"> </span>application/json
+Authorization:<span class="w"> </span>Bearer<span class="w"> </span>&lt;token&gt;
+
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;apiVersion&quot;</span>:<span class="w"> </span><span class="s2">&quot;apps/v1&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;Deployment&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;metadata&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;namespace&quot;</span>:<span class="w"> </span><span class="s2">&quot;default&quot;</span>
+<span class="w">  </span><span class="o">}</span>,
+<span class="w">  </span><span class="s2">&quot;spec&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;replicas&quot;</span>:<span class="w"> </span><span class="m">3</span>,
+<span class="w">    </span><span class="s2">&quot;selector&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">      </span><span class="s2">&quot;matchLabels&quot;</span>:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;app&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx&quot;</span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>,
+<span class="w">    </span><span class="s2">&quot;template&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">      </span><span class="s2">&quot;metadata&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="s2">&quot;labels&quot;</span>:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;app&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx&quot;</span><span class="o">}</span>
+<span class="w">      </span><span class="o">}</span>,
+<span class="w">      </span><span class="s2">&quot;spec&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="s2">&quot;containers&quot;</span>:<span class="w"> </span><span class="o">[{</span>
+<span class="w">          </span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx&quot;</span>,
+<span class="w">          </span><span class="s2">&quot;image&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx:latest&quot;</span>
+<span class="w">        </span><span class="o">}]</span>
+<span class="w">      </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h2 id="phase-2-api-server-processing"><strong>Phase 2: API Server Processing</strong></h2>
+<h3 id="step-3-api-server-validation"><strong>Step 3: API Server Validation</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="m">1</span>.<span class="w"> </span>Authentication:<span class="w"> </span>Verify<span class="w"> </span>kubectl<span class="w"> </span>certificate/token
+<span class="m">2</span>.<span class="w"> </span>Authorization:<span class="w"> </span>Check<span class="w"> </span><span class="k">if</span><span class="w"> </span>user<span class="w"> </span>can<span class="w"> </span>create<span class="w"> </span>deployments
+<span class="m">3</span>.<span class="w"> </span>Admission<span class="w"> </span>Control:
+<span class="w">   </span>-<span class="w"> </span>MutatingWebhook<span class="w"> </span><span class="o">(</span><span class="k">if</span><span class="w"> </span>any<span class="o">)</span>:<span class="w"> </span>Modify<span class="w"> </span>the<span class="w"> </span>object
+<span class="w">   </span>-<span class="w"> </span>ValidatingWebhook<span class="w"> </span><span class="o">(</span><span class="k">if</span><span class="w"> </span>any<span class="o">)</span>:<span class="w"> </span>Validate<span class="w"> </span>the<span class="w"> </span>object
+<span class="w">   </span>-<span class="w"> </span>Defaulting:<span class="w"> </span>Set<span class="w"> </span>default<span class="w"> </span>values
+</code></pre></div>
+<h3 id="step-4-store-in-etcd"><strong>Step 4: Store in etcd</strong></h3>
+<div class="highlight"><pre><span></span><code>API<span class="w"> </span>Server<span class="w"> </span>→<span class="w"> </span>etcd:
+PUT<span class="w"> </span>/registry/deployments/default/nginx
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;deployment object&quot;</span>
+<span class="o">}</span>
+
+<span class="c1"># Returns: HTTP 201 Created</span>
+</code></pre></div>
+<h2 id="phase-3-deployment-controller-actions"><strong>Phase 3: Deployment Controller Actions</strong></h2>
+<h3 id="step-5-deployment-controller-watches"><strong>Step 5: Deployment Controller Watches</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Deployment Controller (in controller-manager) is watching:</span>
+WATCH<span class="w"> </span>/apis/apps/v1/deployments?watch<span class="o">=</span><span class="nb">true</span>
+
+<span class="c1"># Event received:</span>
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;type&quot;</span>:<span class="w"> </span><span class="s2">&quot;ADDED&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;object&quot;</span>:<span class="w"> </span><span class="o">{</span>deployment<span class="w"> </span>spec<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h3 id="step-6-create-replicaset"><strong>Step 6: Create ReplicaSet</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Deployment Controller creates ReplicaSet</span>
+<span class="m">1</span>.<span class="w"> </span>Generates<span class="w"> </span>ReplicaSet<span class="w"> </span>name:<span class="w"> </span>nginx-&lt;hash&gt;
+<span class="m">2</span>.<span class="w"> </span>Sets<span class="w"> </span>ownerReference<span class="w"> </span>to<span class="w"> </span>Deployment
+<span class="m">3</span>.<span class="w"> </span>Sets<span class="w"> </span><span class="nv">replicas</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span>
+<span class="m">4</span>.<span class="w"> </span>Copies<span class="w"> </span>pod<span class="w"> </span>template<span class="w"> </span>from<span class="w"> </span>Deployment
+
+POST<span class="w"> </span>/apis/apps/v1/namespaces/default/replicasets
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;apiVersion&quot;</span>:<span class="w"> </span><span class="s2">&quot;apps/v1&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;ReplicaSet&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;metadata&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx-68bcd98f5c&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;ownerReferences&quot;</span>:<span class="w"> </span><span class="o">[{</span>
+<span class="w">      </span><span class="s2">&quot;apiVersion&quot;</span>:<span class="w"> </span><span class="s2">&quot;apps/v1&quot;</span>,
+<span class="w">      </span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;Deployment&quot;</span>,
+<span class="w">      </span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx&quot;</span>,
+<span class="w">      </span><span class="s2">&quot;uid&quot;</span>:<span class="w"> </span><span class="s2">&quot;deployment-uid&quot;</span>
+<span class="w">    </span><span class="o">}]</span>
+<span class="w">  </span><span class="o">}</span>,
+<span class="w">  </span><span class="s2">&quot;spec&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;replicas&quot;</span>:<span class="w"> </span><span class="m">3</span>,
+<span class="w">    </span><span class="s2">&quot;selector&quot;</span>:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;matchLabels&quot;</span>:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;app&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx&quot;</span><span class="o">}}</span>,
+<span class="w">    </span><span class="s2">&quot;template&quot;</span>:<span class="w"> </span><span class="o">{</span>pod<span class="w"> </span>template<span class="o">}</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h3 id="step-7-replicaset-controller-watches"><strong>Step 7: ReplicaSet Controller Watches</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ReplicaSet Controller (in controller-manager) watches:</span>
+WATCH<span class="w"> </span>/apis/apps/v1/replicasets?watch<span class="o">=</span><span class="nb">true</span>
+
+<span class="c1"># Event received:</span>
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;type&quot;</span>:<span class="w"> </span><span class="s2">&quot;ADDED&quot;</span>,<span class="w"> </span>
+<span class="w">  </span><span class="s2">&quot;object&quot;</span>:<span class="w"> </span><span class="o">{</span>replicaset<span class="w"> </span>spec<span class="w"> </span>with<span class="w"> </span><span class="nv">replicas</span><span class="o">=</span><span class="m">3</span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h3 id="step-8-create-pods"><strong>Step 8: Create Pods</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># For each replica (i=0,1,2):</span>
+<span class="m">1</span>.<span class="w"> </span>Generate<span class="w"> </span>Pod<span class="w"> </span>name:<span class="w"> </span>nginx-68bcd98f5c-&lt;random&gt;
+<span class="m">2</span>.<span class="w"> </span>Set<span class="w"> </span>ownerReference<span class="w"> </span>to<span class="w"> </span>ReplicaSet
+<span class="m">3</span>.<span class="w"> </span>Copy<span class="w"> </span>pod<span class="w"> </span>spec<span class="w"> </span>from<span class="w"> </span>ReplicaSet<span class="w"> </span>template
+<span class="m">4</span>.<span class="w"> </span>Add<span class="w"> </span>default<span class="w"> </span>fields:
+<span class="w">   </span>-<span class="w"> </span>restartPolicy:<span class="w"> </span>Always
+<span class="w">   </span>-<span class="w"> </span>terminationGracePeriodSeconds:<span class="w"> </span><span class="m">30</span>
+<span class="w">   </span>-<span class="w"> </span>dnsPolicy:<span class="w"> </span>ClusterFirst
+<span class="w">   </span>-<span class="w"> </span>schedulerName:<span class="w"> </span>default-scheduler
+
+POST<span class="w"> </span>/api/v1/namespaces/default/pods
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;apiVersion&quot;</span>:<span class="w"> </span><span class="s2">&quot;v1&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;Pod&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;metadata&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx-68bcd98f5c-abc12&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;ownerReferences&quot;</span>:<span class="w"> </span><span class="o">[{</span>
+<span class="w">      </span><span class="s2">&quot;apiVersion&quot;</span>:<span class="w"> </span><span class="s2">&quot;apps/v1&quot;</span>,
+<span class="w">      </span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;ReplicaSet&quot;</span>,<span class="w"> </span>
+<span class="w">      </span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx-68bcd98f5c&quot;</span>,
+<span class="w">      </span><span class="s2">&quot;uid&quot;</span>:<span class="w"> </span><span class="s2">&quot;replicaset-uid&quot;</span>
+<span class="w">    </span><span class="o">}]</span>,
+<span class="w">    </span><span class="s2">&quot;labels&quot;</span>:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;app&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx&quot;</span>,<span class="w"> </span><span class="s2">&quot;pod-template-hash&quot;</span>:<span class="w"> </span><span class="s2">&quot;68bcd98f5c&quot;</span><span class="o">}</span>
+<span class="w">  </span><span class="o">}</span>,
+<span class="w">  </span><span class="s2">&quot;spec&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;containers&quot;</span>:<span class="w"> </span><span class="o">[</span>...<span class="o">]</span>,
+<span class="w">    </span><span class="s2">&quot;nodeName&quot;</span>:<span class="w"> </span><span class="s2">&quot;&quot;</span>,<span class="w">  </span><span class="c1"># Empty = unscheduled</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h2 id="phase-4-scheduler-actions"><strong>Phase 4: Scheduler Actions</strong></h2>
+<h3 id="step-9-scheduler-watches"><strong>Step 9: Scheduler Watches</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Scheduler watches for pods with empty nodeName:</span>
+WATCH<span class="w"> </span>/api/v1/pods?fieldSelector<span class="o">=</span>spec.nodeName<span class="o">=</span>
+
+<span class="c1"># Event received:</span>
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;type&quot;</span>:<span class="w"> </span><span class="s2">&quot;ADDED&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;object&quot;</span>:<span class="w"> </span><span class="o">{</span>pod<span class="w"> </span>with<span class="w"> </span><span class="nv">nodeName</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h3 id="step-10-scheduling-decision"><strong>Step 10: Scheduling Decision</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Scheduler runs scheduling algorithm:</span>
+<span class="m">1</span>.<span class="w"> </span>Filter<span class="w"> </span>nodes:<span class="w"> </span>Check<span class="w"> </span>resource<span class="w"> </span>requests,<span class="w"> </span>node<span class="w"> </span>selector,<span class="w"> </span>taints/tolerations
+<span class="m">2</span>.<span class="w"> </span>Score<span class="w"> </span>nodes:<span class="w"> </span>Calculate<span class="w"> </span>best<span class="w"> </span>node<span class="w"> </span><span class="o">(</span>bin<span class="w"> </span>packing,<span class="w"> </span>affinity,<span class="w"> </span>etc.<span class="o">)</span>
+<span class="m">3</span>.<span class="w"> </span>Select<span class="w"> </span>node:<span class="w"> </span>Choose<span class="w"> </span>highest<span class="w"> </span>scoring<span class="w"> </span>node<span class="w"> </span><span class="o">(</span>e.g.,<span class="w"> </span>worker-node-1<span class="o">)</span>
+</code></pre></div>
+<h3 id="step-11-bind-pod-to-node"><strong>Step 11: Bind Pod to Node</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Scheduler updates pod binding:</span>
+PATCH<span class="w"> </span>/api/v1/namespaces/default/pods/nginx-68bcd98f5c-abc12/binding
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;apiVersion&quot;</span>:<span class="w"> </span><span class="s2">&quot;v1&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;Binding&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;metadata&quot;</span>:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx-68bcd98f5c-abc12&quot;</span><span class="o">}</span>,
+<span class="w">  </span><span class="s2">&quot;target&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;apiVersion&quot;</span>:<span class="w"> </span><span class="s2">&quot;v1&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;Node&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;worker-node-1&quot;</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h3 id="step-12-api-server-updates-pod"><strong>Step 12: API Server Updates Pod</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># API Server updates pod:</span>
+PATCH<span class="w"> </span>/api/v1/namespaces/default/pods/nginx-68bcd98f5c-abc12
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;spec&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;nodeName&quot;</span>:<span class="w"> </span><span class="s2">&quot;worker-node-1&quot;</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h2 id="phase-5-kubelet-actions"><strong>Phase 5: Kubelet Actions</strong></h2>
+<h3 id="step-13-kubelet-watches"><strong>Step 13: Kubelet Watches</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Kubelet on worker-node-1 watches:</span>
+WATCH<span class="w"> </span>/api/v1/pods?fieldSelector<span class="o">=</span>spec.nodeName<span class="o">=</span>worker-node-1
+
+<span class="c1"># Event received:</span>
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;type&quot;</span>:<span class="w"> </span><span class="s2">&quot;ADDED&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;object&quot;</span>:<span class="w"> </span><span class="o">{</span>pod<span class="w"> </span>with<span class="w"> </span><span class="nv">nodeName</span><span class="o">=</span>worker-node-1<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h3 id="step-14-pod-sync"><strong>Step 14: Pod Sync</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Kubelet&#39;s SyncPod() called:</span>
+<span class="m">1</span>.<span class="w"> </span>Create<span class="w"> </span>pod<span class="w"> </span>sandbox<span class="w"> </span><span class="o">(</span>pause<span class="w"> </span>container<span class="o">)</span>
+<span class="m">2</span>.<span class="w"> </span>Pull<span class="w"> </span>images<span class="w"> </span><span class="o">(</span><span class="k">if</span><span class="w"> </span>not<span class="w"> </span>present<span class="o">)</span>
+<span class="m">3</span>.<span class="w"> </span>Create<span class="w"> </span>containers<span class="w"> </span>via<span class="w"> </span>CRI<span class="w"> </span><span class="o">(</span>Container<span class="w"> </span>Runtime<span class="w"> </span>Interface<span class="o">)</span>
+<span class="m">4</span>.<span class="w"> </span>Setup<span class="w"> </span>volumes<span class="w"> </span><span class="o">(</span>mount<span class="w"> </span>PVCs,<span class="w"> </span>secrets,<span class="w"> </span>configmaps<span class="o">)</span>
+<span class="m">5</span>.<span class="w"> </span>Setup<span class="w"> </span>network<span class="w"> </span><span class="o">(</span>CNI<span class="w"> </span>plugin<span class="o">)</span>
+<span class="m">6</span>.<span class="w"> </span>Start<span class="w"> </span>containers
+</code></pre></div>
+<h3 id="step-15-update-pod-status"><strong>Step 15: Update Pod Status</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Kubelet → API Server:</span>
+PATCH<span class="w"> </span>/api/v1/namespaces/default/pods/nginx-68bcd98f5c-abc12/status
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;phase&quot;</span>:<span class="w"> </span><span class="s2">&quot;Running&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;conditions&quot;</span>:<span class="w"> </span><span class="o">[</span>
+<span class="w">      </span><span class="o">{</span><span class="s2">&quot;type&quot;</span>:<span class="w"> </span><span class="s2">&quot;Initialized&quot;</span>,<span class="w"> </span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="s2">&quot;True&quot;</span><span class="o">}</span>,
+<span class="w">      </span><span class="o">{</span><span class="s2">&quot;type&quot;</span>:<span class="w"> </span><span class="s2">&quot;Ready&quot;</span>,<span class="w"> </span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="s2">&quot;True&quot;</span><span class="o">}</span>
+<span class="w">    </span><span class="o">]</span>,
+<span class="w">    </span><span class="s2">&quot;podIP&quot;</span>:<span class="w"> </span><span class="s2">&quot;10.244.1.2&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;containerStatuses&quot;</span>:<span class="w"> </span><span class="o">[</span>...<span class="o">]</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h2 id="phase-6-service-network-setup"><strong>Phase 6: Service &amp; Network Setup</strong></h2>
+<h3 id="step-16-endpoints-controller"><strong>Step 16: Endpoints Controller</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Endpoints Controller watches pods:</span>
+WATCH<span class="w"> </span>/api/v1/pods?labelSelector<span class="o">=</span><span class="nv">app</span><span class="o">=</span>nginx
+
+<span class="c1"># Updates Endpoints object:</span>
+PATCH<span class="w"> </span>/api/v1/namespaces/default/endpoints/nginx
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;subsets&quot;</span>:<span class="w"> </span><span class="o">[{</span>
+<span class="w">    </span><span class="s2">&quot;addresses&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;ip&quot;</span>:<span class="w"> </span><span class="s2">&quot;10.244.1.2&quot;</span>,<span class="w"> </span><span class="s2">&quot;nodeName&quot;</span>:<span class="w"> </span><span class="s2">&quot;worker-node-1&quot;</span><span class="o">}]</span>,
+<span class="w">    </span><span class="s2">&quot;ports&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;port&quot;</span>:<span class="w"> </span><span class="m">80</span><span class="o">}]</span>
+<span class="w">  </span><span class="o">}]</span>
+<span class="o">}</span>
+</code></pre></div>
+<h3 id="step-17-kube-proxy"><strong>Step 17: Kube-proxy</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Kube-proxy watches Endpoints:</span>
+WATCH<span class="w"> </span>/api/v1/endpoints?watch<span class="o">=</span><span class="nb">true</span>
+
+<span class="c1"># Updates iptables/ipvs rules:</span>
+<span class="c1"># Creates DNAT rules: ServiceIP:Port → PodIP:Port</span>
+</code></pre></div>
+<h2 id="phase-7-continuous-reconciliation"><strong>Phase 7: Continuous Reconciliation</strong></h2>
+<h3 id="step-18-health-monitoring"><strong>Step 18: Health Monitoring</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Kubelet runs probes every X seconds:</span>
+-<span class="w"> </span>Liveness<span class="w"> </span>probes:<span class="w"> </span>Restart<span class="w"> </span>container<span class="w"> </span><span class="k">if</span><span class="w"> </span>fails
+-<span class="w"> </span>Readiness<span class="w"> </span>probes:<span class="w"> </span>Remove<span class="w"> </span>from<span class="w"> </span>service<span class="w"> </span>endpoints<span class="w"> </span><span class="k">if</span><span class="w"> </span>fails
+
+<span class="c1"># Status updates flow back:</span>
+Kubelet<span class="w"> </span>→<span class="w"> </span>API<span class="w"> </span>Server<span class="w"> </span>→<span class="w"> </span>ReplicaSet<span class="w"> </span>Controller
+</code></pre></div>
+<h3 id="step-19-scale-updown"><strong>Step 19: Scale Up/Down</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># If user changes replicas:</span>
+kubectl<span class="w"> </span>scale<span class="w"> </span>deployment<span class="w"> </span>nginx<span class="w"> </span>--replicas<span class="o">=</span><span class="m">5</span>
+
+<span class="c1"># Flow:</span>
+<span class="m">1</span>.<span class="w"> </span>kubectl<span class="w"> </span>→<span class="w"> </span>API<span class="w"> </span>Server:<span class="w"> </span>Update<span class="w"> </span>Deployment<span class="w"> </span><span class="nv">replicas</span><span class="o">=</span><span class="m">5</span>
+<span class="m">2</span>.<span class="w"> </span>etcd<span class="w"> </span>stores<span class="w"> </span>new<span class="w"> </span>value
+<span class="m">3</span>.<span class="w"> </span>Deployment<span class="w"> </span>Controller<span class="w"> </span>sees<span class="w"> </span>change
+<span class="m">4</span>.<span class="w"> </span>Updates<span class="w"> </span>ReplicaSet<span class="w"> </span><span class="nv">replicas</span><span class="o">=</span><span class="m">5</span><span class="w">  </span>
+<span class="m">5</span>.<span class="w"> </span>ReplicaSet<span class="w"> </span>Controller<span class="w"> </span>creates<span class="w"> </span><span class="m">2</span><span class="w"> </span>more<span class="w"> </span>pods
+<span class="m">6</span>.<span class="w"> </span>Repeat<span class="w"> </span>steps<span class="w"> </span><span class="m">8</span>-17<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>pods
+</code></pre></div>
+<h2 id="complete-flow-summary"><strong>Complete Flow Summary:</strong></h2>
+<div class="highlight"><pre><span></span><code>User → API Server → etcd
+           ↓
+Deployment Controller → ReplicaSet → Pods
+           ↓
+Scheduler → Pod Binding
+           ↓
+Kubelet → Container Runtime → Containers
+           ↓
+Endpoints Controller → Kube-proxy → Network
+</code></pre></div>
+<p><strong>Total steps: ~19 distinct operations across 6 components.</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "content.code.copy", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

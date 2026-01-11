@@ -2,238 +2,242 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/01-autoscaling/hpa/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/01-autoscaling/keywords/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/01-autoscaling/question/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/01-autoscaling/solution/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/01-autoscaling/vpa/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/02%20helm/answers/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/02%20helm/helm/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/02%20helm/questions/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/03-kustomize/answers/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/03-kustomize/notes/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/03-kustomize/questions/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/04-admission-webhook/commands/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/04-admission-webhook/notes/</loc>
-         <lastmod>2026-01-08</lastmod>
-    </url>
-    <url>
-         <loc>https://opsalchemy.github.io/kubequest/compose/05-kubeconfig/how-to-setup/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/05-kubeconfig/notes/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
+    </url>
+    <url>
+         <loc>https://opsalchemy.github.io/kubequest/compose/05-kubeconfig/question/</loc>
+         <lastmod>2026-01-11</lastmod>
+    </url>
+    <url>
+         <loc>https://opsalchemy.github.io/kubequest/compose/05-kubeconfig/solutions/</loc>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/06-cluster-certificates-and-kube-system%20%5Bimportant%5D/kubeadm-certs/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/07-crd%27s/crd/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/07-crd%27s/question/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/07-crd%27s/solutions/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/08-gateway-api/gateway-api/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/08-gateway-api/question/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/10-scheduling/nodename/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/10-scheduling/nodeselector/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/10-scheduling/podAffinity-nodeAffinity-deployments/notes/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/11-coredns/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/_questions/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/a-daemonsets/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/b-probing/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/container-lifecycle-events/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/deployment-stragety/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/downward-api/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/env-and-envFrom/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/initcontainer/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/lifecycle-hooks/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/pod-disruption-budgets/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/qos/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/requests-limit/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/restart-policies/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/securitycontext/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/termination-grace-period/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/update-strategies/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/12-deployments/volumes/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/13-manage-cluster-via-kubeadm/cluster-create/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/13-manage-cluster-via-kubeadm/etcd/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/13-manage-cluster-via-kubeadm/high-availablity/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/14-ingress-controller-and-resources/north-south-traffic-management/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/14-ingress-controller-and-resources/questions/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/15-troubleshoot-controlplane/prerequisite-and-approach/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/17-authorization/cani/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/17-authorization/examples/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/17-authorization/gotchas/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/17-authorization/role-clusterrole/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/17-authorization/system-based-authorization/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/18-basic-bash/bash/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/19-secrets-and-configmap/environment-and-volume/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/20-services/cli/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/21-storage-class-pv-pvc/example/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
     <url>
          <loc>https://opsalchemy.github.io/kubequest/compose/21-storage-class-pv-pvc/selector/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-11</lastmod>
     </url>
 </urlset>

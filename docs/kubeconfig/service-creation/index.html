@@ -1,0 +1,3015 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Preparation notes for CKA">
+      
+      
+        <meta name="author" content="Vikash Kumar">
+      
+      
+        <link rel="canonical" href="https://github.com/OpsAlchemy/kubequest.git/docs/kubeconfig/service-creation/">
+      
+      
+        <link rel="prev" href="../questions/">
+      
+      
+        <link rel="next" href="../../services-%26-networking/ingress-cli-pathType-and-class/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Service creation - KillerCoda Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#phase-1-user-creates-service" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KillerCoda Notes" class="md-header__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KillerCoda Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Service creation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KillerCoda Notes" class="md-nav__button md-logo" aria-label="KillerCoda Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    KillerCoda Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KillerCoda Notes – CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 ingress controller and resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    14 ingress controller and resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Configs that Mimic Kubernetes Ingress Behavior
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Mystery of (/|$): NGINX Ingress Controller's Secret Sauce
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx-vs-ingress-compare/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nginx vs ingress compare
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/nginx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NGINX Location Block Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/north-south-traffic-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes NGINX Ingress — Complete Master Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-ingress-controller-and-resources/regex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regex From Absolute Scratch - You WILL Understand This 🎯
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster architecture, installation & configuration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster architecture, installation & configuration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/apiserver-misconfigured-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kube-apiserver Crash (Static Pod)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/apiserver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Control Plane (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/cka-kubernetes-upgrade-complete-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Kubernetes Cluster Upgrade Guide for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/etcd-backup-and-restore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    etcd Snapshot Backup and Restore (kubeadm)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubeadm-certificate-commands-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete kubeadm Certificate Management Command Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubeadm-cluster-init-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Cluster Initialization and Node Join Process Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/kubelet-misconfigured/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubelet Misconfigured
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/probing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Probes &amp; Health Endpoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/rbac-namespace-scope-with-clusterrole/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespacing ClusterRoles Using RoleBindings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/rbac-pipeline-serviceaccount-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes RBAC: Pipeline ServiceAccount with Cluster-Wide Read and Namespaced Deployment Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cluster%20architecture%2C%20installation%20%26%20configuration/vimsetpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal Vim Configuration for CKA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gateway api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API: Complete Master Guide 🚀
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/gateway-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway API vs Ingress Controller: Deep Dive into Complex Logic 🧠
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gateway-api/load-of-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Gateway API Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubeconfig
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubeconfig
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Yes, Naming Convention is MANDATORY
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment-creation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pod Creation Flow in Deployment - Every Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../generate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../groups/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Groups in Kubernetes (for permissions)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interactions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Component Interactions - List Only
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kind/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kind
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pki/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pki
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Service creation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Service creation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-user-creates-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: User Creates Service
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: User Creates Service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-user-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: User Command
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-service-yaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Service YAML
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-kubectl-api-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: kubectl → API Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-api-server-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: API Server Processing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: API Server Processing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-4-validation-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Validation &amp; Storage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-endpoints-controller-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Endpoints Controller Action
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Endpoints Controller Action">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-5-endpoints-controller-watches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Endpoints Controller Watches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-find-matching-pods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Find Matching Pods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-createupdate-endpoints-object" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Create/Update Endpoints Object
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-4-kube-proxy-actions-on-every-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: Kube-proxy Actions (on EVERY node)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4: Kube-proxy Actions (on EVERY node)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-8-kube-proxy-watches-services-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8: Kube-proxy Watches Services &amp; Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-9-iptables-mode-traditional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 9: iptables Mode (Traditional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-10-ipvs-mode-modern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 10: IPVS Mode (Modern)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-5-dns-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: DNS Setup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5: DNS Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-11-coredns-watches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 11: CoreDNS Watches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-12-dns-record-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 12: DNS Record Creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-6-network-programming-complete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: Network Programming Complete
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 6: Network Programming Complete">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-13-network-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 13: Network Flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-7-continuous-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: Continuous Updates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 7: Continuous Updates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-14-pod-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 14: Pod Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-15-service-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 15: Service Updates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-of-objects-created" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary of Objects Created:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-data-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Data Flow:
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services & networking
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services & networking
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/ingress-cli-pathType-and-class/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Ingress via kubectl CLI with Prefix Paths and IngressClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-cross-namespace-egress-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restricting Cross-Namespace Traffic Using NetworkPolicies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services-%26-networking/networkpolicy-egress-cross-namespace-label-based/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Egress NetworkPolicy for Label-Based Cross-Namespace Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Storage
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/affinity-with-hostPath-and-selector-on-pvc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    affinity with hostPath and selector on pvc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/cheatshett/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cheatshett
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/consumption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Consumption
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/minimal-pv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimal pv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/standard-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standard sc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storage/usage-of-manual-sc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual StorageClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workload & scheduling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workload & scheduling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/all-possible-way-to-create-secret/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Secrets - Complete Reference Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-env-and-volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using ConfigMaps as Environment Variables and Volumes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/configmap-selective/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configmap selective
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/daemonset-troubleshooting-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DaemonSet YAML Troubleshooting Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment-nodeName-scheduling-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment Scheduling Failure Due to Hard-Coded nodeName
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/deployment.strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment.strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/multi-container-port-conflict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CrashLoopBackOff Due to Port Conflict in Multi-Container Pod
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-affinity-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Pod Affinity: Advanced Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workload-%26-scheduling/pod-priority-and-priorityclass-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pod Priority Using PriorityClass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-user-creates-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: User Creates Service
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: User Creates Service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-user-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: User Command
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-service-yaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Service YAML
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-kubectl-api-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: kubectl → API Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-api-server-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: API Server Processing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: API Server Processing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-4-validation-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Validation &amp; Storage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-endpoints-controller-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Endpoints Controller Action
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Endpoints Controller Action">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-5-endpoints-controller-watches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Endpoints Controller Watches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-find-matching-pods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Find Matching Pods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-createupdate-endpoints-object" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Create/Update Endpoints Object
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-4-kube-proxy-actions-on-every-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: Kube-proxy Actions (on EVERY node)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4: Kube-proxy Actions (on EVERY node)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-8-kube-proxy-watches-services-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8: Kube-proxy Watches Services &amp; Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-9-iptables-mode-traditional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 9: iptables Mode (Traditional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-10-ipvs-mode-modern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 10: IPVS Mode (Modern)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-5-dns-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: DNS Setup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5: DNS Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-11-coredns-watches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 11: CoreDNS Watches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-12-dns-record-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 12: DNS Record Creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-6-network-programming-complete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: Network Programming Complete
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 6: Network Programming Complete">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-13-network-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 13: Network Flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-7-continuous-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: Continuous Updates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 7: Continuous Updates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-14-pod-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 14: Pod Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-15-service-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 15: Service Updates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-of-objects-created" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary of Objects Created:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-data-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Data Flow:
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Service creation</h1>
+
+<p><strong><em>*# </em>*Service Creation - Complete Step-by-Step</strong></p>
+<h2 id="phase-1-user-creates-service"><strong>Phase 1: User Creates Service</strong></h2>
+<h3 id="step-1-user-command"><strong>Step 1: User Command</strong></h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>service.yaml
+<span class="c1"># OR</span>
+kubectl<span class="w"> </span>expose<span class="w"> </span>deployment<span class="w"> </span>nginx<span class="w"> </span>--port<span class="o">=</span><span class="m">80</span><span class="w"> </span>--target-port<span class="o">=</span><span class="m">80</span>
+</code></pre></div>
+<h3 id="step-2-service-yaml"><strong>Step 2: Service YAML</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-service</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span><span class="w">      </span><span class="c1"># Selects pods with label app=nginx</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span><span class="w">        </span><span class="c1"># Service port</span>
+<span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span><span class="w">  </span><span class="c1"># Pod container port</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIP</span><span class="w">   </span><span class="c1"># Default</span>
+</code></pre></div>
+<h3 id="step-3-kubectl-api-server"><strong>Step 3: kubectl → API Server</strong></h3>
+<div class="highlight"><pre><span></span><code>POST<span class="w"> </span>/api/v1/namespaces/default/services
+Content-Type:<span class="w"> </span>application/json
+
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;apiVersion&quot;</span>:<span class="w"> </span><span class="s2">&quot;v1&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;Service&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;metadata&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx-service&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;namespace&quot;</span>:<span class="w"> </span><span class="s2">&quot;default&quot;</span>
+<span class="w">  </span><span class="o">}</span>,
+<span class="w">  </span><span class="s2">&quot;spec&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;selector&quot;</span>:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;app&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx&quot;</span><span class="o">}</span>,
+<span class="w">    </span><span class="s2">&quot;ports&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;port&quot;</span>:<span class="w"> </span><span class="m">80</span>,<span class="w"> </span><span class="s2">&quot;targetPort&quot;</span>:<span class="w"> </span><span class="m">80</span><span class="o">}]</span>,
+<span class="w">    </span><span class="s2">&quot;type&quot;</span>:<span class="w"> </span><span class="s2">&quot;ClusterIP&quot;</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h2 id="phase-2-api-server-processing"><strong>Phase 2: API Server Processing</strong></h2>
+<h3 id="step-4-validation-storage"><strong>Step 4: Validation &amp; Storage</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># API Server:</span>
+<span class="m">1</span>.<span class="w"> </span>Validates<span class="w"> </span>Service<span class="w"> </span>spec
+<span class="m">2</span>.<span class="w"> </span>Allocates<span class="w"> </span>ClusterIP<span class="w"> </span>from<span class="w"> </span>service<span class="w"> </span>CIDR<span class="w"> </span><span class="o">(</span>e.g.,<span class="w"> </span><span class="m">10</span>.96.0.0/12<span class="o">)</span>
+<span class="w">   </span>-<span class="w"> </span>Example:<span class="w"> </span><span class="m">10</span>.96.123.45
+<span class="m">3</span>.<span class="w"> </span>Stores<span class="w"> </span><span class="k">in</span><span class="w"> </span>etcd:
+<span class="w">   </span>PUT<span class="w"> </span>/registry/services/default/nginx-service
+
+<span class="c1"># Returns: Service object with allocated ClusterIP</span>
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;spec&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;clusterIP&quot;</span>:<span class="w"> </span><span class="s2">&quot;10.96.123.45&quot;</span>,<span class="w">  </span><span class="c1"># ← Assigned here</span>
+<span class="w">    </span><span class="s2">&quot;ports&quot;</span>:<span class="w"> </span><span class="o">[</span>...<span class="o">]</span>,
+<span class="w">    </span><span class="s2">&quot;selector&quot;</span>:<span class="w"> </span><span class="o">{</span>...<span class="o">}</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h2 id="phase-3-endpoints-controller-action"><strong>Phase 3: Endpoints Controller Action</strong></h2>
+<h3 id="step-5-endpoints-controller-watches"><strong>Step 5: Endpoints Controller Watches</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Endpoints Controller (in controller-manager) watches:</span>
+WATCH<span class="w"> </span>/api/v1/services?watch<span class="o">=</span><span class="nb">true</span>
+
+<span class="c1"># Event received:</span>
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;type&quot;</span>:<span class="w"> </span><span class="s2">&quot;ADDED&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;object&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;metadata&quot;</span>:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx-service&quot;</span><span class="o">}</span>,
+<span class="w">    </span><span class="s2">&quot;spec&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">      </span><span class="s2">&quot;selector&quot;</span>:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;app&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx&quot;</span><span class="o">}</span>,
+<span class="w">      </span><span class="s2">&quot;clusterIP&quot;</span>:<span class="w"> </span><span class="s2">&quot;10.96.123.45&quot;</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h3 id="step-6-find-matching-pods"><strong>Step 6: Find Matching Pods</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Endpoints Controller queries API Server:</span>
+GET<span class="w"> </span>/api/v1/namespaces/default/pods?labelSelector<span class="o">=</span><span class="nv">app</span><span class="o">=</span>nginx
+
+<span class="c1"># Response: List of pods with IPs</span>
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;items&quot;</span>:<span class="w"> </span><span class="o">[</span>
+<span class="w">    </span><span class="o">{</span>
+<span class="w">      </span><span class="s2">&quot;metadata&quot;</span>:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx-pod-1&quot;</span><span class="o">}</span>,
+<span class="w">      </span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="s2">&quot;podIP&quot;</span>:<span class="w"> </span><span class="s2">&quot;10.244.1.2&quot;</span>,
+<span class="w">        </span><span class="s2">&quot;conditions&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;type&quot;</span>:<span class="w"> </span><span class="s2">&quot;Ready&quot;</span>,<span class="w"> </span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="s2">&quot;True&quot;</span><span class="o">}]</span>
+<span class="w">      </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>,
+<span class="w">    </span><span class="o">{</span>
+<span class="w">      </span><span class="s2">&quot;metadata&quot;</span>:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx-pod-2&quot;</span><span class="o">}</span>,<span class="w"> </span>
+<span class="w">      </span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="s2">&quot;podIP&quot;</span>:<span class="w"> </span><span class="s2">&quot;10.244.1.3&quot;</span>,
+<span class="w">        </span><span class="s2">&quot;conditions&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;type&quot;</span>:<span class="w"> </span><span class="s2">&quot;Ready&quot;</span>,<span class="w"> </span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="s2">&quot;True&quot;</span><span class="o">}]</span>
+<span class="w">      </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="w">  </span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre></div>
+<h3 id="step-7-createupdate-endpoints-object"><strong>Step 7: Create/Update Endpoints Object</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Endpoints Controller creates Endpoints object:</span>
+POST<span class="w"> </span>/api/v1/namespaces/default/endpoints
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;apiVersion&quot;</span>:<span class="w"> </span><span class="s2">&quot;v1&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;Endpoints&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;metadata&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx-service&quot;</span><span class="w">  </span><span class="c1"># Same name as Service!</span>
+<span class="w">  </span><span class="o">}</span>,
+<span class="w">  </span><span class="s2">&quot;subsets&quot;</span>:<span class="w"> </span><span class="o">[{</span>
+<span class="w">    </span><span class="s2">&quot;addresses&quot;</span>:<span class="w"> </span><span class="o">[</span>
+<span class="w">      </span><span class="o">{</span>
+<span class="w">        </span><span class="s2">&quot;ip&quot;</span>:<span class="w"> </span><span class="s2">&quot;10.244.1.2&quot;</span>,
+<span class="w">        </span><span class="s2">&quot;nodeName&quot;</span>:<span class="w"> </span><span class="s2">&quot;worker-1&quot;</span>,
+<span class="w">        </span><span class="s2">&quot;targetRef&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">          </span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;Pod&quot;</span>,
+<span class="w">          </span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx-pod-1&quot;</span>,
+<span class="w">          </span><span class="s2">&quot;namespace&quot;</span>:<span class="w"> </span><span class="s2">&quot;default&quot;</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">      </span><span class="o">}</span>,
+<span class="w">      </span><span class="o">{</span>
+<span class="w">        </span><span class="s2">&quot;ip&quot;</span>:<span class="w"> </span><span class="s2">&quot;10.244.1.3&quot;</span>,
+<span class="w">        </span><span class="s2">&quot;nodeName&quot;</span>:<span class="w"> </span><span class="s2">&quot;worker-2&quot;</span>,
+<span class="w">        </span><span class="s2">&quot;targetRef&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">          </span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;Pod&quot;</span>,
+<span class="w">          </span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;nginx-pod-2&quot;</span>,
+<span class="w">          </span><span class="s2">&quot;namespace&quot;</span>:<span class="w"> </span><span class="s2">&quot;default&quot;</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">      </span><span class="o">}</span>
+<span class="w">    </span><span class="o">]</span>,
+<span class="w">    </span><span class="s2">&quot;ports&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;port&quot;</span>:<span class="w"> </span><span class="m">80</span><span class="o">}]</span>
+<span class="w">  </span><span class="o">}]</span>
+<span class="o">}</span>
+</code></pre></div>
+<p><strong>Note</strong>: Endpoints is a separate object from Service!</p>
+<h2 id="phase-4-kube-proxy-actions-on-every-node"><strong>Phase 4: Kube-proxy Actions (on EVERY node)</strong></h2>
+<h3 id="step-8-kube-proxy-watches-services-endpoints"><strong>Step 8: Kube-proxy Watches Services &amp; Endpoints</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Each kube-proxy watches TWO streams:</span>
+<span class="m">1</span>.<span class="w"> </span>WATCH<span class="w"> </span>/api/v1/services?watch<span class="o">=</span><span class="nb">true</span>
+<span class="m">2</span>.<span class="w"> </span>WATCH<span class="w"> </span>/api/v1/endpoints?watch<span class="o">=</span><span class="nb">true</span>
+
+<span class="c1"># Receives events:</span>
+Service<span class="w"> </span>ADDED:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;clusterIP&quot;</span>:<span class="w"> </span><span class="s2">&quot;10.96.123.45&quot;</span>,<span class="w"> </span><span class="s2">&quot;ports&quot;</span>:<span class="w"> </span><span class="o">[</span><span class="m">80</span><span class="o">]}</span>
+Endpoints<span class="w"> </span>ADDED:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;subsets&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;addresses&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;ip&quot;</span>:<span class="w"> </span><span class="s2">&quot;10.244.1.2&quot;</span><span class="o">}</span>,<span class="w"> </span>...<span class="o">]}]}</span>
+</code></pre></div>
+<h3 id="step-9-iptables-mode-traditional"><strong>Step 9: iptables Mode (Traditional)</strong></h3>
+<p><strong>On each node, kube-proxy creates iptables rules:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Create KUBE-SERVICES chain</span>
+iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-N<span class="w"> </span>KUBE-SERVICES
+
+<span class="c1"># 2. Jump to KUBE-SERVICES from OUTPUT/PREROUTING</span>
+iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>OUTPUT<span class="w"> </span>-m<span class="w"> </span>comment<span class="w"> </span>--comment<span class="w"> </span><span class="s2">&quot;kubernetes service portals&quot;</span><span class="w"> </span>-j<span class="w"> </span>KUBE-SERVICES
+iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>PREROUTING<span class="w"> </span>-m<span class="w"> </span>comment<span class="w"> </span>--comment<span class="w"> </span><span class="s2">&quot;kubernetes service portals&quot;</span><span class="w"> </span>-j<span class="w"> </span>KUBE-SERVICES
+
+<span class="c1"># 3. Create service-specific chain</span>
+iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-N<span class="w"> </span>KUBE-SVC-XXXXXXXX<span class="w">  </span><span class="c1"># Hash of service name</span>
+
+<span class="c1"># 4. Route to service chain</span>
+iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>KUBE-SERVICES<span class="w"> </span>-d<span class="w"> </span><span class="m">10</span>.96.123.45/32<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">80</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-m<span class="w"> </span>comment<span class="w"> </span>--comment<span class="w"> </span><span class="s2">&quot;default/nginx-service:&quot;</span><span class="w"> </span>-j<span class="w"> </span>KUBE-SVC-XXXXXXXX
+
+<span class="c1"># 5. Load balancing rules (random)</span>
+iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>KUBE-SVC-XXXXXXXX<span class="w"> </span>-m<span class="w"> </span>statistic<span class="w"> </span>--mode<span class="w"> </span>random<span class="w"> </span>--probability<span class="w"> </span><span class="m">0</span>.5<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-m<span class="w"> </span>comment<span class="w"> </span>--comment<span class="w"> </span><span class="s2">&quot;default/nginx-service:&quot;</span><span class="w"> </span>-j<span class="w"> </span>KUBE-SEP-AAAAAAA
+iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>KUBE-SVC-XXXXXXXX<span class="w"> </span>-m<span class="w"> </span>comment<span class="w"> </span>--comment<span class="w"> </span><span class="s2">&quot;default/nginx-service:&quot;</span><span class="w"> </span>-j<span class="w"> </span>KUBE-SEP-BBBBBBB
+
+<span class="c1"># 6. Endpoint rules</span>
+iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-N<span class="w"> </span>KUBE-SEP-AAAAAAA
+iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>KUBE-SEP-AAAAAAA<span class="w"> </span>-s<span class="w"> </span><span class="m">10</span>.244.1.2/32<span class="w"> </span>-m<span class="w"> </span>comment<span class="w"> </span>--comment<span class="w"> </span><span class="s2">&quot;default/nginx-service:&quot;</span><span class="w"> </span>-j<span class="w"> </span>KUBE-MARK-MASQ
+iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>KUBE-SEP-AAAAAAA<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>-m<span class="w"> </span>comment<span class="w"> </span>--comment<span class="w"> </span><span class="s2">&quot;default/nginx-service:&quot;</span><span class="w"> </span>-j<span class="w"> </span>DNAT<span class="w"> </span>--to-destination<span class="w"> </span><span class="m">10</span>.244.1.2:80
+
+iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-N<span class="w"> </span>KUBE-SEP-BBBBBBB
+iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>KUBE-SEP-BBBBBBB<span class="w"> </span>-s<span class="w"> </span><span class="m">10</span>.244.1.3/32<span class="w"> </span>-m<span class="w"> </span>comment<span class="w"> </span>--comment<span class="w"> </span><span class="s2">&quot;default/nginx-service:&quot;</span><span class="w"> </span>-j<span class="w"> </span>KUBE-MARK-MASQ
+iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>KUBE-SEP-BBBBBBB<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>-m<span class="w"> </span>comment<span class="w"> </span>--comment<span class="w"> </span><span class="s2">&quot;default/nginx-service:&quot;</span><span class="w"> </span>-j<span class="w"> </span>DNAT<span class="w"> </span>--to-destination<span class="w"> </span><span class="m">10</span>.244.1.3:80
+</code></pre></div>
+<h3 id="step-10-ipvs-mode-modern"><strong>Step 10: IPVS Mode (Modern)</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Create virtual service</span>
+ipvsadm<span class="w"> </span>-A<span class="w"> </span>-t<span class="w"> </span><span class="m">10</span>.96.123.45:80<span class="w"> </span>-s<span class="w"> </span>rr<span class="w">  </span><span class="c1"># Round-robin scheduling</span>
+
+<span class="c1"># 2. Add real servers (pod IPs)</span>
+ipvsadm<span class="w"> </span>-a<span class="w"> </span>-t<span class="w"> </span><span class="m">10</span>.96.123.45:80<span class="w"> </span>-r<span class="w"> </span><span class="m">10</span>.244.1.2:80<span class="w"> </span>-m
+ipvsadm<span class="w"> </span>-a<span class="w"> </span>-t<span class="w"> </span><span class="m">10</span>.96.123.45:80<span class="w"> </span>-r<span class="w"> </span><span class="m">10</span>.244.1.3:80<span class="w"> </span>-m
+</code></pre></div>
+<h2 id="phase-5-dns-setup"><strong>Phase 5: DNS Setup</strong></h2>
+<h3 id="step-11-coredns-watches"><strong>Step 11: CoreDNS Watches</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># CoreDNS watches Services:</span>
+WATCH<span class="w"> </span>/api/v1/services?watch<span class="o">=</span><span class="nb">true</span>
+
+<span class="c1"># Event received: Service ADDED with clusterIP</span>
+</code></pre></div>
+<h3 id="step-12-dns-record-creation"><strong>Step 12: DNS Record Creation</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># CoreDNS adds DNS records:</span>
+nginx-service.default.svc.cluster.local.<span class="w"> </span>IN<span class="w"> </span>A<span class="w"> </span><span class="m">10</span>.96.123.45
+<span class="c1"># Also SRV record for port discovery</span>
+</code></pre></div>
+<h2 id="phase-6-network-programming-complete"><strong>Phase 6: Network Programming Complete</strong></h2>
+<h3 id="step-13-network-flow"><strong>Step 13: Network Flow</strong></h3>
+<p>Now when a pod talks to the service:</p>
+<div class="highlight"><pre><span></span><code>Pod → Service (nginx-service:80 or 10.96.123.45:80)
+     ↓ (iptables/IPVS on host node intercepts)
+     ↓ (DNAT: 10.96.123.45:80 → 10.244.1.2:80)
+     ↓
+Target Pod (10.244.1.2:80)
+</code></pre></div>
+<h2 id="phase-7-continuous-updates"><strong>Phase 7: Continuous Updates</strong></h2>
+<h3 id="step-14-pod-changes"><strong>Step 14: Pod Changes</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># When pod dies and new one created:</span>
+<span class="m">1</span>.<span class="w"> </span>Kubelet<span class="w"> </span>updates<span class="w"> </span>pod<span class="w"> </span>status<span class="w"> </span>→<span class="w"> </span>API<span class="w"> </span>Server
+<span class="m">2</span>.<span class="w"> </span>Endpoints<span class="w"> </span>Controller<span class="w"> </span>sees<span class="w"> </span>pod<span class="w"> </span>IP<span class="w"> </span>removed
+<span class="m">3</span>.<span class="w"> </span>Updates<span class="w"> </span>Endpoints<span class="w"> </span>object<span class="w"> </span><span class="o">(</span>remove<span class="w"> </span>old<span class="w"> </span>IP,<span class="w"> </span>add<span class="w"> </span>new<span class="w"> </span>IP<span class="o">)</span>
+<span class="m">4</span>.<span class="w"> </span>Kube-proxy<span class="w"> </span>watches<span class="w"> </span>Endpoints<span class="w"> </span>update
+<span class="m">5</span>.<span class="w"> </span>Updates<span class="w"> </span>iptables/IPVS<span class="w"> </span>rules
+</code></pre></div>
+<h3 id="step-15-service-updates"><strong>Step 15: Service Updates</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># When Service selector changes:</span>
+<span class="m">1</span>.<span class="w"> </span>User<span class="w"> </span>updates<span class="w"> </span>Service<span class="w"> </span>selector<span class="w"> </span><span class="o">(</span>app:<span class="w"> </span>nginx<span class="w"> </span>→<span class="w"> </span>app:<span class="w"> </span>new-app<span class="o">)</span>
+<span class="m">2</span>.<span class="w"> </span>API<span class="w"> </span>Server<span class="w"> </span>stores<span class="w"> </span>update
+<span class="m">3</span>.<span class="w"> </span>Endpoints<span class="w"> </span>Controller:
+<span class="w">   </span>-<span class="w"> </span>Finds<span class="w"> </span>OLD<span class="w"> </span>pods<span class="w"> </span><span class="o">(</span><span class="nv">app</span><span class="o">=</span>nginx<span class="o">)</span><span class="w"> </span>→<span class="w"> </span>remove<span class="w"> </span>from<span class="w"> </span>Endpoints
+<span class="w">   </span>-<span class="w"> </span>Finds<span class="w"> </span>NEW<span class="w"> </span>pods<span class="w"> </span><span class="o">(</span><span class="nv">app</span><span class="o">=</span>new-app<span class="o">)</span><span class="w"> </span>→<span class="w"> </span>add<span class="w"> </span>to<span class="w"> </span>Endpoints
+<span class="m">4</span>.<span class="w"> </span>Kube-proxy<span class="w"> </span>updates<span class="w"> </span>rules
+</code></pre></div>
+<h2 id="summary-of-objects-created"><strong>Summary of Objects Created:</strong></h2>
+<ol>
+<li><strong>Service</strong>: <code>nginx-service</code> (ClusterIP assigned)</li>
+<li><strong>Endpoints</strong>: <code>nginx-service</code> (pod IPs list)  </li>
+<li><strong>iptables/IPVS rules</strong>: On every node</li>
+<li><strong>DNS record</strong>: In CoreDNS</li>
+</ol>
+<h2 id="complete-data-flow"><strong>Complete Data Flow:</strong></h2>
+<div class="highlight"><pre><span></span><code>User → API Server → etcd
+           ↓
+Endpoints Controller → Watches Pods → Updates Endpoints
+           ↓
+Kube-proxy (every node) → Watches Service+Endpoints → Updates iptables/IPVS
+           ↓  
+CoreDNS → Watches Services → Updates DNS
+</code></pre></div>
+<p><strong>Service is virtual - just an IP + iptables rules. Endpoints hold actual pod IPs. Kube-proxy makes them work together.</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "content.code.copy", "search.highlight"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

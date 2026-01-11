@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Vikash Kumar">
+    <link rel="canonical" href="https://opsalchemy.github.io/kubequest/compose/05-kubeconfig/question/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Kubeconfig &amp; Kubernetes PKI - Practical Challenges - CKA Exam Mastery</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <link href="../../stylesheets/extra.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Kubeconfig \u0026amp; Kubernetes PKI - Practical Challenges", url: "#_top", children: [
+              {title: "Challenge 1: Certificate Analysis in Running Cluster", url: "#challenge-1-certificate-analysis-in-running-cluster" },
+              {title: "Challenge 2: Multi-Cluster Kubeconfig Management", url: "#challenge-2-multi-cluster-kubeconfig-management" },
+              {title: "Challenge 3: Create Users Using Kubernetes CSR API", url: "#challenge-3-create-users-using-kubernetes-csr-api" },
+              {title: "Challenge 4: Build a User Provisioning Automation Script", url: "#challenge-4-build-a-user-provisioning-automation-script" },
+              {title: "Challenge 5: Troubleshoot Certificate Mismatches", url: "#challenge-5-troubleshoot-certificate-mismatches" },
+              {title: "Challenge 6: Monitor Certificate Expiration", url: "#challenge-6-monitor-certificate-expiration" },
+              {title: "Challenge 7: Certificate Renewal Workflow", url: "#challenge-7-certificate-renewal-workflow" },
+              {title: "Challenge 8: Custom Certificate with Specific SANs", url: "#challenge-8-custom-certificate-with-specific-sans" },
+              {title: "Challenge 9: Embedded vs Referenced Certificates in Kubeconfig", url: "#challenge-9-embedded-vs-referenced-certificates-in-kubeconfig" },
+              {title: "Challenge 10: Complete User Lifecycle", url: "#challenge-10-complete-user-lifecycle" },
+              {title: "Challenge 11: CSR Management in Kubernetes", url: "#challenge-11-csr-management-in-kubernetes" },
+              {title: "Challenge 12: Multi-Cluster User Management", url: "#challenge-12-multi-cluster-user-management" },
+              {title: "Challenge 13: Kubeconfig Recovery and Backup", url: "#challenge-13-kubeconfig-recovery-and-backup" },
+              {title: "Challenge 14: Understanding Certificate Authorities", url: "#challenge-14-understanding-certificate-authorities" },
+              {title: "Challenge 15: Real-World Incident Response", url: "#challenge-15-real-world-incident-response" },
+              {title: "Challenge 16: Kubelet Client Certificate Rotation", url: "#challenge-16-kubelet-client-certificate-rotation" },
+              {title: "Challenge 17: Service Account Token and RBAC Integration", url: "#challenge-17-service-account-token-and-rbac-integration" },
+              {title: "Challenge 18: Kube-Controller-Manager and Kube-Scheduler Authentication", url: "#challenge-18-kube-controller-manager-and-kube-scheduler-authentication" },
+              {title: "Challenge 19: Network Policy and Certificate-Based Service Communication", url: "#challenge-19-network-policy-and-certificate-based-service-communication" },
+              {title: "Challenge 20: Audit Logging of Authentication Events", url: "#challenge-20-audit-logging-of-authentication-events" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="../../javascripts/extra.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../solutions/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../solutions/" class="btn btn-xs btn-link">
+        Kubeconfig &amp; PKI - Complete Solutions Guide
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../notes/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../notes/" class="btn btn-xs btn-link">
+        Kubeconfig &amp; Kubernetes PKI Fundamentals
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="kubeconfig-kubernetes-pki-practical-challenges">Kubeconfig &amp; Kubernetes PKI - Practical Challenges</h1>
+<p>Hands-on exercises for mastering Kubernetes certificate management and kubeconfig operations. All scenarios use kind clusters.</p>
+<hr />
+<h2 id="challenge-1-certificate-analysis-in-running-cluster">Challenge 1: Certificate Analysis in Running Cluster</h2>
+<p>Create a kind cluster and investigate its PKI infrastructure.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Create a kind cluster named <code>cka-cluster</code></li>
+<li>Find all certificate files in the cluster's PKI directory</li>
+<li>Determine the CN (Common Name) of the cluster CA</li>
+<li>Verify whether the CA certificate is self-signed</li>
+<li>Check what the API server certificate's issuer is</li>
+<li>Extract the CA certificate from your kubeconfig and verify its validity dates</li>
+<li>Calculate how many days until the CA certificate expires</li>
+<li>List all DNS names that the API server certificate is valid for</li>
+<li>List all IP addresses that the API server certificate is valid for</li>
+<li>Explain why multiple DNS names and IPs are needed in the API server certificate</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Write a script that extracts and prints:</li>
+<li>Certificate validity dates</li>
+<li>Certificate CN</li>
+<li>Days until expiration</li>
+<li>All SANs (DNS names and IPs)</li>
+<li>Whether cert is self-signed</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>Your script runs without errors</li>
+<li>Output is human-readable and formatted</li>
+<li>You understand why each certificate component matters</li>
+</ul>
+<hr />
+<h2 id="challenge-2-multi-cluster-kubeconfig-management">Challenge 2: Multi-Cluster Kubeconfig Management</h2>
+<p>Manage three separate kind clusters with merged kubeconfigs.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Create three kind clusters: <code>prod-cluster</code>, <code>staging-cluster</code>, <code>dev-cluster</code></li>
+<li>Get individual kubeconfigs for each cluster</li>
+<li>Merge all three kubeconfigs into a single file</li>
+<li>Create separate contexts for each cluster, each pointing to a different default namespace:</li>
+<li>prod-cluster → production namespace</li>
+<li>staging-cluster → staging namespace</li>
+<li>dev-cluster → development namespace</li>
+<li>Switch between contexts and verify that the active namespace changes</li>
+<li>Write a function that lets you interactively select and switch to any context</li>
+<li>Display current cluster, user, and namespace information after each switch</li>
+<li>Make the function persistent so it loads every time you open a shell</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Merged kubeconfig file</li>
+<li>Function in your shell rc file</li>
+<li>Demonstrate switching between all three clusters</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>All contexts work without errors</li>
+<li>Switching contexts changes both the active cluster and namespace</li>
+<li>Function shows context info after switching</li>
+</ul>
+<hr />
+<h2 id="challenge-3-create-users-using-kubernetes-csr-api">Challenge 3: Create Users Using Kubernetes CSR API</h2>
+<p>Provision three new users with certificate-based authentication using the Kubernetes CSR API.</p>
+<p><strong>User specifications:</strong></p>
+<ul>
+<li>User 1: <code>alice</code> with group <code>developers</code> - needs read-only pod access</li>
+<li>User 2: <code>bob</code> with group <code>developers</code> - needs read-only pod access</li>
+<li>User 3: <code>admin-carol</code> with group <code>kubeadm:cluster-admins</code> - needs full cluster admin</li>
+</ul>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Generate private key for each user</li>
+<li>Create a certificate signing request for each user with proper CN and Organization fields</li>
+<li>Submit each CSR to the Kubernetes API as a CertificateSigningRequest object</li>
+<li>Approve the CSRs</li>
+<li>Extract the signed certificates from Kubernetes</li>
+<li>Add each user to your kubeconfig</li>
+<li>Create contexts for each user</li>
+<li>Apply RBAC permissions so developers can only view pods and admin has full access</li>
+<li>Test that alice can list pods but cannot delete them</li>
+<li>Test that admin-carol can delete pods</li>
+<li>Test that alice cannot access nodes or other resources</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Three working user contexts in kubeconfig</li>
+<li>RBAC permissions applied correctly</li>
+<li>Test results showing permission enforcement</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>All users can authenticate</li>
+<li>Permissions match the intended roles</li>
+<li>Developer users are restricted, admin user has full access</li>
+</ul>
+<hr />
+<h2 id="challenge-4-build-a-user-provisioning-automation-script">Challenge 4: Build a User Provisioning Automation Script</h2>
+<p>Create a fully automated script that provisions a complete user with certificate and RBAC.</p>
+<p><strong>Script must:</strong></p>
+<ol>
+<li>Accept username, group, and cluster as arguments</li>
+<li>Generate a private key</li>
+<li>Create a CSR with the specified CN and Organization</li>
+<li>Submit CSR to Kubernetes</li>
+<li>Wait for CSR approval (manual or automatic)</li>
+<li>Extract the signed certificate</li>
+<li>Configure the user's kubeconfig</li>
+<li>Create appropriate RBAC rolebindings based on the group</li>
+<li>Test authentication by attempting to list pods</li>
+<li>Output clear messages showing each step</li>
+<li>Save the private key with restrictive permissions</li>
+<li>Generate a warning about key security</li>
+</ol>
+<p><strong>Test your script:</strong></p>
+<ul>
+<li>Provision 3 different users with different groups</li>
+<li>Verify each user context works</li>
+<li>Verify permissions are enforced</li>
+</ul>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Single script file that handles complete provisioning</li>
+<li>Usage documentation (how to run the script)</li>
+<li>Script output showing all 10+ steps</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>Script runs without manual intervention (except CSR approval)</li>
+<li>All users are properly configured and have correct permissions</li>
+<li>Script output is clear and useful for understanding what happened</li>
+</ul>
+<hr />
+<h2 id="challenge-5-troubleshoot-certificate-mismatches">Challenge 5: Troubleshoot Certificate Mismatches</h2>
+<p>You have a certificate problem to solve.</p>
+<p><strong>Scenario 1: Connection fails with certificate signed by unknown authority</strong></p>
+<p>Your developer cannot connect to the cluster. They're getting an error about the certificate not being signed by a known authority.</p>
+<ul>
+<li>Diagnose what's wrong</li>
+<li>Verify the user's certificate was signed by the correct CA</li>
+<li>Verify the CA certificate in their kubeconfig matches the cluster CA</li>
+<li>Fix the issue and test that they can connect</li>
+</ul>
+<p><strong>Scenario 2: API server hostname mismatch</strong></p>
+<p>Someone tries connecting to the API server using a hostname that's not in the certificate SAN.</p>
+<ul>
+<li>Determine why the connection fails</li>
+<li>Show what hostname they're using</li>
+<li>Show what hostnames are valid in the certificate</li>
+<li>Explain why this is a security feature</li>
+<li>Find a valid way to connect using information from the certificate</li>
+</ul>
+<p><strong>Scenario 3: Kubeconfig context is missing</strong></p>
+<p>A user's kubeconfig is missing the context they need.</p>
+<ul>
+<li>Determine what context is missing</li>
+<li>Determine what cluster and user it should reference</li>
+<li>Create the missing context</li>
+<li>Test that it works</li>
+</ul>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Document each problem</li>
+<li>Show diagnostic steps you took</li>
+<li>Show how you fixed each issue</li>
+<li>Prove the issue is resolved with a successful test</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>You fix each problem correctly</li>
+<li>You understand why each problem occurred</li>
+<li>You demonstrate the solution works</li>
+</ul>
+<hr />
+<h2 id="challenge-6-monitor-certificate-expiration">Challenge 6: Monitor Certificate Expiration</h2>
+<p>Create a monitoring script that tracks certificate expiration across multiple users.</p>
+<p><strong>Your script must:</strong></p>
+<ol>
+<li>Read all users from your kubeconfig</li>
+<li>For each user, extract their certificate</li>
+<li>Determine when each certificate expires</li>
+<li>Calculate days remaining until expiration</li>
+<li>Highlight certificates expiring within 30 days</li>
+<li>Show expired certificates</li>
+<li>Output a formatted report</li>
+<li>Color-code the output (OK/Warning/Critical)</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Script that produces an expiration report</li>
+<li>Sample output showing multiple users with different expiration times</li>
+<li>Proof that it correctly identifies soon-to-expire certificates</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>Script runs without errors</li>
+<li>Output is clear and actionable</li>
+<li>Dates are accurate and correct</li>
+</ul>
+<hr />
+<h2 id="challenge-7-certificate-renewal-workflow">Challenge 7: Certificate Renewal Workflow</h2>
+<p>Renew an expiring user certificate.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Identify a user certificate that will expire soon (or create one with short validity)</li>
+<li>Generate a new private key for renewal</li>
+<li>Create a new CSR with the same CN and Organization as the original</li>
+<li>Submit the renewal CSR to Kubernetes</li>
+<li>Approve the new CSR</li>
+<li>Extract the new certificate</li>
+<li>Update the user's kubeconfig with the new certificate</li>
+<li>Verify the user can still authenticate with the new certificate</li>
+<li>Compare the old and new certificates - show what changed and what stayed the same</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Completed renewal process</li>
+<li>Comparison of old and new certificates</li>
+<li>Proof that the renewed certificate works</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>Renewal process completes without errors</li>
+<li>User can authenticate with the new certificate</li>
+<li>You understand the renewal workflow</li>
+</ul>
+<hr />
+<h2 id="challenge-8-custom-certificate-with-specific-sans">Challenge 8: Custom Certificate with Specific SANs</h2>
+<p>Create a custom server certificate with specific Subject Alternative Names.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Create an OpenSSL config file that specifies custom SANs including:</li>
+<li>Multiple DNS names</li>
+<li>Multiple IP addresses</li>
+<li>Specific key usage and extended key usage extensions</li>
+<li>Generate a private key</li>
+<li>Create a CSR using your config</li>
+<li>Sign the certificate with the cluster CA</li>
+<li>Verify that all your specified SANs are in the final certificate</li>
+<li>Verify the key usage extensions are correct</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>OpenSSL config file</li>
+<li>Generated certificate</li>
+<li>Verification that SANs match what you specified</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>Certificate contains all specified SANs</li>
+<li>Certificate is properly signed by cluster CA</li>
+<li>Extensions are exactly as you configured them</li>
+</ul>
+<hr />
+<h2 id="challenge-9-embedded-vs-referenced-certificates-in-kubeconfig">Challenge 9: Embedded vs Referenced Certificates in Kubeconfig</h2>
+<p>Compare and convert between embedded and referenced certificates.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Create a user context with embedded certificates (full base64 data in kubeconfig file)</li>
+<li>Create another user context with referenced certificates (file paths in kubeconfig)</li>
+<li>Compare the kubeconfig files - show size differences</li>
+<li>Show which approach is portable (can move kubeconfig to another machine)</li>
+<li>Show which approach requires external files</li>
+<li>Convert an embedded certificate to a referenced one</li>
+<li>Verify both approaches work for authentication</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Two kubeconfigs (one embedded, one referenced)</li>
+<li>Size comparison</li>
+<li>Explanation of when to use each approach</li>
+<li>Proof both work for authentication</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>You understand the trade-offs between the two approaches</li>
+<li>Both approaches authenticate successfully</li>
+<li>You can explain when to use each one</li>
+</ul>
+<hr />
+<h2 id="challenge-10-complete-user-lifecycle">Challenge 10: Complete User Lifecycle</h2>
+<p>Create, manage, monitor, and eventually retire a user account.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Create a new user with full provisioning automation</li>
+<li>Add the user to your kubeconfig</li>
+<li>Create RBAC permissions for the user</li>
+<li>Verify the user can authenticate and has correct permissions</li>
+<li>Monitor the user's certificate expiration date</li>
+<li>Track the certificate through its lifecycle</li>
+<li>Renew the certificate before it expires</li>
+<li>Verify the renewed certificate works</li>
+<li>Create a report showing certificate history</li>
+<li>Demonstrate removing the user from kubeconfig</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Complete user lifecycle documentation</li>
+<li>Provisioning script that handles all steps</li>
+<li>Expiration monitoring report</li>
+<li>Certificate renewal proof</li>
+<li>User removal process</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>User provisioning is fully automated</li>
+<li>Certificate is successfully renewed before expiration</li>
+<li>All steps are documented and reproducible</li>
+</ul>
+<hr />
+<h2 id="challenge-11-csr-management-in-kubernetes">Challenge 11: CSR Management in Kubernetes</h2>
+<p>Work directly with Kubernetes CSR objects.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Create multiple CSRs in the cluster</li>
+<li>List all pending CSRs</li>
+<li>View details of specific CSRs (including the original request)</li>
+<li>Approve some CSRs</li>
+<li>Deny other CSRs</li>
+<li>Delete CSRs</li>
+<li>Extract certificates from approved CSRs</li>
+<li>Create a script that auto-approves CSRs from specific users or groups</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Demonstration of CSR operations</li>
+<li>Script for automated CSR approval</li>
+<li>Proof that extracted certificates work for authentication</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>You understand the CSR API</li>
+<li>You can perform all CSR operations</li>
+<li>Auto-approval script works correctly</li>
+</ul>
+<hr />
+<h2 id="challenge-12-multi-cluster-user-management">Challenge 12: Multi-Cluster User Management</h2>
+<p>Manage the same user across multiple clusters.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Create the same user (same CN, same group) in both prod and dev clusters</li>
+<li>Generate certificates for this user in each cluster</li>
+<li>Create a single kubeconfig that has contexts for both clusters with the same user</li>
+<li>Test that the user can authenticate to both clusters</li>
+<li>Verify that RBAC permissions are enforced independently in each cluster</li>
+<li>Apply different permissions to the same user in each cluster</li>
+<li>Verify that the user's permissions match what you set in each cluster</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Kubeconfig with user contexts for both clusters</li>
+<li>RBAC configuration for both clusters</li>
+<li>Test results showing user works in both clusters with different permissions</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>Same user authenticates to both clusters</li>
+<li>Permissions are independent per cluster</li>
+<li>You understand how RBAC works across clusters</li>
+</ul>
+<hr />
+<h2 id="challenge-13-kubeconfig-recovery-and-backup">Challenge 13: Kubeconfig Recovery and Backup</h2>
+<p>Backup your kubeconfig and recover from corruption.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Create a backup strategy for your kubeconfig</li>
+<li>Create automated backups</li>
+<li>Intentionally corrupt your kubeconfig</li>
+<li>Attempt to use the corrupted kubeconfig (should fail)</li>
+<li>Recover from your backup</li>
+<li>Verify all contexts work after recovery</li>
+<li>Create a script that verifies kubeconfig integrity</li>
+<li>Create a validation function that tests all contexts can connect</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Backup script</li>
+<li>Recovery script</li>
+<li>Validation script</li>
+<li>Proof that recovery works</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>Backup and recovery process works</li>
+<li>Validation correctly identifies working and broken contexts</li>
+<li>You can recover from corruption</li>
+</ul>
+<hr />
+<h2 id="challenge-14-understanding-certificate-authorities">Challenge 14: Understanding Certificate Authorities</h2>
+<p>Work with multiple CAs.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Extract the cluster CA</li>
+<li>Extract other CAs from the cluster (ETCD CA, front-proxy CA, etc.)</li>
+<li>Understand which certificates are signed by which CA</li>
+<li>Verify that API server cert is signed by cluster CA</li>
+<li>Verify that kubelet cert is signed by cluster CA</li>
+<li>Understand what would happen if a certificate was signed by a different CA</li>
+<li>Create a script that validates all system certificates are signed by expected CAs</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>List of all CAs in cluster</li>
+<li>Which certificates are signed by which CA</li>
+<li>Validation script</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>You understand the CA hierarchy</li>
+<li>Your validation script correctly checks certificate chains</li>
+</ul>
+<hr />
+<h2 id="challenge-15-real-world-incident-response">Challenge 15: Real-World Incident Response</h2>
+<p>Simulate and respond to certificate-related incidents.</p>
+<p><strong>Incident 1: Kubelet certificate expires</strong></p>
+<ul>
+<li>A kubelet certificate expires</li>
+<li>Node goes NotReady</li>
+<li>Diagnose why (certificate expiration)</li>
+<li>Fix the issue</li>
+<li>Restore node to Ready state</li>
+</ul>
+<p><strong>Incident 2: User certificate theft</strong></p>
+<ul>
+<li>Assume a user's certificate was compromised</li>
+<li>Revoke the user's access (remove RBAC and kubeconfig)</li>
+<li>Provision the user with a new certificate</li>
+<li>Verify old certificate no longer works</li>
+</ul>
+<p><strong>Incident 3: Certificate configuration mistake</strong></p>
+<ul>
+<li>Someone created a certificate without the correct SANs</li>
+<li>Connections fail with hostname mismatch</li>
+<li>Diagnose the problem</li>
+<li>Create a new certificate with correct SANs</li>
+<li>Update configuration to use new certificate</li>
+</ul>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Diagnosis and resolution for each incident</li>
+<li>Steps you took to fix each problem</li>
+<li>Proof that each issue is resolved</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>You successfully diagnose and fix all incidents</li>
+<li>You understand how to prevent each incident in the future</li>
+</ul>
+<hr />
+<h2 id="challenge-16-kubelet-client-certificate-rotation">Challenge 16: Kubelet Client Certificate Rotation</h2>
+<p>Investigate and manage kubelet client certificates which authenticate the kubelet to the API server.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Create a kind cluster with kubelet client certificate rotation enabled</li>
+<li>Find the kubelet client certificate in the node</li>
+<li>Extract and examine the kubelet client certificate (CN should be system:node:NODENAME)</li>
+<li>Verify the certificate is signed by the cluster CA</li>
+<li>Simulate certificate rotation by manually creating a new CSR from the kubelet's key</li>
+<li>Understand what happens when kubelet certificate expires without rotation</li>
+<li>Create a monitoring script that tracks kubelet certificate expiration dates</li>
+<li>Compare kubelet certs across multiple nodes (if multi-node cluster)</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Script that monitors kubelet certificate expiration</li>
+<li>Report showing certificate details for all kubelet certs</li>
+<li>Explanation of how kubelet certificate rotation prevents service disruption</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>You can locate and analyze kubelet certificates</li>
+<li>You understand the CN format for kubelet certificates</li>
+<li>Your monitoring script correctly identifies all kubelet certs</li>
+</ul>
+<hr />
+<h2 id="challenge-17-service-account-token-and-rbac-integration">Challenge 17: Service Account Token and RBAC Integration</h2>
+<p>Connect service account tokens to RBAC permissions.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Create a service account in a namespace</li>
+<li>Extract its token from the secret</li>
+<li>Create a kubeconfig that uses the service account token for authentication</li>
+<li>Use this kubeconfig to attempt API calls (will be denied without RBAC)</li>
+<li>Create a Role with specific pod permissions</li>
+<li>Bind the Role to the service account</li>
+<li>Verify the service account can now perform only the permitted actions</li>
+<li>Create another service account with different permissions in the same namespace</li>
+<li>Verify each service account has different access levels</li>
+<li>Mount a service account in a pod and test it can access the API</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Kubeconfig using service account token</li>
+<li>RBAC Role and RoleBinding</li>
+<li>Test results showing permission enforcement</li>
+<li>Pod that successfully uses the mounted service account</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>Service account token works for authentication</li>
+<li>RBAC permissions are enforced correctly</li>
+<li>Tokens are properly scoped to their permissions</li>
+</ul>
+<hr />
+<h2 id="challenge-18-kube-controller-manager-and-kube-scheduler-authentication">Challenge 18: Kube-Controller-Manager and Kube-Scheduler Authentication</h2>
+<p>Understand how system components authenticate.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Create a kind cluster</li>
+<li>Find the certificates used by kube-controller-manager to authenticate to the API server</li>
+<li>Find the certificates used by kube-scheduler to authenticate to the API server</li>
+<li>Examine CN and Organization fields - they should be <code>system:kube-controller-manager</code> and <code>system:kube-scheduler</code></li>
+<li>Verify these certificates are signed by the cluster CA</li>
+<li>Understand what permissions these components need (check RBAC clusterroles)</li>
+<li>Extract these certificates and create kubeconfigs using them</li>
+<li>Test that you can use these kubeconfigs to authenticate as the components</li>
+<li>Verify that each component can only do what their RBAC roles allow</li>
+<li>Explain why system components use certificates instead of service accounts</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Analysis of system component certificates</li>
+<li>Kubeconfigs for kube-controller-manager and kube-scheduler</li>
+<li>RBAC permissions for each component</li>
+<li>Explanation of component authentication design</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>You can locate all system component certificates</li>
+<li>You understand the CN format for system components (system:COMPONENTNAME)</li>
+<li>You understand why each component needs its own identity</li>
+</ul>
+<hr />
+<h2 id="challenge-19-network-policy-and-certificate-based-service-communication">Challenge 19: Network Policy and Certificate-Based Service Communication</h2>
+<p>Restrict communication between pods based on network policies while using certificate authentication.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Create a kind cluster with CNI that supports network policies (e.g., Calico)</li>
+<li>Create three namespaces: frontend, backend, database</li>
+<li>Deploy applications in each namespace</li>
+<li>Create network policies that:</li>
+<li>Allow frontend → backend communication</li>
+<li>Allow backend → database communication</li>
+<li>Deny frontend → database communication</li>
+<li>Deny database → anything</li>
+<li>Create certificates for each service</li>
+<li>Configure services to use mutual TLS (mTLS) for communication</li>
+<li>Test that allowed traffic flows but restricted traffic is blocked by network policy</li>
+<li>Verify that even though some pods could communicate at layer 3, network policy prevents it</li>
+<li>Create a network policy audit script that shows allowed and denied traffic</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Network policy definitions</li>
+<li>Certificates for each service</li>
+<li>Test results showing allowed/denied connections</li>
+<li>Audit script output</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>Network policies enforce correct traffic restrictions</li>
+<li>You understand the relationship between network policies and application-level authentication</li>
+<li>All tests show expected behavior</li>
+</ul>
+<hr />
+<h2 id="challenge-20-audit-logging-of-authentication-events">Challenge 20: Audit Logging of Authentication Events</h2>
+<p>Monitor and analyze authentication events in your cluster.</p>
+<p><strong>What you need to do:</strong></p>
+<ol>
+<li>Create a kind cluster with audit logging enabled</li>
+<li>Configure audit logging to capture:</li>
+<li>All authentication events</li>
+<li>All certificate-based authentication</li>
+<li>All service account token usage</li>
+<li>Perform various authentication actions:</li>
+<li>Connect as a user with certificate</li>
+<li>Use service account token from a pod</li>
+<li>Attempt unauthenticated connection (should fail)</li>
+<li>Use wrong certificate (should fail)</li>
+<li>Review audit logs and identify authentication events</li>
+<li>Parse audit logs to extract:</li>
+<li>User identity</li>
+<li>Timestamp</li>
+<li>Whether it succeeded or failed</li>
+<li>API action attempted</li>
+<li>Create a script that generates an authentication report</li>
+<li>Identify suspicious authentication patterns</li>
+<li>Create alerts for failed authentication attempts</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Audit logging configuration</li>
+<li>Audit log parser script</li>
+<li>Authentication report showing all login events</li>
+<li>Security analysis of authentication patterns</li>
+</ul>
+<p><strong>Success criteria:</strong></p>
+<ul>
+<li>Audit logging captures all authentication events</li>
+<li>You can parse and analyze audit logs</li>
+<li>You understand what to look for in authentication logs</li>
+<li>Your report clearly shows who accessed the cluster and when</li>
+</ul>
+<hr />
+<p><strong>Notes for all challenges:</strong></p>
+<ul>
+<li>Use kind clusters - no special production setup required</li>
+<li>Refer to <code>notes.md</code> for technical background and reference commands</li>
+<li>Use <code>solutions.md</code> for hints if you get stuck</li>
+<li>All challenges should be completed using a kind cluster you create</li>
+<li>Document your work as you go</li>
+<li>Test each step to ensure it works before moving to the next</li>
+</ul>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../solutions/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../solutions/" class="btn btn-xs btn-link">
+        Kubeconfig &amp; PKI - Complete Solutions Guide
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../notes/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../notes/" class="btn btn-xs btn-link">
+        Kubeconfig &amp; Kubernetes PKI Fundamentals
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>

@@ -11,7 +11,7 @@
     <link rel="canonical" href="https://opsalchemy.github.io/kubequest/compose/05-kubeconfig/notes/">
     <link rel="shortcut icon" href="../../img/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <title>Notes - CKA Exam Mastery</title>
+    <title>Kubeconfig &amp; Kubernetes PKI Fundamentals - CKA Exam Mastery</title>
     <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
     <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
     <link href="../../css/base.css" rel="stylesheet">
@@ -33,7 +33,18 @@
       var is_top_frame = false;
         
         var pageToc = [
-          {title: "Show the structure", url: "#_top", children: [
+          {title: "Kubeconfig \u0026amp; Kubernetes PKI Fundamentals", url: "#_top", children: [
+              {title: "Quick Reference: kubectl config Commands", url: "#quick-reference-kubectl-config-commands" },
+              {title: "Advanced: kubectl config Usage Patterns", url: "#advanced-kubectl-config-usage-patterns" },
+              {title: "Part 1: Kubernetes PKI Basics", url: "#part-1-kubernetes-pki-basics" },
+              {title: "Part 2: Understanding X.509 Certificates", url: "#part-2-understanding-x509-certificates" },
+              {title: "Part 3: Inspecting Certificates with OpenSSL", url: "#part-3-inspecting-certificates-with-openssl" },
+              {title: "Part 4: Kubeconfig File Format", url: "#part-4-kubeconfig-file-format" },
+              {title: "Part 5: Creating Custom Users with Certificates", url: "#part-5-creating-custom-users-with-certificates" },
+              {title: "Part 7: Kubernetes API CertificateSigningRequest (CSR)", url: "#part-7-kubernetes-api-certificatesigningrequest-csr" },
+              {title: "Part 8: Working with Kubeconfig - Examples", url: "#part-8-working-with-kubeconfig-examples" },
+          ]},
+          {title: "Show the structure", url: "#show-the-structure", children: [
           ]},
           {title: "Using grep/sed only", url: "#using-grepsed-only", children: [
           ]},
@@ -63,20 +74,20 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
   <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
     
     <div class="wm-article-nav pull-right">
-      <a href="../../06-cluster-certificates-and-kube-system%20%5Bimportant%5D/kubeadm-certs/" class="btn btn-xs btn-default pull-right">
+      <a href="../question/" class="btn btn-xs btn-default pull-right">
         Next
         <i class="fa fa-chevron-right" aria-hidden="true"></i>
       </a>
-      <a href="../../06-cluster-certificates-and-kube-system%20%5Bimportant%5D/kubeadm-certs/" class="btn btn-xs btn-link">
-        kubeadm Certificate Checks &amp; Renewal
+      <a href="../question/" class="btn btn-xs btn-link">
+        Kubeconfig &amp; Kubernetes PKI - Practical Challenges
       </a>
     </div>
     
     <div class="wm-article-nav">
-      <a href="../how-to-setup/" class="btn btn-xs btn-default pull-left">
+      <a href="../../04-admission-webhook/notes/" class="btn btn-xs btn-default pull-left">
         <i class="fa fa-chevron-left" aria-hidden="true"></i>
-        Previous</a><a href="../how-to-setup/" class="btn btn-xs btn-link">
-        How to setup
+        Previous</a><a href="../../04-admission-webhook/notes/" class="btn btn-xs btn-link">
+        Notes
       </a>
     </div>
     
@@ -84,7 +95,780 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
 
     
 
-    <p>~/.kube                                                                                                                      14:23:22
+    <h1 id="kubeconfig-kubernetes-pki-fundamentals">Kubeconfig &amp; Kubernetes PKI Fundamentals</h1>
+<p>Comprehensive guide to understanding Kubernetes PKI (Public Key Infrastructure), X.509 certificates, and kubeconfig file structure. Learn how to work with certificates, create custom users, and manage cluster authentication.</p>
+<h2 id="quick-reference-kubectl-config-commands">Quick Reference: kubectl config Commands</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># View configuration</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w">                    </span><span class="c1"># Show entire kubeconfig</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--raw<span class="w">              </span><span class="c1"># Show with decoded credentials</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--flatten<span class="w">          </span><span class="c1"># Merge all kubeconfigs</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--minify<span class="w">           </span><span class="c1"># Show only current context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>-o<span class="w"> </span>json<span class="w">            </span><span class="c1"># Output as JSON</span>
+
+<span class="c1"># Set cluster</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-cluster<span class="w"> </span>kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="o">=</span>https://172.30.1.2:6443<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--certificate-authority<span class="o">=</span>/etc/kubernetes/pki/ca.crt
+
+<span class="c1"># Set user credentials (certificate-based)</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>kubelet<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-certificate<span class="o">=</span>/etc/kubernetes/pki/kubelet.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-key<span class="o">=</span>/etc/kubernetes/pki/kubelet.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embed-certs<span class="o">=</span><span class="nb">true</span>
+
+<span class="c1"># Set user credentials (token-based)</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>token-user<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--token<span class="o">=</span>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+<span class="c1"># Create context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>default<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--user<span class="o">=</span>kubelet<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--namespace<span class="o">=</span>default
+
+<span class="c1"># Use context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>default
+
+<span class="c1"># Get current context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>current-context
+
+<span class="c1"># Get all clusters, users, contexts</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>get-clusters
+kubectl<span class="w"> </span>config<span class="w"> </span>get-users
+kubectl<span class="w"> </span>config<span class="w"> </span>get-contexts
+
+<span class="c1"># Rename context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>rename-context<span class="w"> </span>old-name<span class="w"> </span>new-name
+
+<span class="c1"># Delete entries</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>delete-cluster<span class="w"> </span>cluster-name
+kubectl<span class="w"> </span>config<span class="w"> </span>delete-user<span class="w"> </span>user-name
+kubectl<span class="w"> </span>config<span class="w"> </span>delete-context<span class="w"> </span>context-name
+
+<span class="c1"># Unset (remove) configuration</span>
+kubectl<span class="w"> </span>config<span class="w"> </span><span class="nb">unset</span><span class="w"> </span>current-context
+kubectl<span class="w"> </span>config<span class="w"> </span><span class="nb">unset</span><span class="w"> </span>clusters.cluster-name
+kubectl<span class="w"> </span>config<span class="w"> </span><span class="nb">unset</span><span class="w"> </span>users.user-name
+kubectl<span class="w"> </span>config<span class="w"> </span><span class="nb">unset</span><span class="w"> </span>contexts.context-name.namespace
+</code></pre></div>
+<hr />
+<h2 id="advanced-kubectl-config-usage-patterns">Advanced: kubectl config Usage Patterns</h2>
+<h3 id="pattern-1-setup-complete-cluster-access-one-command-sequence">Pattern 1: Setup Complete Cluster Access (One Command Sequence)</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Add cluster configuration</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-cluster<span class="w"> </span>prod-cluster<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="o">=</span>https://api.prod.example.com:6443<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--certificate-authority<span class="o">=</span>/path/to/ca.crt
+
+<span class="c1"># 2. Add user with certificate</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>prod-admin<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-certificate<span class="o">=</span>/path/to/admin.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-key<span class="o">=</span>/path/to/admin.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embed-certs<span class="o">=</span><span class="nb">true</span>
+
+<span class="c1"># 3. Create context binding</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>prod-admin<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="o">=</span>prod-cluster<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--user<span class="o">=</span>prod-admin<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--namespace<span class="o">=</span>default
+
+<span class="c1"># 4. Switch to use it</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>prod-admin
+
+<span class="c1"># Verify</span>
+kubectl<span class="w"> </span>cluster-info
+kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+</code></pre></div>
+<h3 id="pattern-2-add-token-based-user">Pattern 2: Add Token-Based User</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># For service account tokens</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>service-user<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--token<span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>create<span class="w"> </span>token<span class="w"> </span>my-service-account<span class="k">)</span>
+
+<span class="c1"># For predefined token</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>token-user<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--token<span class="o">=</span>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0...
+
+<span class="c1"># Use in context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>token-context<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--user<span class="o">=</span>token-user
+</code></pre></div>
+<h3 id="pattern-3-multiple-kubeconfigs">Pattern 3: Multiple Kubeconfigs</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Combine multiple kubeconfig files</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">KUBECONFIG</span><span class="o">=</span>~/.kube/config:~/.kube/prod-config:~/.kube/dev-config
+
+<span class="c1"># View all merged</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view
+
+<span class="c1"># Switch between clusters easily</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>prod-admin
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>dev-admin
+
+<span class="c1"># Make permanent</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;export KUBECONFIG=~/.kube/config:~/.kube/prod-config:~/.kube/dev-config&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.zshrc
+</code></pre></div>
+<h3 id="pattern-4-extract-user-credentials">Pattern 4: Extract User Credentials</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Extract certificate from kubeconfig</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--raw<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>grep<span class="w"> </span><span class="s1">&#39;client-certificate-data:&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>head<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span>user.crt
+
+<span class="c1"># Extract key from kubeconfig</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--raw<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>grep<span class="w"> </span><span class="s1">&#39;client-key-data:&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>head<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span>user.key
+
+<span class="c1"># Extract CA certificate</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--raw<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>grep<span class="w"> </span><span class="s1">&#39;certificate-authority-data:&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>head<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span>ca.crt
+</code></pre></div>
+<h3 id="pattern-5-context-specific-namespace">Pattern 5: Context-Specific Namespace</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create different contexts pointing to same cluster but different namespaces</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>dev-namespace<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--user<span class="o">=</span>devuser<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--namespace<span class="o">=</span>development
+
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>prod-namespace<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--user<span class="o">=</span>devuser<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--namespace<span class="o">=</span>production
+
+<span class="c1"># Switch context to change namespace automatically</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>dev-namespace<span class="w">   </span><span class="c1"># Now using development namespace</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w">                            </span><span class="c1"># Shows pods from development</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>prod-namespace<span class="w">  </span><span class="c1"># Now using production namespace</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w">                            </span><span class="c1"># Shows pods from production</span>
+</code></pre></div>
+<h3 id="pattern-6-temporary-context-override">Pattern 6: Temporary Context Override</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Switch context just for one command</span>
+kubectl<span class="w"> </span>--context<span class="o">=</span>staging-admin<span class="w"> </span>get<span class="w"> </span>nodes
+
+<span class="c1"># Override namespace for one command</span>
+kubectl<span class="w"> </span>--namespace<span class="o">=</span>kube-system<span class="w"> </span>get<span class="w"> </span>pods
+
+<span class="c1"># Override entire cluster connection</span>
+kubectl<span class="w"> </span>--server<span class="o">=</span>https://different-api:6443<span class="w"> </span>get<span class="w"> </span>nodes
+</code></pre></div>
+<h3 id="pattern-7-audit-kubeconfig">Pattern 7: Audit Kubeconfig</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Show current context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>current-context
+
+<span class="c1"># Show all contexts with current marker</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>get-contexts
+
+<span class="c1"># Show which cluster/user/namespace current context uses</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A3<span class="w"> </span><span class="s2">&quot;current-context&quot;</span>
+
+<span class="c1"># Check if specific context exists</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>get-contexts<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;^[*]&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span>
+
+<span class="c1"># Get API server for current context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A2<span class="w"> </span><span class="s2">&quot;current-context&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>cluster<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span>
+</code></pre></div>
+<h3 id="pattern-8-cluster-switching-script">Pattern 8: Cluster Switching Script</h3>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># Interactive cluster switcher</span>
+
+<span class="c1"># Get all contexts</span>
+<span class="nv">CONTEXTS</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>config<span class="w"> </span>get-contexts<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;NR &gt; 1 {print $2}&#39;</span><span class="k">)</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Available contexts:&quot;</span>
+<span class="k">select</span><span class="w"> </span>CONTEXT<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nv">$CONTEXTS</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$CONTEXT</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Switched to: </span><span class="nv">$CONTEXT</span><span class="s2">&quot;</span>
+<span class="w">  </span>kubectl<span class="w"> </span>config<span class="w"> </span>current-context
+<span class="w">  </span>kubectl<span class="w"> </span>cluster-info<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1
+<span class="w">  </span><span class="k">break</span>
+<span class="k">done</span>
+</code></pre></div>
+<hr />
+<h2 id="part-1-kubernetes-pki-basics">Part 1: Kubernetes PKI Basics</h2>
+<h3 id="what-is-pki">What is PKI?</h3>
+<p><strong>PKI (Public Key Infrastructure)</strong> is a system for creating, managing, and validating digital certificates used for authentication and encryption in Kubernetes. Every component that needs to authenticate uses certificates signed by the cluster's Certificate Authority (CA).</p>
+<h3 id="pki-directory-structure">PKI Directory Structure</h3>
+<p>All Kubernetes certificates are stored in <code>/etc/kubernetes/pki/</code>:</p>
+<div class="highlight"><pre><span></span><code>/etc/kubernetes/pki/
+├── ca.crt                  # Cluster CA certificate (what signed everything)
+├── ca.key                  # Cluster CA private key (secret! signs new certs)
+├── apiserver.crt           # API Server certificate
+├── apiserver.key           # API Server private key
+├── kubelet*.crt            # Kubelet certificates
+├── controller-manager.crt  # Controller manager certificate
+├── scheduler.crt           # Scheduler certificate
+├── front-proxy-ca.*        # Front proxy CA for API aggregation
+├── etcd/                   # ETCD certificates (database)
+│   ├── ca.crt
+│   ├── server.crt
+│   └── server.key
+└── sa.key                  # Service account signing key (not X.509)
+</code></pre></div>
+<h3 id="why-multiple-cas">Why Multiple CAs?</h3>
+<p>Kubernetes uses different CAs for security isolation:</p>
+<ol>
+<li><strong>Cluster CA</strong> (<code>ca.crt/ca.key</code>): Main CA, signs kubelet, controller-manager, scheduler certificates</li>
+<li><strong>API Server CA</strong>: Dedicated CA for API server communication</li>
+<li><strong>Front Proxy CA</strong>: For aggregated API servers</li>
+<li><strong>ETCD CA</strong>: Isolated CA for ETCD database communication</li>
+</ol>
+<hr />
+<h2 id="part-2-understanding-x509-certificates">Part 2: Understanding X.509 Certificates</h2>
+<h3 id="certificate-structure">Certificate Structure</h3>
+<p>Every X.509 certificate contains identity information:</p>
+<div class="highlight"><pre><span></span><code>Certificate Structure
+├── Version: v3 (X.509v3)
+├── Serial Number: Unique ID (2897472356293683110)
+├── Signature Algorithm: sha256WithRSAEncryption
+├── Issuer: CN=kubernetes (who signed this cert)
+├── Validity Period
+│   ├── Not Before: Jan 1 2026 GMT
+│   └── Not After: Dec 30 2035 GMT (10 year validity)
+├── Subject: CN=kubernetes-admin (who this cert is for)
+├── Public Key Info
+│   ├── Algorithm: RSA
+│   └── Size: 2048 bits
+└── Extensions (critical for Kubernetes)
+    ├── Subject Alternative Names (SAN): DNS names, IP addresses
+    ├── Key Usage: digitalSignature, keyEncipherment
+    └── Extended Key Usage: serverAuth, clientAuth
+</code></pre></div>
+<h3 id="certificate-components">Certificate Components</h3>
+<h4 id="1-cn-common-name-the-identity">1. <strong>CN (Common Name)</strong> - The Identity</h4>
+<p>CN identifies WHO the certificate is for:</p>
+<div class="highlight"><pre><span></span><code>CN=kubernetes-admin      # User name &quot;kubernetes-admin&quot;
+CN=kubelet              # System component &quot;kubelet&quot;
+CN=controller-manager   # System component &quot;controller-manager&quot;
+CN=kubernetes           # API server default identity
+</code></pre></div>
+<h4 id="2-o-organization-user-groups-for-rbac">2. <strong>O (Organization)</strong> - User Groups for RBAC</h4>
+<p>Organization field maps to groups, used for Role-Based Access Control:</p>
+<div class="highlight"><pre><span></span><code>O=system:masters              # Built-in admin group
+O=kubeadm:cluster-admins      # Created by kubeadm (admins)
+O=system:nodes                # For kubelet certificates
+O=developers                  # Custom developer group
+O=system:authenticated        # Standard authenticated users group
+</code></pre></div>
+<p><strong>Example Certificate Subject:</strong>
+<div class="highlight"><pre><span></span><code>Subject: O=kubeadm:cluster-admins, CN=kubernetes-admin
+         ↓                      ↓
+      Groups              User Name
+</code></pre></div></p>
+<h4 id="3-san-subject-alternative-names-where-the-certificate-is-valid">3. <strong>SAN (Subject Alternative Names)</strong> - Where the Certificate is Valid</h4>
+<p>SAN lists all valid hostnames and IPs for the certificate:</p>
+<div class="highlight"><pre><span></span><code>DNS Names:
+- kubernetes
+- kubernetes.default
+- kubernetes.default.svc
+- kubernetes.default.svc.cluster.local
+- localhost
+
+IP Addresses:
+- 127.0.0.1 (localhost)
+- 10.96.0.1 (Kubernetes service IP)
+- 10.0.0.100 (Control plane node IP)
+- 10.0.0.101 (Other control plane nodes)
+</code></pre></div>
+<p><strong>Why important?</strong> If a DNS name or IP is NOT in SAN, the certificate is invalid for that endpoint!</p>
+<hr />
+<h2 id="part-3-inspecting-certificates-with-openssl">Part 3: Inspecting Certificates with OpenSSL</h2>
+<h3 id="basic-certificate-inspection">Basic Certificate Inspection</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># View certificate details</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/ca.crt<span class="w"> </span>-text<span class="w"> </span>-noout
+
+<span class="c1"># View first 30 lines</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/ca.crt<span class="w"> </span>-text<span class="w"> </span>-noout<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-30
+
+<span class="c1"># Extract specific fields</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>cert.crt<span class="w"> </span>-noout<span class="w"> </span>-subject<span class="w">      </span><span class="c1"># Get CN and O</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>cert.crt<span class="w"> </span>-noout<span class="w"> </span>-issuer<span class="w">       </span><span class="c1"># Who signed it</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>cert.crt<span class="w"> </span>-noout<span class="w"> </span>-dates<span class="w">        </span><span class="c1"># Validity period</span>
+</code></pre></div>
+<h3 id="extract-certificate-from-kubeconfig">Extract Certificate from Kubeconfig</h3>
+<p>Kubeconfig stores certificates as base64-encoded data. To decode:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Extract CA certificate from kubeconfig</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--raw<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>grep<span class="w"> </span><span class="s1">&#39;certificate-authority-data:&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span>ca.crt
+
+<span class="c1"># Inspect</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>ca.crt<span class="w"> </span>-text<span class="w"> </span>-noout<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+</code></pre></div>
+<h3 id="check-certificate-validity">Check Certificate Validity</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># View Not Before and Not After dates</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>cert.crt<span class="w"> </span>-noout<span class="w"> </span>-dates
+<span class="c1"># Output:</span>
+<span class="c1"># notBefore=Jan  1 07:08:58 2026 GMT</span>
+<span class="c1"># notAfter=Dec 30 07:13:58 2035 GMT</span>
+
+<span class="c1"># Check days until expiration</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>cert.crt<span class="w"> </span>-noout<span class="w"> </span>-enddate<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">&#39;=&#39;</span><span class="w"> </span>-f2<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>xargs<span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span>date<span class="w"> </span>-d<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+%s<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>xargs<span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span>expr<span class="w"> </span><span class="se">\(</span><span class="w"> </span><span class="o">{}</span><span class="w"> </span>-<span class="w"> </span><span class="k">$(</span>date<span class="w"> </span>+%s<span class="k">)</span><span class="w"> </span><span class="se">\)</span><span class="w"> </span>/<span class="w"> </span><span class="m">86400</span>
+</code></pre></div>
+<h3 id="view-san-extensions">View SAN Extensions</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># See all Subject Alternative Names</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>cert.crt<span class="w"> </span>-text<span class="w"> </span>-noout<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A5<span class="w"> </span><span class="s2">&quot;Subject Alternative Name&quot;</span>
+
+<span class="c1"># Example output:</span>
+<span class="c1">#     X509v3 Subject Alternative Name: </span>
+<span class="c1">#         DNS:kubernetes, DNS:kubernetes.default, DNS:kubernetes.default.svc, </span>
+<span class="c1">#         IP Address:10.96.0.1, IP Address:10.0.0.1</span>
+</code></pre></div>
+<hr />
+<h2 id="part-4-kubeconfig-file-format">Part 4: Kubeconfig File Format</h2>
+<h3 id="complete-kubeconfig-structure">Complete Kubeconfig Structure</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Config</span>
+<span class="nt">preferences</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+
+<span class="c1"># SECTION 1: Clusters - How to connect to clusters</span>
+<span class="nt">clusters</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">cluster</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">certificate-authority-data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LS0tLS1CRUdJTi...</span><span class="w"> </span><span class="c1"># Base64 CA cert</span>
+<span class="w">    </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://172.30.1.2:6443</span><span class="w">               </span><span class="c1"># API server URL</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes</span><span class="w">                                 </span><span class="c1"># Cluster name (identifier)</span>
+
+<span class="c1"># SECTION 2: Users - Authentication credentials</span>
+<span class="nt">users</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes-admin</span>
+<span class="w">  </span><span class="nt">user</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Method A: Certificate-based auth (most common)</span>
+<span class="w">    </span><span class="nt">client-certificate-data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LS0tLS1CRUdJTi...</span><span class="w">    </span><span class="c1"># Base64 client cert</span>
+<span class="w">    </span><span class="nt">client-key-data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LS0tLS1CRUdJTi...</span><span class="w">            </span><span class="c1"># Base64 client key</span>
+
+<span class="c1"># SECTION 3: Contexts - Bind (cluster + user + namespace)</span>
+<span class="nt">contexts</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">context</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes</span><span class="w">           </span><span class="c1"># Which cluster (from clusters[])</span>
+<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes-admin</span><span class="w">        </span><span class="c1"># Which user (from users[])</span>
+<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w">            </span><span class="c1"># Default namespace for this context</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes-admin@kubernetes</span><span class="w">  </span><span class="c1"># Context name (identifier)</span>
+
+<span class="c1"># SECTION 4: Current context - Default when you run kubectl</span>
+<span class="nt">current-context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes-admin@kubernetes</span>
+</code></pre></div>
+<h3 id="section-details">Section Details</h3>
+<h4 id="clusters-section"><strong>Clusters Section</strong></h4>
+<p>Defines how to reach a Kubernetes cluster:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">clusters</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">cluster</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># CA cert to verify API server certificate</span>
+<span class="w">    </span><span class="nt">certificate-authority-data</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">base64 encoded</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="c1"># OR use file path:</span>
+<span class="w">    </span><span class="c1"># certificate-authority: /etc/kubernetes/pki/ca.crt</span>
+
+<span class="w">    </span><span class="c1"># API server URL</span>
+<span class="w">    </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://api.example.com:6443</span>
+
+<span class="w">    </span><span class="c1"># DANGEROUS: Skip cert verification (never in production)</span>
+<span class="w">    </span><span class="c1"># insecure-skip-tls-verify: true</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production-cluster</span>
+</code></pre></div>
+<h4 id="users-section"><strong>Users Section</strong></h4>
+<p>Defines HOW to authenticate:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">users</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span>
+<span class="w">  </span><span class="nt">user</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Method 1: Certificate + Key (TLS client auth)</span>
+<span class="w">    </span><span class="nt">client-certificate-data</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">base64</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">client-key-data</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">base64</span><span class="p p-Indicator">]</span>
+
+<span class="w">    </span><span class="c1"># Method 2: Token (for service accounts)</span>
+<span class="w">    </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</span>
+
+<span class="w">    </span><span class="c1"># Method 3: Username/Password (deprecated, rarely used)</span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pass123</span>
+</code></pre></div>
+<h4 id="contexts-section"><strong>Contexts Section</strong></h4>
+<p>Binds together cluster + user + namespace:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">contexts</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">context</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production-cluster</span><span class="w">   </span><span class="c1"># Reference from clusters[]</span>
+<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span><span class="w">                   </span><span class="c1"># Reference from users[]</span>
+<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span><span class="w">        </span><span class="c1"># Default namespace for commands</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod-admin</span><span class="w">               </span><span class="c1"># Context identifier</span>
+</code></pre></div>
+<hr />
+<h2 id="part-5-creating-custom-users-with-certificates">Part 5: Creating Custom Users with Certificates</h2>
+<h3 id="step-1-generate-private-key">Step 1: Generate Private Key</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create a 2048-bit RSA private key for the user</span>
+openssl<span class="w"> </span>genrsa<span class="w"> </span>-out<span class="w"> </span>devuser.key<span class="w"> </span><span class="m">2048</span>
+
+<span class="c1"># Result: A private key file that should be kept secret</span>
+</code></pre></div>
+<h3 id="step-2-create-certificate-signing-request-csr">Step 2: Create Certificate Signing Request (CSR)</h3>
+<p>A CSR is a request to the CA to sign a certificate:</p>
+<div class="highlight"><pre><span></span><code>openssl<span class="w"> </span>req<span class="w"> </span>-new<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-key<span class="w"> </span>devuser.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-out<span class="w"> </span>devuser.csr<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-subj<span class="w"> </span><span class="s2">&quot;/CN=devuser/O=developers/O=kubeadm:cluster-admins&quot;</span>
+
+<span class="c1"># /CN=devuser              → Username (Common Name)</span>
+<span class="c1"># /O=developers            → Group 1</span>
+<span class="c1"># /O=kubeadm:cluster-admins → Group 2 (RBAC admin group)</span>
+</code></pre></div>
+<h3 id="step-3-sign-csr-with-cluster-ca">Step 3: Sign CSR with Cluster CA</h3>
+<p>The cluster admin signs the CSR, creating a valid certificate:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Sign CSR with cluster CA (valid for 365 days)</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-req<span class="w"> </span>-in<span class="w"> </span>devuser.csr<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-CA<span class="w"> </span>/etc/kubernetes/pki/ca.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-CAkey<span class="w"> </span>/etc/kubernetes/pki/ca.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-CAcreateserial<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-out<span class="w"> </span>devuser.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-days<span class="w"> </span><span class="m">365</span>
+
+<span class="c1"># After this, devuser.crt is a valid Kubernetes certificate</span>
+</code></pre></div>
+<h3 id="step-4-add-to-kubeconfig">Step 4: Add to Kubeconfig</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Add cluster (if not already there)</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-cluster<span class="w"> </span>kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="o">=</span>https://api.example.com:6443<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--certificate-authority<span class="o">=</span>/etc/kubernetes/pki/ca.crt
+
+<span class="c1"># 2. Add user with certificate</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>devuser<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-certificate<span class="o">=</span>devuser.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-key<span class="o">=</span>devuser.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embed-certs<span class="o">=</span><span class="nb">true</span><span class="w">    </span><span class="c1"># Embed cert/key data in kubeconfig file</span>
+
+<span class="c1"># 3. Create context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>devuser-context<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--user<span class="o">=</span>devuser
+
+<span class="c1"># 4. Switch to use this context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>devuser-context
+
+<span class="c1"># 5. Verify connection</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+</code></pre></div>
+<h3 id="complete-automation-script">Complete Automation Script</h3>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nb">set</span><span class="w"> </span>-e
+
+<span class="nv">USERNAME</span><span class="o">=</span><span class="s2">&quot;devuser&quot;</span>
+<span class="nv">GROUP</span><span class="o">=</span><span class="s2">&quot;developers&quot;</span>
+<span class="nv">DAYS_VALID</span><span class="o">=</span><span class="m">365</span>
+<span class="nv">CLUSTER_IP</span><span class="o">=</span><span class="s2">&quot;api.example.com:6443&quot;</span>
+<span class="nv">CA_CERT</span><span class="o">=</span><span class="s2">&quot;/etc/kubernetes/pki/ca.crt&quot;</span>
+<span class="nv">CA_KEY</span><span class="o">=</span><span class="s2">&quot;/etc/kubernetes/pki/ca.key&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[1/5] Generating private key...&quot;</span>
+openssl<span class="w"> </span>genrsa<span class="w"> </span>-out<span class="w"> </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span>.key<span class="w"> </span><span class="m">2048</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[2/5] Creating certificate signing request...&quot;</span>
+openssl<span class="w"> </span>req<span class="w"> </span>-new<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-key<span class="w"> </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span>.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-out<span class="w"> </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span>.csr<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-subj<span class="w"> </span><span class="s2">&quot;/CN=</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">/O=</span><span class="si">${</span><span class="nv">GROUP</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[3/5] Signing CSR with cluster CA...&quot;</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-req<span class="w"> </span>-in<span class="w"> </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span>.csr<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-CA<span class="w"> </span><span class="si">${</span><span class="nv">CA_CERT</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-CAkey<span class="w"> </span><span class="si">${</span><span class="nv">CA_KEY</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-CAcreateserial<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-out<span class="w"> </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span>.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-days<span class="w"> </span><span class="si">${</span><span class="nv">DAYS_VALID</span><span class="si">}</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[4/5] Adding to kubeconfig...&quot;</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-cluster<span class="w"> </span>kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="o">=</span>https://<span class="si">${</span><span class="nv">CLUSTER_IP</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--certificate-authority<span class="o">=</span><span class="si">${</span><span class="nv">CA_CERT</span><span class="si">}</span>
+
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-certificate<span class="o">=</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span>.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-key<span class="o">=</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span>.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embed-certs<span class="o">=</span><span class="nb">true</span>
+
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span>-context<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--user<span class="o">=</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[5/5] Verifying...&quot;</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>get-contexts<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ User &#39;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">&#39; created successfully!&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;To use: kubectl config use-context </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">-context&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;To apply RBAC: kubectl create rolebinding dev-role --clusterrole=view --user=</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="part-7-kubernetes-api-certificatesigningrequest-csr">Part 7: Kubernetes API CertificateSigningRequest (CSR)</h2>
+<h3 id="creating-csr-through-kubernetes-api-real-world-method">Creating CSR Through Kubernetes API (Real-World Method)</h3>
+<p>In production clusters, instead of manually signing certificates, you create a <strong>CertificateSigningRequest</strong> object and let the cluster's control plane sign it.</p>
+<h3 id="practical-generate-csr-and-submit-to-kubernetes">Practical: Generate CSR and Submit to Kubernetes</h3>
+<h4 id="step-1-generate-private-key-and-csr-client-side">Step 1: Generate Private Key and CSR (Client-Side)</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate private key</span>
+openssl<span class="w"> </span>genrsa<span class="w"> </span>-out<span class="w"> </span>newuser.key<span class="w"> </span><span class="m">2048</span>
+
+<span class="c1"># Create CSR (note: generate CSR with subject, no signing yet)</span>
+openssl<span class="w"> </span>req<span class="w"> </span>-new<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-key<span class="w"> </span>newuser.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-out<span class="w"> </span>newuser.csr<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-subj<span class="w"> </span><span class="s2">&quot;/CN=newuser/O=developers&quot;</span>
+
+<span class="c1"># Verify CSR was created</span>
+openssl<span class="w"> </span>req<span class="w"> </span>-in<span class="w"> </span>newuser.csr<span class="w"> </span>-text<span class="w"> </span>-noout
+</code></pre></div>
+<h4 id="step-2-create-kubernetes-csr-object">Step 2: Create Kubernetes CSR Object</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Base64 encode the CSR</span>
+<span class="nv">CSR_CONTENT</span><span class="o">=</span><span class="k">$(</span>cat<span class="w"> </span>newuser.csr<span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="k">)</span>
+
+<span class="c1"># Create CSR object</span>
+cat<span class="w"> </span><span class="s">&lt;&lt;EOF | kubectl apply -f -</span>
+<span class="s">apiVersion: certificates.k8s.io/v1</span>
+<span class="s">kind: CertificateSigningRequest</span>
+<span class="s">metadata:</span>
+<span class="s">  name: newuser-csr</span>
+<span class="s">spec:</span>
+<span class="s">  request: $CSR_CONTENT</span>
+<span class="s">  signerName: kubernetes.io/kube-apiserver-client</span>
+<span class="s">  expirationSeconds: 31536000  # 1 year</span>
+<span class="s">  usages:</span>
+<span class="s">  - client auth</span>
+<span class="s">EOF</span>
+
+<span class="c1"># Verify CSR was created</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>csr
+kubectl<span class="w"> </span>describe<span class="w"> </span>csr<span class="w"> </span>newuser-csr
+</code></pre></div>
+<h4 id="step-3-approve-the-csr">Step 3: Approve the CSR</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Admin approves the request</span>
+kubectl<span class="w"> </span>certificate<span class="w"> </span>approve<span class="w"> </span>newuser-csr
+
+<span class="c1"># Verify it&#39;s approved</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>csr<span class="w"> </span>newuser-csr
+<span class="c1"># Status should show: Approved, Issued</span>
+
+<span class="c1"># View the approved certificate (base64 encoded)</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>csr<span class="w"> </span>newuser-csr<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.status.certificate}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span>newuser.crt
+
+<span class="c1"># Verify the certificate</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>newuser.crt<span class="w"> </span>-text<span class="w"> </span>-noout<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+</code></pre></div>
+<h4 id="step-4-add-user-to-kubeconfig">Step 4: Add User to Kubeconfig</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Set cluster (if not already present)</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-cluster<span class="w"> </span>kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="o">=</span>https://api.example.com:6443<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--certificate-authority<span class="o">=</span>/path/to/ca.crt
+
+<span class="c1"># Add user with the issued certificate</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>newuser<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-certificate<span class="o">=</span>newuser.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-key<span class="o">=</span>newuser.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embed-certs<span class="o">=</span><span class="nb">true</span>
+
+<span class="c1"># Create context</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>newuser-context<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--user<span class="o">=</span>newuser
+
+<span class="c1"># Test access</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>newuser-context
+kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</code></pre></div>
+<h3 id="complete-automation-script_1">Complete Automation Script</h3>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nb">set</span><span class="w"> </span>-e
+
+<span class="nv">USERNAME</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span>
+<span class="nv">GROUP</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">2</span><span class="k">:-</span><span class="nv">developers</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nv">CLUSTER_NAME</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">3</span><span class="k">:-</span><span class="nv">kubernetes</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nv">API_SERVER</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">4</span><span class="k">:-</span><span class="nv">https</span><span class="p">://api.example.com:</span><span class="nv">6443</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nv">CA_PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">5</span><span class="k">:-</span><span class="p">/etc/kubernetes/pki/ca.crt</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Usage: </span><span class="nv">$0</span><span class="s2"> &lt;username&gt; [group] [cluster-name] [api-server] [ca-path]&quot;</span>
+<span class="w">  </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;📋 Creating user certificate via Kubernetes CSR API...&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="c1"># Step 1: Generate private key</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[1/5] Generating private key...&quot;</span>
+openssl<span class="w"> </span>genrsa<span class="w"> </span>-out<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">.key&quot;</span><span class="w"> </span><span class="m">2048</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
+chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">.key&quot;</span>
+
+<span class="c1"># Step 2: Create CSR file</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[2/5] Creating certificate signing request...&quot;</span>
+openssl<span class="w"> </span>req<span class="w"> </span>-new<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-key<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">.key&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-out<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">.csr&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-subj<span class="w"> </span><span class="s2">&quot;/CN=</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">/O=</span><span class="si">${</span><span class="nv">GROUP</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
+
+<span class="c1"># Step 3: Submit CSR to Kubernetes</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[3/5] Submitting CSR to Kubernetes API...&quot;</span>
+<span class="nv">CSR_CONTENT</span><span class="o">=</span><span class="k">$(</span>cat<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">.csr&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="k">)</span>
+
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: certificates.k8s.io/v1</span>
+<span class="s">kind: CertificateSigningRequest</span>
+<span class="s">metadata:</span>
+<span class="s">  name: ${USERNAME}-csr</span>
+<span class="s">spec:</span>
+<span class="s">  request: $CSR_CONTENT</span>
+<span class="s">  signerName: kubernetes.io/kube-apiserver-client</span>
+<span class="s">  expirationSeconds: 31536000</span>
+<span class="s">  usages:</span>
+<span class="s">  - client auth</span>
+<span class="s">EOF</span>
+
+<span class="c1"># Step 4: Wait for approval (manual or automated)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[4/5] CSR created. Waiting for approval...&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;      Admin needs to run: kubectl certificate approve </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">-csr&quot;</span>
+
+<span class="c1"># Optional: auto-approve for testing</span>
+<span class="c1"># kubectl certificate approve ${USERNAME}-csr</span>
+
+<span class="c1"># Wait for approval (with timeout)</span>
+<span class="nv">TIMEOUT</span><span class="o">=</span><span class="m">300</span>
+<span class="nv">ELAPSED</span><span class="o">=</span><span class="m">0</span>
+<span class="k">while</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$ELAPSED</span><span class="w"> </span>-lt<span class="w"> </span><span class="nv">$TIMEOUT</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="nv">STATUS</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>csr<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">-csr&quot;</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.status.conditions[?(@.type==&quot;Approved&quot;)].type}&#39;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="k">)</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STATUS</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;Approved&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;      ✅ CSR Approved!&quot;</span>
+<span class="w">    </span><span class="k">break</span>
+<span class="w">  </span><span class="k">fi</span>
+<span class="w">  </span>sleep<span class="w"> </span><span class="m">5</span>
+<span class="w">  </span><span class="nv">ELAPSED</span><span class="o">=</span><span class="k">$((</span><span class="nv">ELAPSED</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">5</span><span class="k">))</span>
+<span class="k">done</span>
+
+<span class="c1"># Step 5: Extract certificate and configure kubeconfig</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[5/5] Extracting certificate and configuring kubeconfig...&quot;</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>csr<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">-csr&quot;</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.status.certificate}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">.crt&quot;</span>
+
+<span class="c1"># Configure kubeconfig</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-cluster<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">API_SERVER</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--certificate-authority<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CA_PATH</span><span class="si">}</span><span class="s2">&quot;</span>
+
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-certificate<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">.crt&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-key<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">.key&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embed-certs<span class="o">=</span><span class="nb">true</span>
+
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">-context&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--user<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ User &#39;</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">&#39; created successfully!&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;📌 Files created:&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   - </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">.key      (private key - KEEP SECURE)&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   - </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">.csr      (certificate signing request)&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   - </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">.crt      (signed certificate)&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;📌 To use this user:&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   kubectl config use-context </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">-context&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   kubectl get pods&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;📌 To grant permissions:&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   kubectl create rolebinding </span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">-view --clusterrole=view --user=</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<h3 id="view-and-manage-csrs">View and Manage CSRs</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># List all CSRs</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>csr
+
+<span class="c1"># Show detailed CSR info</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>csr<span class="w"> </span>&lt;csr-name&gt;
+
+<span class="c1"># Show CSR in YAML</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>csr<span class="w"> </span>&lt;csr-name&gt;<span class="w"> </span>-o<span class="w"> </span>yaml
+
+<span class="c1"># View the original CSR content</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>csr<span class="w"> </span>&lt;csr-name&gt;<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.spec.request}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span><span class="p">|</span><span class="w"> </span>openssl<span class="w"> </span>req<span class="w"> </span>-text<span class="w"> </span>-noout
+
+<span class="c1"># Approve CSR</span>
+kubectl<span class="w"> </span>certificate<span class="w"> </span>approve<span class="w"> </span>&lt;csr-name&gt;
+
+<span class="c1"># Deny CSR</span>
+kubectl<span class="w"> </span>certificate<span class="w"> </span>deny<span class="w"> </span>&lt;csr-name&gt;
+
+<span class="c1"># Delete CSR</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>csr<span class="w"> </span>&lt;csr-name&gt;
+
+<span class="c1"># Watch for pending CSRs</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>csr<span class="w"> </span>--watch
+</code></pre></div>
+<h3 id="available-signer-names">Available Signer Names</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Different signerName values for different certificate types:</span>
+
+<span class="c1"># 1. Client certificate for connecting to API server</span>
+signerName:<span class="w"> </span>kubernetes.io/kube-apiserver-client
+
+<span class="c1"># 2. Kubelet serving certificate (for kubelet HTTPS endpoint)</span>
+signerName:<span class="w"> </span>kubernetes.io/kubelet-serving
+
+<span class="c1"># 3. Legacy (kubeadm) client certificate</span>
+signerName:<span class="w"> </span>kubernetes.io/kube-apiserver-client-kubelet
+
+<span class="c1"># Check available signers in your cluster:</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>certificatesigningrequests.certificates.k8s.io<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>jq<span class="w"> </span><span class="s1">&#39;.items[].spec.signerName&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>uniq
+</code></pre></div>
+<h3 id="csr-best-practices-for-kind-clusters">CSR Best Practices for Kind Clusters</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. For kind, approve CSRs immediately or auto-approve them</span>
+kubectl<span class="w"> </span>certificate<span class="w"> </span>approve<span class="w"> </span>&lt;csr-name&gt;
+
+<span class="c1"># 2. Create a helper function for approval in testing</span>
+auto-approve-csrs<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span>kubectl<span class="w"> </span>get<span class="w"> </span>csr<span class="w"> </span>--no-headers<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $1}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="nb">read</span><span class="w"> </span>csr<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>csr<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$csr</span><span class="s2">&quot;</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.status.conditions}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span>Approved<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">      </span><span class="k">continue</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Approving: </span><span class="nv">$csr</span><span class="s2">&quot;</span>
+<span class="w">    </span>kubectl<span class="w"> </span>certificate<span class="w"> </span>approve<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$csr</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="k">done</span>
+<span class="o">}</span>
+
+<span class="c1"># 3. Watch for pending CSRs</span>
+watch<span class="w"> </span><span class="s1">&#39;kubectl get csr&#39;</span>
+</code></pre></div>
+<hr />
+<h2 id="part-8-working-with-kubeconfig-examples">Part 8: Working with Kubeconfig - Examples</h2>
+<h3 id="example-1-create-read-only-viewer-account">Example 1: Create Read-Only Viewer Account</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate keys</span>
+openssl<span class="w"> </span>genrsa<span class="w"> </span>-out<span class="w"> </span>viewer.key<span class="w"> </span><span class="m">2048</span>
+openssl<span class="w"> </span>req<span class="w"> </span>-new<span class="w"> </span>-key<span class="w"> </span>viewer.key<span class="w"> </span>-out<span class="w"> </span>viewer.csr<span class="w"> </span>-subj<span class="w"> </span><span class="s2">&quot;/CN=viewer/O=viewers&quot;</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-req<span class="w"> </span>-in<span class="w"> </span>viewer.csr<span class="w"> </span>-CA<span class="w"> </span>/etc/kubernetes/pki/ca.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-CAkey<span class="w"> </span>/etc/kubernetes/pki/ca.key<span class="w"> </span>-out<span class="w"> </span>viewer.crt<span class="w"> </span>-days<span class="w"> </span><span class="m">365</span>
+
+<span class="c1"># Add to kubeconfig</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>viewer<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-certificate<span class="o">=</span>viewer.crt<span class="w"> </span>--client-key<span class="o">=</span>viewer.key
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>viewer-context<span class="w"> </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span>--user<span class="o">=</span>viewer
+
+<span class="c1"># Create RBAC role binding</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>rolebinding<span class="w"> </span>viewer-role<span class="w"> </span>--clusterrole<span class="o">=</span>view<span class="w"> </span>--user<span class="o">=</span>viewer
+</code></pre></div>
+<h3 id="example-2-certificate-expiration-check">Example 2: Certificate Expiration Check</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check when certs expire</span>
+<span class="k">for</span><span class="w"> </span>cert<span class="w"> </span><span class="k">in</span><span class="w"> </span>/etc/kubernetes/pki/*.crt<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$cert</span><span class="s2">:&quot;</span>
+<span class="w">  </span>openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$cert</span><span class="s2">&quot;</span><span class="w"> </span>-noout<span class="w"> </span>-dates
+<span class="k">done</span>
+
+<span class="c1"># List certs expiring within 30 days</span>
+<span class="c1"># (Useful for monitoring and renewal planning)</span>
+</code></pre></div>
+<h3 id="example-3-verify-certificate-trust-chain">Example 3: Verify Certificate Trust Chain</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check if cert was signed by CA</span>
+openssl<span class="w"> </span>verify<span class="w"> </span>-CAfile<span class="w"> </span>/etc/kubernetes/pki/ca.crt<span class="w"> </span>cert.crt
+
+<span class="c1"># Output: cert.crt: OK (if valid)</span>
+</code></pre></div>
+<hr />
+<p><strong>Last Updated:</strong> January 9, 2026</p>
+<p>~/.kube                                                                                                                      14:23:22
 ❯ kind get cluster
 Gets one of [clusters, nodes, kubeconfig]</p>
 <p>Usage:
@@ -262,6 +1046,34 @@ zsh: command not found: #
 base64: invalid input</p>
 <p>~/.kube                                                                                                                      14:29:36
 ❯</p>
+<p>play with openssl
+- ca key
+- csr
+- sign the csr</p>
+<p>undderstnad the contnet inside</p>
+<p>what is cn
+what is groups 
+how certificate or csr at basica level undersnada</p>
+<p>-&gt; how kubeconfig </p>
+<p>-&gt; kubectl config command everytrhign everything!
+-&gt; then how kubeconfig looks like differnet way to derive and create
+-&gt; create a user -&gt; key, get create a csr request to the kluster 
+-&gt; addmin approve it athen create stuff and stuff thign please</p>
+<p>pki inspect -( do somethign with some pratcial qustion )</p>
+<p>play with openssl
+- ca key
+- csr
+- sign the csr</p>
+<p>undderstnad the contnet inside</p>
+<p>what is cn
+what is groups 
+how certificate or csr at basica level undersnada</p>
+<p>-&gt; how kubeconfig </p>
+<p>-&gt; kubectl config command everytrhign everything!
+-&gt; then how kubeconfig looks like differnet way to derive and create
+-&gt; create a user -&gt; key, get create a csr request to the kluster 
+-&gt; addmin approve it athen create stuff and stuff thign please</p>
+<p>pki inspect -( do somethign with some pratcial qustion )</p>
 
   <br>
     
@@ -274,20 +1086,20 @@ base64: invalid input</p>
   <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
     
     <div class="wm-article-nav pull-right">
-      <a href="../../06-cluster-certificates-and-kube-system%20%5Bimportant%5D/kubeadm-certs/" class="btn btn-xs btn-default pull-right">
+      <a href="../question/" class="btn btn-xs btn-default pull-right">
         Next
         <i class="fa fa-chevron-right" aria-hidden="true"></i>
       </a>
-      <a href="../../06-cluster-certificates-and-kube-system%20%5Bimportant%5D/kubeadm-certs/" class="btn btn-xs btn-link">
-        kubeadm Certificate Checks &amp; Renewal
+      <a href="../question/" class="btn btn-xs btn-link">
+        Kubeconfig &amp; Kubernetes PKI - Practical Challenges
       </a>
     </div>
     
     <div class="wm-article-nav">
-      <a href="../how-to-setup/" class="btn btn-xs btn-default pull-left">
+      <a href="../../04-admission-webhook/notes/" class="btn btn-xs btn-default pull-left">
         <i class="fa fa-chevron-left" aria-hidden="true"></i>
-        Previous</a><a href="../how-to-setup/" class="btn btn-xs btn-link">
-        How to setup
+        Previous</a><a href="../../04-admission-webhook/notes/" class="btn btn-xs btn-link">
+        Notes
       </a>
     </div>
     
